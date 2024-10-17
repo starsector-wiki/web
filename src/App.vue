@@ -3,7 +3,11 @@
 </template>
 
 <script setup lang="ts">
+import { useDataStore } from './stores/dataStore';
+
 defineOptions({
-  name: 'App'
+  name: 'App',
 });
+
+useDataStore().initData();
 </script>
