@@ -3,7 +3,7 @@
     <ul>
       <li v-for="ship in dataStore.sortdShips" :key="ship.id">
         <router-link :to="{ name: 'ship', params: { id: ship.id } }">{{
-          ship.name
+          ship.emptyHullVariant ? ship.name : ship.name + ' ' + ship.variantName
         }}</router-link>
       </li>
     </ul>
