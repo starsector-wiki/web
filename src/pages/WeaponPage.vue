@@ -41,11 +41,7 @@ const variantShips = computed(() => {
           >{{ weapon.description }}</span
         >
         <div style="margin: auto">
-          <img
-            style="background-color: black"
-            decoding="async"
-            :src="weapon.turretSprite"
-          />
+          <img decoding="async" :src="weapon.turretSprite" />
         </div>
       </div>
 
