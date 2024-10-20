@@ -52,6 +52,9 @@ export class Weapon {
 
   tags!: string[];
 
+  shipIds: string[] = []
+  variantIds: string[] = []
+
   static deserialize(object: object) {
     return plainToInstance(Weapon, object);
   }

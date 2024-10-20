@@ -28,6 +28,9 @@ export class ShipMod {
   tags!: string[];
   uiTags!: string[];
 
+  shipIds: string[] = []
+  variantIds: string[] = []
+
   static deserialize(object: object) {
     return plainToInstance(ShipMod, object);
   }

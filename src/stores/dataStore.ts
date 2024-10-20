@@ -18,7 +18,20 @@ export const useDataStore = defineStore('dataStore', {
       const sortedArray = Array.from(state.shipMap.entries());
       sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
       for (const [, value] of sortedArray) {
-        result.push(value);
+        if (value.emptyHullVariant) {
+          result.push(value);
+        }
+      }
+      return result;
+    },
+    sortdShipVarinats(state): Ship[] {
+      const result = [] as Ship[];
+      const sortedArray = Array.from(state.shipMap.entries());
+      sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+      for (const [, value] of sortedArray) {
+        if (!value.emptyHullVariant) {
+          result.push(value);
+        }
       }
       return result;
     },
@@ -55,6 +68,7 @@ export const useDataStore = defineStore('dataStore', {
       try {
         const response = await api.get('data/data.json');
         const jsonArray: WikiJsonObject[] = response.data;
+        //load data
         for (const jsonObject of jsonArray) {
           if ('jsonType' in jsonObject) {
             if (jsonObject.jsonType === 'SHIP') {
@@ -72,12 +86,58 @@ export const useDataStore = defineStore('dataStore', {
             }
           }
         }
+        //add link
+        for (const ship of this.shipMap.values()) {
+          //ship
+          if (ship.emptyHullVariant) {
+            ship.varinatIds = Array.from(this.shipMap.values())
+              .filter(it => !it.emptyHullVariant && it.hullId === ship.hullId)
+              .map(it => it.id);
+          }
+          if (!ship.isSkin()) {
+            ship.skinIds = Array.from(this.shipMap.values())
+              .filter(it => it.isSkin() && it.emptyHullVariant && it.baseHullId === ship.hullId)
+              .map(it => it.id);
+          }
+          //ship system
+          if (ship.hasSystem() && ship.emptyHullVariant) {
+            const shipSystem = this.getShipSystemById(ship.shipSystemId)
+            shipSystem?.shipIds.push(ship.id)
+          }
+          if (ship.hasDefense() && ship.emptyHullVariant) {
+            const shipDefenseSystem = this.getShipSystemById(ship.shipDefenseId)
+            shipDefenseSystem?.defenseShipIds.push(ship.id)
+          }
+          //ship mod
+          if (ship.emptyHullVariant) {
+            for (const modId of ship.builtInMods.concat(ship.storyMods).concat(ship.nonBuiltInMods)) {
+              const shipMod = this.getShipModById(modId)
+              shipMod?.shipIds.push(ship.id)
+            }
+          } else {
+            for (const modId of ship.builtInMods.concat(ship.storyMods).concat(ship.nonBuiltInMods)) {
+              const shipMod = this.getShipModById(modId)
+              shipMod?.variantIds.push(ship.id)
+            }
+          }
+        }
+
       } catch (error) {
         console.error(error);
       }
     },
     getShipById(id: string): Ship | undefined {
       return this.shipMap.get(id);
+    },
+    getShipsByIds(ids: string[]): Ship[] {
+      const result = []
+      for (const id of ids) {
+        const ship = this.getShipById(id);
+        if (ship) {
+          result.push(ship);
+        }
+      }
+      return result;
     },
     getShipSystemById(id: string): ShipSystem | undefined {
       return this.shipSystemMap.get(id);

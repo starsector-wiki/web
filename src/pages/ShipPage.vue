@@ -1,34 +1,49 @@
+<script setup lang="ts">
+import { ShieldTypeDisplay } from 'src/classes/conts';
+import MutableStatDiv from 'src/components/MutableStatDiv.vue';
+import ShipsDiv from 'src/components/ShipsDiv.vue';
+import { useDataStore } from 'src/stores/dataStore';
+import { computed, ref } from 'vue';
+import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+
+defineOptions({
+  name: 'ShipPage',
+});
+
+const route = useRoute();
+let id = ref(route.params.id as string);
+onBeforeRouteUpdate(async (to) => {
+  id.value = to.params.id as string;
+});
+
+const ship = computed(() => useDataStore().getShipById(id.value));
+const skins = computed(() =>
+  useDataStore().getShipsByIds(ship.value?.skinIds ?? [])
+);
+const variants = computed(() =>
+  useDataStore().getShipsByIds(ship.value?.varinatIds ?? [])
+);
+</script>
+
 <template>
-  <q-page>
+  <q-page padding>
     <template v-if="ship === undefined">
       <h2>Ship id:{{ id }} not found.</h2>
     </template>
     <template v-else>
       <h4>
-        {{ ship.name }}-级{{
-          ship.emptyHullVariant ? '' : ' ' + ship.variantName + ' '
-        }}{{ ship.designation ? ' ' + ship.designation : '' }}
+        {{ ship.getDisplayName() }}
       </h4>
 
-      <table>
-        <tbody>
-          <tr>
-            <td
-              style="
-                width: 75%;
-                text-align: left;
-                vertical-align: top;
-                white-space: pre-wrap;
-              "
-            >
-              {{ ship.description }}
-            </td>
-            <td style="width: 25%; text-align: center; vertical-align: middle">
-              <img decoding="async" :src="ship.sprite" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ ship.description }}</span
+        >
+        <div style="margin: auto">
+          <img decoding="async" :src="ship.sprite" />
+        </div>
+      </div>
 
       <br /><br />
 
@@ -210,7 +225,14 @@
           <tr>
             <td>战术系统</td>
             <td style="text-align: right">
-              {{ ship.getSystem()?.name ?? '无' }}
+              <router-link
+                v-if="ship.getSystem()"
+                :to="{
+                  name: 'ship_system',
+                  params: { id: ship?.shipSystemId },
+                }"
+                >{{ ship.getSystem()?.name }}</router-link
+              >
             </td>
             <td>探测范围</td>
             <td style="text-align: right">
@@ -227,7 +249,16 @@
           </tr>
           <tr>
             <td>特殊系统</td>
-            <td colspan="5">{{ ship.getDefense()?.name ?? '无' }}</td>
+            <td colspan="5">
+              <router-link
+                v-if="ship.getDefense()"
+                :to="{
+                  name: 'ship_system',
+                  params: { id: ship?.shipDefenseId },
+                }"
+                >{{ ship.getDefense()?.name ?? '无' }}</router-link
+              >
+            </td>
           </tr>
           <tr v-if="ship.hasDefense()">
             <td></td>
@@ -252,28 +283,23 @@
 
       <br /><br />
 
+      <template v-if="skins.length > 0">
+        <h4>变体船</h4>
+        <ShipsDiv :ships="skins" />
+      </template>
+
+      <template v-if="variants.length > 0">
+        <h4>装配</h4>
+        <ShipsDiv :ships="variants" />
+      </template>
+
+      <br /><br />
+
       <pre><code>{{ JSON.stringify(ship,null,2) }}</code></pre>
     </template>
   </q-page>
 </template>
 
-<script setup lang="ts">
-import { ShieldTypeDisplay } from 'src/classes/conts';
-import MutableStatDiv from 'src/components/MutableStatDiv.vue';
-import { useDataStore } from 'src/stores/dataStore';
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-
-defineOptions({
-  name: 'ShipPage',
-});
-
-const route = useRoute();
-const id = route.params.id as string;
-const ship = computed(() => {
-  return useDataStore().getShipById(id);
-});
-</script>
 <style lang="scss">
 table {
   width: 100%;

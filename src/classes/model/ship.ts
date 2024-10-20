@@ -146,8 +146,26 @@ export class Ship {
   hints!: string[];
   tags!: string[];
 
+  skinIds: string[] = [];
+  varinatIds: string[] = [];
+
   static deserialize(object: object) {
     return plainToInstance(Ship, object);
+  }
+
+  isSkin(): boolean {
+    return this.hullId !== this.baseHullId
+  }
+
+  getDisplayName(): string {
+    let result = this.name + '-级';
+    if (!this.emptyHullVariant) {
+      result += ' ' + this.variantName
+    }
+    if (this.designation) {
+      result += ' ' + this.designation
+    }
+    return result
   }
 
   hasShield(): boolean {
@@ -239,7 +257,7 @@ export class Ship {
     });
     const weaponStrs: string[] = []
     weaponMap.forEach((count, weaponId) => {
-      weaponStrs.push(`${count}x ${dataStore.getWeaponById(weaponId)?.name}`)
+      weaponStrs.push(`${count}x ${dataStore.getWeaponById(weaponId)?.name ?? weaponId}`)
     })
     return weaponStrs.join(', ')
   }

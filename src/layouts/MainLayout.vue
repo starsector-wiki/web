@@ -17,9 +17,18 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> 分类 </q-item-label>
+        <q-item clickable :to="{ name: 'ships' }">
+          <q-item-section> 舰船数据 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'ship_systems' }">
+          <q-item-section> 战术系统 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'ship_mods' }">
+          <q-item-section> 舰船插件 </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
