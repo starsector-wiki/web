@@ -71,10 +71,10 @@ export class Ship {
   shieldType!: ShieldType;
   //    护盾角度
   @Type(() => MutableStat)
-  shieldRadius!: MutableStat;
+  shieldArc!: MutableStat;
   //    护盾维持(幅能/秒)
   @Type(() => MutableStat)
-  shieldCost!: MutableStat;
+  shieldUpkeep!: MutableStat;
   //    护盾效率(幅能/伤害)
   @Type(() => MutableStat)
   fluxPerDamageAbsorbed!: MutableStat;

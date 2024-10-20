@@ -116,10 +116,7 @@
               }}
             </td>
             <td style="text-align: right">
-              <MutableStatDiv
-                v-if="ship.hasShield()"
-                :stat="ship.shieldRadius"
-              />
+              <MutableStatDiv v-if="ship.hasShield()" :stat="ship.shieldArc" />
               <MutableStatDiv
                 v-else-if="ship.hasPhase()"
                 :stat="ship.phaseCost"
@@ -148,7 +145,7 @@
             <td style="text-align: right">
               <MutableStatDiv
                 v-if="ship.hasShield()"
-                :stat="ship.shieldCost"
+                :stat="ship.shieldUpkeep"
                 :add-is-good="false"
               />
               <MutableStatDiv
