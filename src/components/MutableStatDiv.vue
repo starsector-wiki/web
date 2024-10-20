@@ -1,5 +1,5 @@
 <template>
-  <span>{{ stat.modifiedValue }}</span>
+  <span>{{ round(stat.modifiedValue) }}</span>
   <span
     v-if="stat.hasModify()"
     :style="{
@@ -8,12 +8,13 @@
           ? 'green'
           : 'red',
     }"
-    >({{ (stat.isPositive() ? '+' : '') + stat.getAddend() }})</span
+    >({{ (stat.isPositive() ? '+' : '') + round(stat.getAddend()) }})</span
   >
 </template>
 
 <script setup lang="ts">
 import { MutableStat } from 'src/classes/model/ship';
+import { round } from 'src/classes/utils';
 
 defineOptions({
   name: 'MutableStatDiv',
