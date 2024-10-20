@@ -12,6 +12,8 @@ const routes: RouteRecordRaw[] = [
       { name: 'ship_system', path: 'ship_systems/:id', component: () => import('pages/ShipSystemPage.vue'), },
       { name: 'ship_mods', path: 'ship_mods', component: () => import('pages/ShipModsPage.vue'), },
       { name: 'ship_mod', path: 'ship_mods/:id', component: () => import('pages/ShipModPage.vue'), },
+      { name: 'weapons', path: 'weapons', component: () => import('pages/WeaponsPage.vue'), },
+      { name: 'weapon', path: 'weapons/:id', component: () => import('pages/WeaponPage.vue'), },
     ],
   },
 

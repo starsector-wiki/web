@@ -29,6 +29,9 @@
         <q-item clickable :to="{ name: 'ship_mods' }">
           <q-item-section> 舰船插件 </q-item-section>
         </q-item>
+        <q-item clickable :to="{ name: 'weapons' }">
+          <q-item-section> 武器数据 </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 

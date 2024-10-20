@@ -109,15 +109,28 @@ export const useDataStore = defineStore('dataStore', {
             shipDefenseSystem?.defenseShipIds.push(ship.id)
           }
           //ship mod
-          if (ship.emptyHullVariant) {
-            for (const modId of ship.builtInMods.concat(ship.storyMods).concat(ship.nonBuiltInMods)) {
-              const shipMod = this.getShipModById(modId)
+          for (const modId of ship.builtInMods.concat(ship.storyMods).concat(ship.nonBuiltInMods)) {
+            const shipMod = this.getShipModById(modId)
+            if (ship.emptyHullVariant) {
               shipMod?.shipIds.push(ship.id)
             }
-          } else {
-            for (const modId of ship.builtInMods.concat(ship.storyMods).concat(ship.nonBuiltInMods)) {
-              const shipMod = this.getShipModById(modId)
+            else {
               shipMod?.variantIds.push(ship.id)
+            }
+          }
+          //weapon
+          const weaponSet = new Set<string>();
+          for (const weaponId of Array.from(ship.weaponIdMap.values())) {
+            if (weaponId) {
+              weaponSet.add(weaponId);
+            }
+          }
+          for (const weaponId of weaponSet) {
+            const weapon = this.getWeaponById(weaponId);
+            if (ship.emptyHullVariant) {
+              weapon?.shipIds.push(ship.id)
+            } else {
+              weapon?.variantIds.push(ship.id)
             }
           }
         }
