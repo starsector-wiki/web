@@ -43,7 +43,22 @@ const dataStore = useDataStore();
             align-items: center;
           "
         >
-          <img decoding="async" :src="weapon.turretSprite" />
+          <img
+            style="position: absolute; z-index: -2"
+            decoding="async"
+            :src="weapon.turretUnderSprite"
+          />
+          <img
+            style="position: absolute; z-index: -1"
+            decoding="async"
+            :src="weapon.turretGunSprite"
+          />
+          <img class="weapon-img" decoding="async" :src="weapon.turretSprite" />
+          <img
+            style="position: absolute; z-index: 2"
+            decoding="async"
+            :src="weapon.turretGlowSprite"
+          />
         </div>
         <span>
           {{ weapon.name }}

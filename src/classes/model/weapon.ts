@@ -10,8 +10,19 @@ export class Weapon {
   customPrimary!: string;
   //    炮塔贴图
   turretSprite!: string;
+  turretUnderSprite!: string;
+  turretGunSprite!: string;
+  turretGlowSprite!: string;
   //    固定槽位贴图
   hardPointSprite!: string;
+  hardPointUnderSprite!: string;
+  hardPointGunSprite!: string;
+  hardPointGlowSprite!: string;
+  //    渲染用标签
+  renderHints!: string[];
+  //    导弹位置
+  turretOffsets!: number[];
+  projSpriteName!: string;
 
   //    战术应用
   primaryRoleStr!: string;
