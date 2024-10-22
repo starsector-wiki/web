@@ -23,6 +23,28 @@ const ships = computed(() => {
 const variantShips = computed(() => {
   return useDataStore().getShipsByIds(weapon.value?.variantIds ?? []);
 });
+const offsetPairs = computed(() => {
+  if (weapon.value) {
+    const showMissile =
+      weapon.value.renderHints.includes('RENDER_LOADED_MISSILES') ||
+      weapon.value.renderHints.includes('RENDER_LOADED_MISSILES_UNLESS_HIDDEN');
+    if (
+      showMissile &&
+      weapon.value.turretOffsets.length > 0 &&
+      weapon.value.projSpriteName
+    ) {
+      const result = [];
+      for (let i = 0; i < weapon.value.turretOffsets.length; i += 2) {
+        result.push([
+          weapon.value.turretOffsets[i],
+          weapon.value.turretOffsets[i + 1],
+        ]);
+      }
+      return result;
+    }
+  }
+  return undefined;
+});
 </script>
 
 <template>
@@ -40,7 +62,7 @@ const variantShips = computed(() => {
           style="text-align: left; vertical-align: top; white-space: pre-wrap"
           >{{ weapon.description }}</span
         >
-        <div style="margin: auto">
+        <div style="margin: auto; position: relative">
           <img
             style="position: absolute; z-index: -2"
             decoding="async"
@@ -51,12 +73,29 @@ const variantShips = computed(() => {
             decoding="async"
             :src="weapon.turretGunSprite"
           />
-          <img class="weapon-img" decoding="async" :src="weapon.turretSprite" />
           <img
             style="position: absolute; z-index: 2"
             decoding="async"
             :src="weapon.turretGlowSprite"
           />
+          <template v-if="offsetPairs">
+            <img
+              v-for="(offsetPair, index) in offsetPairs"
+              :style="{
+                position: 'absolute',
+                zIndex: 1000 + index,
+                top: '50%',
+                left: '50%',
+                transform: `translate(-50%, -50%) translate(${
+                  offsetPair[1] * -1
+                }px, ${offsetPair[0] * -1}px)`,
+              }"
+              :key="index"
+              decoding="async"
+              :src="weapon.projSpriteName"
+            />
+          </template>
+          <img decoding="async" :src="weapon.turretSprite" />
         </div>
       </div>
 
