@@ -22,7 +22,7 @@ export class Weapon {
   renderHints!: string[];
   //    导弹位置
   turretOffsets!: number[];
-  projSpriteName!: string;
+  projSpriteName?: string;
 
   //    战术应用
   primaryRoleStr!: string;
@@ -57,8 +57,21 @@ export class Weapon {
   customAncillary!: string;
   @Type(() => DamageType)
   damageType!: DamageType;
+  //    导弹飞行速度
+  speedStr!: string;
+  //    导弹追踪性能
+  trackingStr!: string;
+  //    武器精准度
   accuracyStr!: string;
+  //    武器转向速度
   turnRateStr!: string;
+  //    最大充能数/最大备弹数
+  maxAmmo?: number;
+  //    充能时间/装弹时间
+  reloadTime?: number;
+  //    每次充能数/每次装弹数
+  reloadSize!: number;
+  //    武器开火间隔
   reFireDelay!: number;
 
   tags!: string[];
