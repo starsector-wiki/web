@@ -7,8 +7,12 @@ export class ShipMod {
   name!: string;
   description!: string;
   icon!: string;
+  manufacturer!:string;
 
-  isHaveSModEffect!: boolean;
+  haveSModEffect!: boolean;
+  alwaysUnlocked!: boolean;
+  hidden!: boolean;
+  hiddenEverywhere!: boolean;
 
   frigateCost!: number;
   destroyerCost!: number;
