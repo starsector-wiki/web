@@ -13,6 +13,8 @@ export class Ship {
   designation!: string;
   description!: string;
   sprite!: string;
+  center!: { x: number; y: number; };
+  moduleAnchor?: { x: number; y: number; };
 
   hullId!: string;
   baseHullId!: string;

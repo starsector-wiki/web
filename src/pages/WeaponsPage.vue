@@ -1,35 +1,12 @@
 <script setup lang="ts">
+import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
 import { useDataStore } from 'src/stores/dataStore';
-import { computed } from 'vue';
 
 defineOptions({
   name: 'WeaponsPage',
 });
 
 const dataStore = useDataStore();
-const offsetPairsMap = computed(() => {
-  const result = new Map();
-  for (const weapon of dataStore.sortdWeapon) {
-    const showMissile =
-      weapon.renderHints.includes('RENDER_LOADED_MISSILES') ||
-      weapon.renderHints.includes('RENDER_LOADED_MISSILES_UNLESS_HIDDEN');
-    if (
-      showMissile &&
-      weapon.turretOffsets.length > 0 &&
-      weapon.projSpriteName
-    ) {
-      const offsetPairs = [];
-      for (let i = 0; i < weapon.turretOffsets.length; i += 2) {
-        offsetPairs.push([
-          weapon.turretOffsets[i],
-          weapon.turretOffsets[i + 1],
-        ]);
-      }
-      result.set(weapon.id, offsetPairs);
-    }
-  }
-  return result;
-});
 </script>
 
 <template>
@@ -59,41 +36,7 @@ const offsetPairsMap = computed(() => {
           justify-content: flex-end;
         "
       >
-        <div style="flex: 0 0 auto; margin: auto; position: relative">
-          <img
-            style="position: absolute; z-index: -2"
-            decoding="async"
-            :src="weapon.turretUnderSprite"
-          />
-          <img
-            style="position: absolute; z-index: -1"
-            decoding="async"
-            :src="weapon.turretGunSprite"
-          />
-          <img
-            style="position: absolute; z-index: 2"
-            decoding="async"
-            :src="weapon.turretGlowSprite"
-          />
-          <template v-if="offsetPairsMap.get(weapon.id)">
-            <img
-              v-for="(offsetPair, index) in offsetPairsMap.get(weapon.id)"
-              :style="{
-                position: 'absolute',
-                zIndex: 1000 + index,
-                top: '50%',
-                left: '50%',
-                transform: `translate(-50%, -50%) translate(${
-                  offsetPair[1] * -1
-                }px, ${offsetPair[0] * -1}px)`,
-              }"
-              :key="index"
-              decoding="async"
-              :src="weapon.projSpriteName"
-            />
-          </template>
-          <img decoding="async" :src="weapon.turretSprite" />
-        </div>
+        <WeaponSpriteDiv style="flex: 0 0 auto" :weapon="weapon" />
         <span>
           {{ weapon.name }}
         </span>
