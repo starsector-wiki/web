@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ShieldTypeDisplay } from 'src/classes/conts';
+import { Ship, WeaponSlot } from 'src/classes/model/ship';
 import MutableStatDiv from 'src/components/MutableStatDiv.vue';
 import ShipsDiv from 'src/components/ShipsDiv.vue';
+import ShipSpriteDiv from 'src/components/ShipSpriteDiv.vue';
 import { useDataStore } from 'src/stores/dataStore';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
@@ -15,14 +17,33 @@ let id = ref(route.params.id as string);
 onBeforeRouteUpdate(async (to) => {
   id.value = to.params.id as string;
 });
-
-const ship = computed(() => useDataStore().getShipById(id.value));
+const dataStore = useDataStore();
+const ship = computed(() => dataStore.getShipById(id.value));
 const skins = computed(() =>
-  useDataStore().getShipsByIds(ship.value?.skinIds ?? [])
+  dataStore.getShipsByIds(ship.value?.skinIds ?? [])
 );
 const variants = computed(() =>
-  useDataStore().getShipsByIds(ship.value?.varinatIds ?? [])
+  dataStore.getShipsByIds(ship.value?.varinatIds ?? [])
 );
+const modules = computed(() => {
+  if (ship.value && ship.value.station) {
+    const result = [];
+    for (const [slotId, variantId] of ship.value.moduleIdMap.entries()) {
+      if (variantId) {
+        const variant = dataStore.getShipById(variantId);
+        const slotData = ship.value.allWeaponSlots.find(
+          (it) => it.id === slotId
+        );
+        if (variant && slotData) {
+          result.push([variant, slotData] as [Ship, WeaponSlot]);
+        }
+      }
+    }
+    return result;
+  } else {
+    return [];
+  }
+});
 </script>
 
 <template>
@@ -40,8 +61,34 @@ const variants = computed(() =>
           style="text-align: left; vertical-align: top; white-space: pre-wrap"
           >{{ ship.description }}</span
         >
-        <div style="margin: auto">
-          <img decoding="async" :src="ship.sprite" />
+        <div style="margin: auto; position: relative">
+          <div
+            v-for="([module, slotData], index) in modules"
+            :key="slotData.id"
+            :style="{
+              position: 'absolute',
+              bottom: ship.center.y + 'px',
+              left: ship.center.x + 'px',
+              transformOrigin: `calc(${module.center.x}px - ${
+                module.moduleAnchor?.y ?? 0
+              }px) calc(100% - ${module.center.y}px - ${
+                module.moduleAnchor?.x ?? 0
+              }px)`,
+              transform:
+                `translate(${module.center.x * -1}px, ${module.center.y}px) ` +
+                `translate(${module.moduleAnchor?.y ?? 0}px, ${
+                  module.moduleAnchor?.x ?? 0
+                }px) ` +
+                `translate(${slotData.location.y * -1}px, ${
+                  slotData.location.x * -1
+                }px) ` +
+                `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
+              zIndex: 500 + index,
+            }"
+          >
+            <ShipSpriteDiv :ship="module" />
+          </div>
+          <ShipSpriteDiv :ship="ship" />
         </div>
       </div>
 
@@ -311,5 +358,11 @@ td {
 }
 th {
   border: 1px solid;
+}
+</style>
+
+<style lang="scss">
+img {
+  display: block;
 }
 </style>
