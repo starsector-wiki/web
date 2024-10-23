@@ -35,9 +35,10 @@ const variantShips = computed(() => {
         {{ shipMod.name }}
       </h4>
 
-      <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
+      <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
+
         <span
-          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+           style="text-align: left; vertical-align: top; white-space: pre-wrap"
           >{{ shipMod.description }}</span
         >
         <div style="margin: auto">
@@ -46,6 +47,36 @@ const variantShips = computed(() => {
             decoding="async"
             :src="shipMod.icon"
           />
+        </div>
+      </div>
+
+      <br /><br />
+
+
+      <div style="column-count: 1">
+        <div style="display: grid; grid-template-columns: 1fr 9fr">
+          <div>设计类型</div>
+          <div>{{ shipMod.manufacturer ?? '通常' }}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 9fr">
+          <div>舰船尺寸</div>
+          <div>安装需要点数</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 9fr">
+          <div>护卫舰</div>
+          <div>{{ shipMod.frigateCost }}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 9fr">
+          <div>驱逐舰</div>
+          <div>{{ shipMod.destroyerCost }}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 9fr">
+          <div>巡洋舰</div>
+          <div>{{ shipMod.cruiserCost }}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 9fr">
+          <div>主力舰</div>
+          <div>{{ shipMod.capitalCost }}</div>
         </div>
       </div>
 
