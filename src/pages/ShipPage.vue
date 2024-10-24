@@ -270,8 +270,18 @@ const modules = computed(() => {
             </td>
           </tr>
           <tr>
-            <td>战术系统</td>
+            <td></td>
+            <td></td>
+            <td>探测范围</td>
             <td style="text-align: right">
+              <MutableStatDiv :stat="ship.sensorStrength" />
+            </td>
+            <td></td>
+            <td style="text-align: right"></td>
+          </tr>
+          <tr>
+            <td>战术系统</td>
+            <td colspan="5">
               <router-link
                 v-if="ship.getSystem()"
                 :to="{
@@ -281,12 +291,7 @@ const modules = computed(() => {
                 >{{ ship.getSystem()?.name }}</router-link
               >
             </td>
-            <td>探测范围</td>
-            <td style="text-align: right">
-              <MutableStatDiv :stat="ship.sensorStrength" />
-            </td>
             <td></td>
-            <td style="text-align: right"></td>
           </tr>
           <tr v-if="ship.hasSystem()">
             <td></td>
@@ -319,11 +324,26 @@ const modules = computed(() => {
           </tr>
           <tr>
             <td>军备详情:</td>
-            <td colspan="5">{{ ship.getWeaponDescription() }}</td>
+            <td colspan="5">
+              <span style="margin-right: 10px"  v-for="weapon in ship.getWeapons()"  :key="weapon.id">
+                 {{ weapon.count }}x
+                <router-link v-if="weapon.id != weapon.name" :to="{ name: 'weapon',params: { id: weapon.id }}">
+                  {{weapon.name}}
+                </router-link>
+                <span v-else>{{ weapon.name }}</span>
+              </span>
+            </td>
           </tr>
           <tr>
             <td>船体插槽:</td>
-            <td colspan="5">{{ ship.getShipModDescription() }}</td>
+            <td colspan="5">
+              <span style="margin-right: 10px"  v-for="shipMod in ship.getShipMods()"  :key="shipMod.id">
+                <router-link v-if="shipMod.id != shipMod.name" :to="{ name: 'ship_mod',params: { id: shipMod.id }}">
+                  {{ shipMod.name}}
+                </router-link>
+                <span v-else>{{ shipMod.name }}</span>
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
