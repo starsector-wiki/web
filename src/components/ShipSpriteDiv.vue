@@ -43,12 +43,15 @@ const weapons = computed(() => {
         position: 'absolute',
         bottom: ship.center.y + 'px',
         left: ship.center.x + 'px',
-        transform: `translate(-50%, 50%) translate(${
-          slotData.location.y * -1
-        }px, ${slotData.location.x * -1}px) rotate(${360 - slotData.angle}deg)`,
+        transformOrigin: `50% ${slotData.hardPoint ? 75 : 50}%`,
+        transform: `translate(-50%, ${
+          slotData.hardPoint ? 25 : 50
+        }%) translate(${slotData.location.y * -1}px, ${
+          slotData.location.x * -1
+        }px) rotate(${360 - slotData.angle}deg)`,
       }"
     >
-      <WeaponSpriteDiv :weapon="weapon" />
+      <WeaponSpriteDiv :weapon="weapon" :is-hard-point="slotData.hardPoint" />
     </div>
     <img decoding="async" :src="ship.sprite" />
   </div>

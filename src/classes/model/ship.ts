@@ -294,6 +294,9 @@ export class WeaponSlot {
   angle!: number;
 
   weaponSlot!: boolean;
+  decorative!: boolean;
   hidden!: boolean;
   builtIn!: boolean;
+  turret!: boolean;
+  hardPoint!: boolean;
 }

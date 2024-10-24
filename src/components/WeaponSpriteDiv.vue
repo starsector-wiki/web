@@ -8,8 +8,9 @@ defineOptions({
 
 interface Props {
   weapon: Weapon;
+  isHardPoint?: boolean;
 }
-const { weapon } = defineProps<Props>();
+const { weapon, isHardPoint = false } = defineProps<Props>();
 const offsetPairs = computed(() => {
   if (weapon) {
     const showMissile =
@@ -36,12 +37,14 @@ const offsetPairs = computed(() => {
     <img
       style="position: absolute; z-index: -2"
       decoding="async"
-      :src="weapon.turretUnderSprite"
+      :src="
+        isHardPoint ? weapon.hardPointUnderSprite : weapon.turretUnderSprite
+      "
     />
     <img
       style="position: absolute; z-index: -1"
       decoding="async"
-      :src="weapon.turretGunSprite"
+      :src="isHardPoint ? weapon.hardPointGunSprite : weapon.turretGunSprite"
     />
     <template v-if="offsetPairs">
       <img
@@ -52,7 +55,7 @@ const offsetPairs = computed(() => {
           top: '50%',
           left: '50%',
           transform:
-            'translate(-50%,-50%) ' +
+            `translate(-50%,-${isHardPoint ? 25 : 50}%) ` +
             `translate(${offsetPair[1] * -1}px,${offsetPair[0] * -1}px)`,
         }"
         :key="index"
@@ -60,6 +63,9 @@ const offsetPairs = computed(() => {
         :src="weapon.projSpriteName"
       />
     </template>
-    <img decoding="async" :src="weapon.turretSprite" />
+    <img
+      decoding="async"
+      :src="isHardPoint ? weapon.hardPointSprite : weapon.turretSprite"
+    />
   </div>
 </template>
