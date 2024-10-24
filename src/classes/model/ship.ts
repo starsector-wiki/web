@@ -232,6 +232,17 @@ export class Ship {
     return weaponSlotStrs.join(', ');
   }
 
+  getShipMods(): {id:string,name:string}[]{
+    const dataStore = useDataStore();
+    return [...this.builtInMods,...this.storyMods,...this.nonBuiltInMods].filter(value => value != undefined)
+       .map(id => {
+         return{
+           id:id,
+           name: dataStore.getShipModById(id)?.name ?? id
+         }
+       })
+  }
+
   getShipModDescription(): string {
     const dataStore = useDataStore();
     const modStrs: string[] = []
@@ -246,6 +257,27 @@ export class Ship {
     }
     return modStrs.join(', ');
   }
+  getWeapons():{id:string,name:string,count:number}[]{
+    const dataStore = useDataStore();
+    const weaponMap = new Map<string, number>();
+    this.weaponIdMap.forEach((weaponId) => {
+      if(weaponId){
+        let count = weaponMap.get(weaponId) ?? 0
+        count += 1
+        weaponMap.set(weaponId, count);
+      }
+    })
+    const weapons:{id:string,name:string,count:number}[] = []
+    weaponMap.forEach((count, weaponId) => {
+      weapons.push({
+        id:weaponId,
+        name:dataStore.getWeaponById(weaponId)?.name ?? weaponId,
+        count:count,
+      });
+    })
+    return weapons;
+  }
+
 
   getWeaponDescription(): string {
     const dataStore = useDataStore();
