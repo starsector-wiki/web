@@ -1,156 +1,82 @@
 <script setup lang="ts">
-import { useDataStore } from 'src/stores/dataStore';
 import { ShipMod } from 'src/classes/model/shipMod';
-import { onMounted, ref } from 'vue';
+import { useDataStore } from 'src/stores/dataStore';
+import { ref } from 'vue';
+import { computed } from 'vue';
 
 defineOptions({
-  name: 'ShipModsPage'
+  name: 'ShipModsPage',
 });
 
-const dataStore = useDataStore();
-const uiTagOptions = getUITagsOptions();
-const manufacturerOptions = getManufacturersOptions();
-const normalShipMod = ref<ShipMod[]>([])
-const hiddenShipMod = ref<ShipMod[]>([])
-const dShipMod = ref<ShipMod[]>([])
-const uiTagSelected = ref<string[]>([]);
-const manufacturerSelected = ref<string[]>([]);
+const ALL = '全部';
+const selectUiTag = ref(ALL);
+const selectManufacturer = ref(ALL);
 
-function getUITagsOptions(): { label: string; value: string }[] {
-  const uiTags = new Map<string, number>();
-  dataStore.sortdShipMod.forEach(shipMod => {
-    shipMod.uiTags.forEach(uiTag => {
-        if(!uiTags.has(uiTag)) {
-          uiTags.set(uiTag, 1);
-        }else{
-          uiTags.set(uiTag, (uiTags.get(uiTag))as number + 1);
-        }
-    });
-  });[]
-  const result = [];
-  result.push({
-    label: '全部' + '(' +dataStore.sortdShipMod.length + ')',
-    value: '全部'
+const uiTagOptions = computed(() => {
+  const allShipMods = useDataStore().sortdShipMod;
+  const set = new Set(allShipMods.flatMap((it) => it.uiTags).sort());
+  return [ALL, ...set].map((it) => {
+    return {
+      label: it + '(' + filterUiTag(allShipMods, it).length + ')',
+      value: it,
+    };
   });
-  for (let [key, value] of uiTags) {
-    result.push({
-      label: key + '(' +value + ')',
-      value: key
-    });
-  }
+});
+const manufacturerOptions = computed(() => {
+  const allShipMods = useDataStore().sortdShipMod;
+  const set = new Set(allShipMods.map((it) => it.manufacturer).sort());
+  return [ALL, ...set].map((it) => {
+    return {
+      label: it + '(' + filterManufacturer(allShipMods, it).length + ')',
+      value: it,
+    };
+  });
+});
+const shipMods = computed(() => {
+  let mods = useDataStore().sortdShipMod.sort((a, b) =>
+    a.id.localeCompare(b.id)
+  );
+  mods = filterUiTag(mods, selectUiTag.value);
+  mods = filterManufacturer(mods, selectManufacturer.value);
+  const dMods = mods.filter((it) => it.tags.includes('dmod'));
+  const hiddenMods = mods.filter((it) => it.hidden);
+  const normalMods = mods.filter(
+    (it) => !(it.hidden || it.tags.includes('dmod'))
+  );
+  return {
+    dMods,
+    hiddenMods,
+    normalMods,
+  };
+});
 
-
-  return result;
-}
-function getManufacturersOptions(): { label: string; value: string }[] {
-  const manufacturers = new Map<string, number>();
-  dataStore.sortdShipMod.forEach(shipMod => {
-    if(!manufacturers.has(shipMod.manufacturer ?? '通常' )) {
-      manufacturers.set(shipMod.manufacturer ?? '通常' , 1);
-    }else{
-      manufacturers.set(shipMod.manufacturer ?? '通常' ,(manufacturers.get(shipMod.manufacturer ?? '通常'))as number  + 1);
+function filterUiTag(shipMods: ShipMod[], uiTag: string): ShipMod[] {
+  return shipMods.filter((shipMod) => {
+    if (selectUiTag.value === ALL) {
+      return true;
+    } else {
+      return shipMod.uiTags.some((it) => it === uiTag);
     }
   });
-  const result = [];
-  result.push({
-    label: '全部' + '(' +dataStore.sortdShipMod.length + ')',
-    value: '全部'
+}
+function filterManufacturer(
+  shipMods: ShipMod[],
+  manufacturer: string
+): ShipMod[] {
+  return shipMods.filter((shipMod) => {
+    if (selectManufacturer.value === ALL) {
+      return true;
+    } else {
+      return shipMod.manufacturer === manufacturer;
+    }
   });
-  for (let [key, value] of manufacturers) {
-    result.push({
-      label: key + '(' +value + ')',
-      value: key
-    });
-  }
-
-  return result;
 }
-
-onMounted(()=>{
-  init();
-})
-
-const DMod = (shipMod: ShipMod) => shipMod.tags.includes('dmod');
-const unDMod = (shipMod: ShipMod) => !shipMod.tags.includes('dmod');
-const hiddenMod = (shipMod: ShipMod) => shipMod.hidden;
-const unHiddenMod = (shipMod: ShipMod) => !shipMod.hidden;
-const idSort = (a:ShipMod, b:ShipMod) => a.id.localeCompare(b.id);
-
-const normalModFilterChain = [unDMod,unHiddenMod]
-const hiddenModFilterChain = [unDMod,hiddenMod]
-const dModFilterChain = [DMod,hiddenMod]
-
-function getNormalMod():ShipMod[]{
-  return dataStore.sortdShipMod
-    .filter(shipMod=> normalModFilterChain.every(a=>a(shipMod))).sort(idSort);
-}
-function getHiddenMod():ShipMod[]{
-  return dataStore.sortdShipMod
-    .filter((shipMod=> hiddenModFilterChain.every(a=>a(shipMod)))).sort(idSort);
-}
-function getDMod():ShipMod[]{
-  return dataStore.sortdShipMod
-    .filter((shipMod=> dModFilterChain.every(a=>a(shipMod)))).sort(idSort);
-}
-
-
-
-function uiTagFilter(shipMod: ShipMod):boolean{
-  return shipMod.uiTags.some(uiTag => uiTagSelected.value.includes(uiTag))
-}
-function manufacturerFilter(shipMod: ShipMod):boolean{
-  return manufacturerSelected.value.includes(shipMod.manufacturer ?? '通常')
-}
-
-function uiTagALlSelected(){
-  uiTagSelected.value = uiTagOptions.map(item => item.value)
-}
-function manufacturerALlSelected(){
-  manufacturerSelected.value = manufacturerOptions.map(item => item.value)
-}
-
-function onSubmit(){
-  let normalMods = getNormalMod()
-  let hiddenMods = getHiddenMod()
-  let dMods = getDMod();
-
-  if(uiTagSelected.value.length > 0 && !uiTagSelected.value.includes('全部')){
-    normalMods = normalMods.filter(uiTagFilter)
-    hiddenMods =  hiddenMods.filter(uiTagFilter)
-    dMods = dMods.filter(uiTagFilter)
-  }else if(uiTagSelected.value.includes('全部')){
-    uiTagALlSelected()
-  }
-  if(manufacturerSelected.value.length > 0 && !manufacturerSelected.value.includes('全部')){
-    normalMods = normalMods.filter(manufacturerFilter)
-    hiddenMods =  hiddenMods.filter(manufacturerFilter)
-    dMods = dMods.filter(manufacturerFilter)
-  }else if(manufacturerSelected.value.includes('全部')){
-    manufacturerALlSelected()
-  }
-   normalShipMod.value = normalMods
-   hiddenShipMod.value = hiddenMods
-   dShipMod .value = dMods
-
-  console.log(hiddenShipMod.value);
-}
-
-function init() {
-  normalShipMod.value = getNormalMod()
-  hiddenShipMod.value =getHiddenMod()
-  dShipMod.value = getDMod();
-  uiTagALlSelected()
-  manufacturerALlSelected()
-}
-
-function onReset() {
-   init();
-}
-
 </script>
+
 <template>
-  <q-page padding
-          style="
+  <q-page
+    padding
+    style="
       display: flex;
       flex-flow: row wrap;
       justify-content: flex-start;
@@ -158,39 +84,33 @@ function onReset() {
       gap: 10px 10px;
     "
   >
-
-    <div class="q-pa-sm window-width" >
-
-      <q-form
-        @submit="onSubmit"
-        @reset="onReset"
-        class="q-gutter-md"
-      >
+    <div class="q-pa-sm window-width">
       UI标签:
-      <q-option-group name="accepted_uiTags"
-                      v-model="uiTagSelected"
-                      :options="uiTagOptions"
-                      type="checkbox"
-                      color="primary"
-                      inline />
+      <q-option-group
+        name="accepted_uiTags"
+        v-model="selectUiTag"
+        :options="uiTagOptions"
+        type="radio"
+        color="primary"
+        inline
+      />
       设计类型:
-      <q-option-group name="accepted_manufacturer"
-                        v-model="manufacturerSelected"
-                        :options="manufacturerOptions"
-                        type="checkbox"
-                        color="primary"
-                        inline />
-        <q-btn label="提交" type="submit" color="primary"/>
-        <q-btn label="重置" type="reset" color="primary" flat class="q-ml-sm" />
-      </q-form>
+      <q-option-group
+        name="accepted_manufacturer"
+        v-model="selectManufacturer"
+        :options="manufacturerOptions"
+        type="radio"
+        color="primary"
+        inline
+      />
     </div>
 
     <br /><br />
-    <h4 v-show="normalShipMod.length > 0" >可使用插件</h4>
+    <h4 v-show="shipMods.normalMods.length > 0">可使用插件</h4>
     <div class="items">
       <q-btn
         style="flex: 0.2 0 auto"
-        v-for="shipMod in normalShipMod"
+        v-for="shipMod in shipMods.normalMods"
         :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
       >
@@ -199,19 +119,19 @@ function onReset() {
             <img decoding="async" :src="shipMod.icon" />
           </div>
           <span>
-          {{ shipMod.name }}
-        </span>
+            {{ shipMod.name }}
+          </span>
         </div>
       </q-btn>
     </div>
 
     <br /><br />
 
-    <h4 v-show="dShipMod.length > 0" >D插件</h4>
+    <h4 v-show="shipMods.dMods.length > 0">D插件</h4>
     <div class="items">
       <q-btn
         style="flex: 0.2 0 auto"
-        v-for="shipMod in dShipMod"
+        v-for="shipMod in shipMods.dMods"
         :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
       >
@@ -220,19 +140,19 @@ function onReset() {
             <img decoding="async" :src="shipMod.icon" />
           </div>
           <span>
-          {{ shipMod.name }}
-        </span>
+            {{ shipMod.name }}
+          </span>
         </div>
       </q-btn>
     </div>
 
     <br /><br />
 
-    <h4 v-show="hiddenShipMod.length > 0" >隐藏插件</h4>
+    <h4 v-show="shipMods.hiddenMods.length > 0">隐藏插件</h4>
     <div class="items">
       <q-btn
         style="flex: 0.2 0 auto"
-        v-for="shipMod in hiddenShipMod"
+        v-for="shipMod in shipMods.hiddenMods"
         :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
       >
@@ -241,18 +161,15 @@ function onReset() {
             <img decoding="async" :src="shipMod.icon" />
           </div>
           <span>
-          {{ shipMod.name }}
-        </span>
+            {{ shipMod.name }}
+          </span>
         </div>
       </q-btn>
     </div>
-
   </q-page>
 </template>
 
 <style lang="scss">
-
-
 .items {
   display: flex;
   flex-flow: row wrap;
