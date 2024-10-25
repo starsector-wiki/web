@@ -27,7 +27,15 @@ const weapons = computed(() => {
         }
       }
     }
-    return result;
+    return result.sort((a, b) => {
+      //越靠近中间的武器越后渲染，使其显示在顶层
+      const aLocation = a[1].location;
+      const bLocation = b[1].location;
+      if (aLocation.x !== bLocation.x) {
+        return aLocation.x - bLocation.x;
+      }
+      return aLocation.y - bLocation.y;
+    });
   } else {
     return undefined;
   }
@@ -37,10 +45,11 @@ const weapons = computed(() => {
 <template>
   <div style="margin: auto; position: relative">
     <div
-      v-for="[weapon, slotData] in weapons"
+      v-for="([weapon, slotData], index) in weapons"
       :key="slotData.id"
       :style="{
         position: 'absolute',
+        zIndex: 700 + index,
         bottom: ship.center.y + 'px',
         left: ship.center.x + 'px',
         transformOrigin: `50% ${slotData.hardPoint ? 75 : 50}%`,

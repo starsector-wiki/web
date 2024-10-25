@@ -39,7 +39,21 @@ const modules = computed(() => {
         }
       }
     }
-    return result;
+    return result.sort((a, b) => {
+      const aModule = a[0];
+      const bModule = b[0];
+      if (aModule.isEmptyModule() !== bModule.isEmptyModule()) {
+        //空模块排在前面渲染
+        return aModule.isEmptyModule() ? -1 : 1;
+      }
+      //越靠近外面的模块越后渲染，使其显示在顶层
+      const aLocation = a[1].location;
+      const bLocation = b[1].location;
+      if (aLocation.x !== bLocation.x) {
+        return bLocation.x - aLocation.x;
+      }
+      return bLocation.y - aLocation.y;
+    });
   } else {
     return [];
   }
@@ -56,7 +70,7 @@ const modules = computed(() => {
         {{ ship.getDisplayName() }}
       </h4>
 
-      <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
+      <div style="display: grid; grid-template-columns: 3fr; gap: 10px">
         <span
           style="text-align: left; vertical-align: top; white-space: pre-wrap"
           >{{ ship.description }}</span
@@ -83,7 +97,7 @@ const modules = computed(() => {
                   slotData.location.x * -1
                 }px) ` +
                 `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
-              zIndex: 500 + index,
+              zIndex: module.isUnderParent() ? -1 : 500 + index,
             }"
           >
             <ShipSpriteDiv :ship="module" />
@@ -325,10 +339,17 @@ const modules = computed(() => {
           <tr>
             <td>军备详情:</td>
             <td colspan="5">
-              <span style="margin-right: 10px"  v-for="weapon in ship.getWeapons()"  :key="weapon.id">
-                 {{ weapon.count }}x
-                <router-link v-if="weapon.id != weapon.name" :to="{ name: 'weapon',params: { id: weapon.id }}">
-                  {{weapon.name}}
+              <span
+                style="margin-right: 10px"
+                v-for="weapon in ship.getWeapons()"
+                :key="weapon.id"
+              >
+                {{ weapon.count }}x
+                <router-link
+                  v-if="weapon.id != weapon.name"
+                  :to="{ name: 'weapon', params: { id: weapon.id } }"
+                >
+                  {{ weapon.name }}
                 </router-link>
                 <span v-else>{{ weapon.name }}</span>
               </span>
@@ -337,9 +358,16 @@ const modules = computed(() => {
           <tr>
             <td>船体插槽:</td>
             <td colspan="5">
-              <span style="margin-right: 10px"  v-for="shipMod in ship.getShipMods()"  :key="shipMod.id">
-                <router-link v-if="shipMod.id != shipMod.name" :to="{ name: 'ship_mod',params: { id: shipMod.id }}">
-                  {{ shipMod.name}}
+              <span
+                style="margin-right: 10px"
+                v-for="shipMod in ship.getShipMods()"
+                :key="shipMod.id"
+              >
+                <router-link
+                  v-if="shipMod.id != shipMod.name"
+                  :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
+                >
+                  {{ shipMod.name }}
                 </router-link>
                 <span v-else>{{ shipMod.name }}</span>
               </span>

@@ -159,6 +159,14 @@ export class Ship {
     return this.hullId !== this.baseHullId
   }
 
+  isUnderParent(): boolean {
+    return this.hints.includes('UNDER_PARENT');
+  }
+
+  isEmptyModule(): boolean {
+    return this.allWeaponSlots.length === 0;
+  }
+
   getDisplayName(): string {
     let result = this.name + '-级';
     if (!this.emptyHullVariant) {
@@ -232,15 +240,15 @@ export class Ship {
     return weaponSlotStrs.join(', ');
   }
 
-  getShipMods(): {id:string,name:string}[]{
+  getShipMods(): { id: string, name: string }[] {
     const dataStore = useDataStore();
-    return [...this.builtInMods,...this.storyMods,...this.nonBuiltInMods].filter(value => value != undefined)
-       .map(id => {
-         return{
-           id:id,
-           name: dataStore.getShipModById(id)?.name ?? id
-         }
-       })
+    return [...this.builtInMods, ...this.storyMods, ...this.nonBuiltInMods].filter(value => value != undefined)
+      .map(id => {
+        return {
+          id: id,
+          name: dataStore.getShipModById(id)?.name ?? id
+        }
+      })
   }
 
   getShipModDescription(): string {
@@ -257,22 +265,22 @@ export class Ship {
     }
     return modStrs.join(', ');
   }
-  getWeapons():{id:string,name:string,count:number}[]{
+  getWeapons(): { id: string, name: string, count: number }[] {
     const dataStore = useDataStore();
     const weaponMap = new Map<string, number>();
     this.weaponIdMap.forEach((weaponId) => {
-      if(weaponId){
+      if (weaponId) {
         let count = weaponMap.get(weaponId) ?? 0
         count += 1
         weaponMap.set(weaponId, count);
       }
     })
-    const weapons:{id:string,name:string,count:number}[] = []
+    const weapons: { id: string, name: string, count: number }[] = []
     weaponMap.forEach((count, weaponId) => {
       weapons.push({
-        id:weaponId,
-        name:dataStore.getWeaponById(weaponId)?.name ?? weaponId,
-        count:count,
+        id: weaponId,
+        name: dataStore.getWeaponById(weaponId)?.name ?? weaponId,
+        count: count,
       });
     })
     return weapons;

@@ -66,3 +66,15 @@ export const WeaponSizeDisplay = new Map([
   [WeaponSize.MEDIUM, '中型'],
   [WeaponSize.LARGE, '大型'],
 ]);
+
+export function compareWeaponSize(a: WeaponSize, b: WeaponSize) {
+  return (WeaponSizeValueMap.get(a) ?? 'a').localeCompare(
+    WeaponSizeValueMap.get(b) ?? 'a'
+  );
+}
+
+const WeaponSizeValueMap = new Map([
+  [WeaponSize.SMALL, 'a'],
+  [WeaponSize.MEDIUM, 'b'],
+  [WeaponSize.LARGE, 'c'],
+]);
