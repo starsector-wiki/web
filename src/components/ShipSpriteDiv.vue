@@ -32,9 +32,9 @@ const weapons = computed(() => {
       const aLocation = a[1].location;
       const bLocation = b[1].location;
       if (aLocation.x !== bLocation.x) {
-        return aLocation.x - bLocation.x;
+        return Math.abs(aLocation.x) - Math.abs(bLocation.x);
       }
-      return aLocation.y - bLocation.y;
+      return Math.abs(aLocation.y) - Math.abs(bLocation.y);
     });
   } else {
     return undefined;
@@ -44,22 +44,16 @@ const weapons = computed(() => {
 
 <template>
   <div style="margin: auto; position: relative">
-    <div
-      v-for="([weapon, slotData], index) in weapons"
-      :key="slotData.id"
-      :style="{
-        position: 'absolute',
-        zIndex: 700 + index,
-        bottom: ship.center.y + 'px',
-        left: ship.center.x + 'px',
-        transformOrigin: `50% ${slotData.hardPoint ? 75 : 50}%`,
-        transform: `translate(-50%, ${
-          slotData.hardPoint ? 25 : 50
-        }%) translate(${slotData.location.y * -1}px, ${
-          slotData.location.x * -1
+    <div v-for="([weapon, slotData], index) in weapons" :key="slotData.id" :style="{
+      position: 'absolute',
+      zIndex: 700 + index,
+      bottom: ship.center.y + 'px',
+      left: ship.center.x + 'px',
+      transformOrigin: `50% ${slotData.hardPoint ? 75 : 50}%`,
+      transform: `translate(-50%, ${slotData.hardPoint ? 25 : 50
+        }%) translate(${slotData.location.y * -1}px, ${slotData.location.x * -1
         }px) rotate(${360 - slotData.angle}deg)`,
-      }"
-    >
+    }">
       <WeaponSpriteDiv :weapon="weapon" :is-hard-point="slotData.hardPoint" />
     </div>
     <img decoding="async" :src="ship.sprite" />
