@@ -50,9 +50,9 @@ const modules = computed(() => {
       const aLocation = a[1].location;
       const bLocation = b[1].location;
       if (aLocation.x !== bLocation.x) {
-        return bLocation.x - aLocation.x;
+        return Math.abs(bLocation.x) - Math.abs(aLocation.x);
       }
-      return bLocation.y - aLocation.y;
+      return Math.abs(bLocation.y) - Math.abs(aLocation.y);
     });
   } else {
     return [];
@@ -70,36 +70,25 @@ const modules = computed(() => {
         {{ ship.getDisplayName() }}
       </h4>
 
-      <div style="display: grid; grid-template-columns: 3fr; gap: 10px">
-        <span
-          style="text-align: left; vertical-align: top; white-space: pre-wrap"
-          >{{ ship.description }}</span
-        >
+      <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
+        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ ship.description }}</span>
         <div style="margin: auto; position: relative">
-          <div
-            v-for="([module, slotData], index) in modules"
-            :key="slotData.id"
-            :style="{
-              position: 'absolute',
-              bottom: ship.center.y + 'px',
-              left: ship.center.x + 'px',
-              transformOrigin: `calc(${module.center.x}px - ${
-                module.moduleAnchor?.y ?? 0
-              }px) calc(100% - ${module.center.y}px - ${
-                module.moduleAnchor?.x ?? 0
+          <div v-for="([module, slotData], index) in modules" :key="slotData.id" :style="{
+            position: 'absolute',
+            bottom: ship.center.y + 'px',
+            left: ship.center.x + 'px',
+            transformOrigin: `calc(${module.center.x}px - ${module.moduleAnchor?.y ?? 0
+              }px) calc(100% - ${module.center.y}px - ${module.moduleAnchor?.x ?? 0
               }px)`,
-              transform:
-                `translate(${module.center.x * -1}px, ${module.center.y}px) ` +
-                `translate(${module.moduleAnchor?.y ?? 0}px, ${
-                  module.moduleAnchor?.x ?? 0
-                }px) ` +
-                `translate(${slotData.location.y * -1}px, ${
-                  slotData.location.x * -1
-                }px) ` +
-                `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
-              zIndex: module.isUnderParent() ? -1 : 500 + index,
-            }"
-          >
+            transform:
+              `translate(${module.center.x * -1}px, ${module.center.y}px) ` +
+              `translate(${module.moduleAnchor?.y ?? 0}px, ${module.moduleAnchor?.x ?? 0
+              }px) ` +
+              `translate(${slotData.location.y * -1}px, ${slotData.location.x * -1
+              }px) ` +
+              `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
+            zIndex: module.isUnderParent() ? -1 : 500 + index,
+          }">
             <ShipSpriteDiv :ship="module" />
           </div>
           <ShipSpriteDiv :ship="ship" />
@@ -129,10 +118,7 @@ const modules = computed(() => {
             <td style="text-align: right">{{ ship.crToDeploy }}%</td>
             <td>维护消耗(补给/月)</td>
             <td style="text-align: right">
-              <MutableStatDiv
-                :stat="ship.suppliesPerMonth"
-                :add-is-good="false"
-              />
+              <MutableStatDiv :stat="ship.suppliesPerMonth" :add-is-good="false" />
             </td>
             <td>结构值</td>
             <td style="text-align: right">
@@ -156,10 +142,7 @@ const modules = computed(() => {
           <tr>
             <td>部署成本(补给)</td>
             <td style="text-align: right">
-              <MutableStatDiv
-                :stat="ship.suppliesToRecover"
-                :add-is-good="false"
-              />
+              <MutableStatDiv :stat="ship.suppliesToRecover" :add-is-good="false" />
             </td>
             <td>最大载员</td>
             <td style="text-align: right">
@@ -173,10 +156,7 @@ const modules = computed(() => {
           <tr>
             <td>部署点</td>
             <td style="text-align: right">
-              <MutableStatDiv
-                :stat="ship.suppliesToRecover"
-                :add-is-good="false"
-              />
+              <MutableStatDiv :stat="ship.suppliesToRecover" :add-is-good="false" />
             </td>
             <td>必要船员</td>
             <td style="text-align: right">
@@ -187,17 +167,13 @@ const modules = computed(() => {
                 ship.hasShield()
                   ? '护盾角度'
                   : ship.hasPhase()
-                  ? '相位线圈激活'
-                  : ''
+                    ? '相位线圈激活'
+                    : ''
               }}
             </td>
             <td style="text-align: right">
               <MutableStatDiv v-if="ship.hasShield()" :stat="ship.shieldArc" />
-              <MutableStatDiv
-                v-else-if="ship.hasPhase()"
-                :stat="ship.phaseCost"
-                :add-is-good="false"
-              />
+              <MutableStatDiv v-else-if="ship.hasPhase()" :stat="ship.phaseCost" :add-is-good="false" />
             </td>
           </tr>
           <tr>
@@ -214,21 +190,13 @@ const modules = computed(() => {
                 ship.hasShield()
                   ? '护盾维持(幅能/秒)'
                   : ship.hasPhase()
-                  ? '相位线圈维持(幅能/秒)'
-                  : ''
+                    ? '相位线圈维持(幅能/秒)'
+                    : ''
               }}
             </td>
             <td style="text-align: right">
-              <MutableStatDiv
-                v-if="ship.hasShield()"
-                :stat="ship.shieldUpkeep"
-                :add-is-good="false"
-              />
-              <MutableStatDiv
-                v-else-if="ship.hasPhase()"
-                :stat="ship.phaseUpKeep"
-                :add-is-good="false"
-              />
+              <MutableStatDiv v-if="ship.hasShield()" :stat="ship.shieldUpkeep" :add-is-good="false" />
+              <MutableStatDiv v-else-if="ship.hasPhase()" :stat="ship.phaseUpKeep" :add-is-good="false" />
             </td>
           </tr>
           <tr>
@@ -242,11 +210,7 @@ const modules = computed(() => {
               {{ ship.hasShield() ? '护盾效率(幅能/伤害)' : '' }}
             </td>
             <td style="text-align: right">
-              <MutableStatDiv
-                v-if="ship.hasShield()"
-                :stat="ship.fluxPerDamageAbsorbed"
-                :add-is-good="false"
-              />
+              <MutableStatDiv v-if="ship.hasShield()" :stat="ship.fluxPerDamageAbsorbed" :add-is-good="false" />
             </td>
           </tr>
           <tr>
@@ -296,14 +260,10 @@ const modules = computed(() => {
           <tr>
             <td>战术系统</td>
             <td colspan="5">
-              <router-link
-                v-if="ship.getSystem()"
-                :to="{
-                  name: 'ship_system',
-                  params: { id: ship?.shipSystemId },
-                }"
-                >{{ ship.getSystem()?.name }}</router-link
-              >
+              <router-link v-if="ship.getSystem()" :to="{
+                name: 'ship_system',
+                params: { id: ship?.shipSystemId },
+              }">{{ ship.getSystem()?.name }}</router-link>
             </td>
             <td></td>
           </tr>
@@ -316,14 +276,10 @@ const modules = computed(() => {
           <tr>
             <td>特殊系统</td>
             <td colspan="5">
-              <router-link
-                v-if="ship.getDefense()"
-                :to="{
-                  name: 'ship_system',
-                  params: { id: ship?.shipDefenseId },
-                }"
-                >{{ ship.getDefense()?.name ?? '无' }}</router-link
-              >
+              <router-link v-if="ship.getDefense()" :to="{
+                name: 'ship_system',
+                params: { id: ship?.shipDefenseId },
+              }">{{ ship.getDefense()?.name ?? '无' }}</router-link>
             </td>
           </tr>
           <tr v-if="ship.hasDefense()">
@@ -339,16 +295,9 @@ const modules = computed(() => {
           <tr>
             <td>军备详情:</td>
             <td colspan="5">
-              <span
-                style="margin-right: 10px"
-                v-for="weapon in ship.getWeapons()"
-                :key="weapon.id"
-              >
+              <span style="margin-right: 10px" v-for="weapon in ship.getWeapons()" :key="weapon.id">
                 {{ weapon.count }}x
-                <router-link
-                  v-if="weapon.id != weapon.name"
-                  :to="{ name: 'weapon', params: { id: weapon.id } }"
-                >
+                <router-link v-if="weapon.id != weapon.name" :to="{ name: 'weapon', params: { id: weapon.id } }">
                   {{ weapon.name }}
                 </router-link>
                 <span v-else>{{ weapon.name }}</span>
@@ -358,15 +307,8 @@ const modules = computed(() => {
           <tr>
             <td>船体插槽:</td>
             <td colspan="5">
-              <span
-                style="margin-right: 10px"
-                v-for="shipMod in ship.getShipMods()"
-                :key="shipMod.id"
-              >
-                <router-link
-                  v-if="shipMod.id != shipMod.name"
-                  :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
-                >
+              <span style="margin-right: 10px" v-for="shipMod in ship.getShipMods()" :key="shipMod.id">
+                <router-link v-if="shipMod.id != shipMod.name" :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
                   {{ shipMod.name }}
                 </router-link>
                 <span v-else>{{ shipMod.name }}</span>
@@ -390,7 +332,7 @@ const modules = computed(() => {
 
       <br /><br />
 
-      <pre><code>{{ JSON.stringify(ship,null,2) }}</code></pre>
+      <pre><code>{{ JSON.stringify(ship, null, 2) }}</code></pre>
     </template>
   </q-page>
 </template>
@@ -401,9 +343,11 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
 td {
   border: 1px solid;
 }
+
 th {
   border: 1px solid;
 }
