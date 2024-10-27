@@ -30,42 +30,29 @@ const offsetPairs = computed(() => {
   }
   return undefined;
 });
+const underSprite = computed(() => isHardPoint ? weapon.hardPointUnderSprite : weapon.turretUnderSprite);
+const gunSprite = computed(() => isHardPoint ? weapon.hardPointGunSprite : weapon.turretGunSprite);
+const weaponSprite = computed(() => isHardPoint ? weapon.hardPointSprite : weapon.turretSprite);
 </script>
 
 <template>
   <div style="margin: auto; position: relative">
-    <img
-      style="position: absolute; z-index: -2"
-      decoding="async"
-      :src="
-        isHardPoint ? weapon.hardPointUnderSprite : weapon.turretUnderSprite
-      "
-    />
-    <img
-      style="position: absolute; z-index: -1"
-      decoding="async"
-      :src="isHardPoint ? weapon.hardPointGunSprite : weapon.turretGunSprite"
-    />
+    <img v-if="underSprite" decoding="async" :src="underSprite" :style="{ position: 'absolute', zIndex: -2 }" />
+
+    <img v-if="gunSprite" decoding="async" :src="gunSprite" :style="{ position: 'absolute', zIndex: -1 }" />
+
     <template v-if="offsetPairs">
-      <img
-        v-for="(offsetPair, index) in offsetPairs"
-        :style="{
-          position: 'absolute',
-          zIndex: 1000 + index,
-          top: '50%',
-          left: '50%',
-          transform:
-            `translate(-50%,-${isHardPoint ? 25 : 50}%) ` +
-            `translate(${offsetPair[1] * -1}px,${offsetPair[0] * -1}px)`,
-        }"
-        :key="index"
-        decoding="async"
-        :src="weapon.projSpriteName"
-      />
+      <img v-for="(offsetPair, index) in offsetPairs" :key="index" decoding="async" :src="weapon.projSpriteName" :style="{
+        position: 'absolute',
+        zIndex: 2 + index,
+        top: '50%',
+        left: '50%',
+        transform:
+          `translate(-50%,-${isHardPoint ? 25 : 50}%) ` +
+          `translate(${offsetPair[1] * -1}px,${offsetPair[0] * -1}px)`,
+      }" />
     </template>
-    <img
-      decoding="async"
-      :src="isHardPoint ? weapon.hardPointSprite : weapon.turretSprite"
-    />
+
+    <img v-if="weaponSprite" decoding="async" :src="weaponSprite" />
   </div>
 </template>
