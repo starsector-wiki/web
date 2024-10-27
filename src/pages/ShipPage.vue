@@ -42,6 +42,10 @@ const modules = computed(() => {
     return result.sort((a, b) => {
       const aModule = a[0];
       const bModule = b[0];
+      if (aModule.isUnderParent() !== bModule.isUnderParent()) {
+        //底部模块排在前面渲染
+        return aModule.isUnderParent() ? -1 : 1;
+      }
       if (aModule.isEmptyModule() !== bModule.isEmptyModule()) {
         //空模块排在前面渲染
         return aModule.isEmptyModule() ? -1 : 1;
@@ -87,7 +91,7 @@ const modules = computed(() => {
               `translate(${slotData.location.y * -1}px, ${slotData.location.x * -1
               }px) ` +
               `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
-            zIndex: module.isUnderParent() ? -1 : 500 + index,
+            zIndex: module.isUnderParent() ? -1 : 2 + index,
           }">
             <ShipSpriteDiv :ship="module" />
           </div>

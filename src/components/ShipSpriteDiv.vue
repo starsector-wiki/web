@@ -6,7 +6,7 @@ import { computed } from 'vue';
 import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
 
 defineOptions({
-  name: 'WeaponSpriteDiv',
+  name: 'ShipSpriteDiv',
 });
 
 interface Props {
@@ -46,15 +46,14 @@ const weapons = computed(() => {
   <div style="margin: auto; position: relative">
     <div v-for="([weapon, slotData], index) in weapons" :key="slotData.id" :style="{
       position: 'absolute',
-      zIndex: 700 + index,
       bottom: ship.center.y + 'px',
       left: ship.center.x + 'px',
       transformOrigin: `50% ${slotData.hardPoint ? 75 : 50}%`,
-      transform: `translate(-50%, ${slotData.hardPoint ? 25 : 50
-        }%) translate(${slotData.location.y * -1}px, ${slotData.location.x * -1
-        }px) rotate(${360 - slotData.angle}deg)`,
+      transform: `translate(-50%, ${slotData.hardPoint ? 25 : 50}%)`
+        + ` translate(${slotData.location.y * -1}px, ${slotData.location.x * -1}px)`
+        + ` rotate(${360 - slotData.angle}deg)`,
     }">
-      <WeaponSpriteDiv :weapon="weapon" :is-hard-point="slotData.hardPoint" />
+      <WeaponSpriteDiv :weapon="weapon" :base-z-index="1 + (index + 1) * 10" :is-hard-point="slotData.hardPoint" />
     </div>
     <img decoding="async" :src="ship.sprite" />
   </div>
