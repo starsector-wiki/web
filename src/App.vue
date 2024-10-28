@@ -1,7 +1,3 @@
-<template>
-  <router-view />
-</template>
-
 <script setup lang="ts">
 import { useDataStore } from './stores/dataStore';
 
@@ -11,3 +7,7 @@ defineOptions({
 
 useDataStore().initData();
 </script>
+
+<template>
+  <router-view />
+</template>

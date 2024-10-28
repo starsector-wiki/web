@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import { useDataStore } from 'src/stores/dataStore';
+
+defineOptions({
+  name: 'IndexPage',
+});
+
+const dataStore = useDataStore();
+</script>
+
 <template>
   <q-page>
     <ul>
@@ -9,13 +19,3 @@
     </ul>
   </q-page>
 </template>
-
-<script setup lang="ts">
-import { useDataStore } from 'src/stores/dataStore';
-
-defineOptions({
-  name: 'IndexPage',
-});
-
-const dataStore = useDataStore();
-</script>

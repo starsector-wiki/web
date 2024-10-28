@@ -74,46 +74,27 @@ function filterManufacturer(
 </script>
 
 <template>
-  <q-page
-    padding
-    style="
+  <q-page padding style="
       display: flex;
       flex-flow: row wrap;
       justify-content: flex-start;
       align-items: stretch;
       gap: 10px 10px;
-    "
-  >
+    ">
     <div class="q-pa-sm window-width">
       UI标签:
-      <q-option-group
-        name="accepted_uiTags"
-        v-model="selectUiTag"
-        :options="uiTagOptions"
-        type="radio"
-        color="primary"
-        inline
-      />
+      <q-option-group name="accepted_uiTags" v-model="selectUiTag" :options="uiTagOptions" type="radio" color="primary"
+        inline />
       设计类型:
-      <q-option-group
-        name="accepted_manufacturer"
-        v-model="selectManufacturer"
-        :options="manufacturerOptions"
-        type="radio"
-        color="primary"
-        inline
-      />
+      <q-option-group name="accepted_manufacturer" v-model="selectManufacturer" :options="manufacturerOptions"
+        type="radio" color="primary" inline />
     </div>
 
     <br /><br />
     <h4 v-show="shipMods.normalMods.length > 0">可使用插件</h4>
     <div class="items">
-      <q-btn
-        style="flex: 0.2 0 auto"
-        v-for="shipMod in shipMods.normalMods"
-        :key="shipMod.id"
-        :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
-      >
+      <q-btn style="flex: 0.2 0 auto" v-for="shipMod in shipMods.normalMods" :key="shipMod.id"
+        :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
         <div class="item">
           <div class="item_img_section">
             <img decoding="async" :src="shipMod.icon" />
@@ -129,12 +110,8 @@ function filterManufacturer(
 
     <h4 v-show="shipMods.dMods.length > 0">D插件</h4>
     <div class="items">
-      <q-btn
-        style="flex: 0.2 0 auto"
-        v-for="shipMod in shipMods.dMods"
-        :key="shipMod.id"
-        :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
-      >
+      <q-btn style="flex: 0.2 0 auto" v-for="shipMod in shipMods.dMods" :key="shipMod.id"
+        :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
         <div class="item">
           <div class="item_img_section">
             <img decoding="async" :src="shipMod.icon" />
@@ -150,12 +127,8 @@ function filterManufacturer(
 
     <h4 v-show="shipMods.hiddenMods.length > 0">隐藏插件</h4>
     <div class="items">
-      <q-btn
-        style="flex: 0.2 0 auto"
-        v-for="shipMod in shipMods.hiddenMods"
-        :key="shipMod.id"
-        :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
-      >
+      <q-btn style="flex: 0.2 0 auto" v-for="shipMod in shipMods.hiddenMods" :key="shipMod.id"
+        :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
         <div class="item">
           <div class="item_img_section">
             <img decoding="async" :src="shipMod.icon" />

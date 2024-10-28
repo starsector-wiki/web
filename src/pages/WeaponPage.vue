@@ -37,10 +37,7 @@ const variantShips = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
-        <span
-          style="text-align: left; vertical-align: top; white-space: pre-wrap"
-          >{{ weapon.description }}</span
-        >
+        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ weapon.description }}</span>
         <WeaponSpriteDiv :weapon="weapon" />
       </div>
 
@@ -164,7 +161,7 @@ const variantShips = computed(() => {
 
       <br /><br />
 
-      <pre><code>{{ JSON.stringify(weapon,null,2) }}</code></pre>
+      <pre><code>{{ JSON.stringify(weapon, null, 2) }}</code></pre>
     </template>
   </q-page>
 </template>

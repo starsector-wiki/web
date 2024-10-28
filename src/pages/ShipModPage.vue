@@ -37,16 +37,9 @@ const variantShips = computed(() => {
 
       <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
 
-        <span
-           style="text-align: left; vertical-align: top; white-space: pre-wrap"
-          >{{ shipMod.description }}</span
-        >
+        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ shipMod.description }}</span>
         <div style="margin: auto">
-          <img
-            style="background-color: black"
-            decoding="async"
-            :src="shipMod.icon"
-          />
+          <img style="background-color: black" decoding="async" :src="shipMod.icon" />
         </div>
       </div>
 
@@ -94,7 +87,7 @@ const variantShips = computed(() => {
 
       <br /><br />
 
-      <pre><code>{{ JSON.stringify(shipMod,null,2) }}</code></pre>
+      <pre><code>{{ JSON.stringify(shipMod, null, 2) }}</code></pre>
     </template>
   </q-page>
 </template>
