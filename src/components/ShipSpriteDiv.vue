@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Ship, WeaponSlot } from 'src/classes/model/ship';
 import { Weapon } from 'src/classes/model/weapon';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 import { computed } from 'vue';
 import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
 
@@ -13,14 +13,13 @@ interface Props {
   ship: Ship;
 }
 const { ship } = defineProps<Props>();
-const dataStore = useDataStore();
 
 const weapons = computed(() => {
   if (ship) {
     const result = [];
     for (const [slotId, weaponId] of ship.weaponIdMap.entries()) {
       if (weaponId) {
-        const weapon = dataStore.getWeaponById(weaponId);
+        const weapon = appData.getWeaponById(weaponId);
         const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
         if (weapon && slotData) {
           result.push([weapon, slotData] as [Weapon, WeaponSlot]);

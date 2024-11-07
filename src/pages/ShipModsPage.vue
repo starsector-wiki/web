@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ShipMod } from 'src/classes/model/shipMod';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 import { ref } from 'vue';
 import { computed } from 'vue';
 
@@ -13,7 +13,7 @@ const selectUiTag = ref(ALL);
 const selectManufacturer = ref(ALL);
 
 const uiTagOptions = computed(() => {
-  const allShipMods = useDataStore().sortdShipMod;
+  const allShipMods = appData.sortdShipMod();
   const set = new Set(allShipMods.flatMap((it) => it.uiTags).sort());
   return [ALL, ...set].map((it) => {
     return {
@@ -23,7 +23,7 @@ const uiTagOptions = computed(() => {
   });
 });
 const manufacturerOptions = computed(() => {
-  const allShipMods = useDataStore().sortdShipMod;
+  const allShipMods = appData.sortdShipMod();
   const set = new Set(allShipMods.map((it) => it.manufacturer).sort());
   return [ALL, ...set].map((it) => {
     return {
@@ -33,7 +33,7 @@ const manufacturerOptions = computed(() => {
   });
 });
 const shipMods = computed(() => {
-  let mods = useDataStore().sortdShipMod.sort((a, b) =>
+  let mods = appData.sortdShipMod().sort((a, b) =>
     a.id.localeCompare(b.id)
   );
   mods = filterUiTag(mods, selectUiTag.value);

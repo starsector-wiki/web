@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import ShipsDiv from 'src/components/ShipsDiv.vue';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 
 defineOptions({
   name: 'ShipsPage',
 });
 
-const dataStore = useDataStore();
 </script>
 
 <template>
   <q-page padding>
-    <ShipsDiv :ships="dataStore.sortdShips" />
+    <ShipsDiv :ships="appData.sortdShips()" />
   </q-page>
 </template>

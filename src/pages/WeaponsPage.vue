@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 
 defineOptions({
   name: 'WeaponsPage',
 });
 
-const dataStore = useDataStore();
 </script>
 
 <template>
@@ -17,7 +16,7 @@ const dataStore = useDataStore();
       align-items: stretch;
       gap: 10px 10px;
     ">
-    <q-btn style="flex: 0.2 0 auto" v-for="weapon in dataStore.sortdWeapon" :key="weapon.id"
+    <q-btn style="flex: 0.2 0 auto" v-for="weapon in appData.sortdWeapon()" :key="weapon.id"
       :to="{ name: 'weapon', params: { id: weapon.id } }">
       <div style="
           width: 100%;

@@ -4,7 +4,7 @@ import { Ship, WeaponSlot } from 'src/classes/model/ship';
 import MutableStatDiv from 'src/components/MutableStatDiv.vue';
 import ShipsDiv from 'src/components/ShipsDiv.vue';
 import ShipSpriteDiv from 'src/components/ShipSpriteDiv.vue';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
@@ -17,20 +17,19 @@ let id = ref(route.params.id as string);
 onBeforeRouteUpdate(async (to) => {
   id.value = to.params.id as string;
 });
-const dataStore = useDataStore();
-const ship = computed(() => dataStore.getShipById(id.value));
+const ship = computed(() => appData.getShipById(id.value));
 const skins = computed(() =>
-  dataStore.getShipsByIds(ship.value?.skinIds ?? [])
+  appData.getShipsByIds(ship.value?.skinIds ?? [])
 );
 const variants = computed(() =>
-  dataStore.getShipsByIds(ship.value?.varinatIds ?? [])
+  appData.getShipsByIds(ship.value?.varinatIds ?? [])
 );
 const modules = computed(() => {
   if (ship.value && ship.value.station) {
     const result = [];
     for (const [slotId, variantId] of ship.value.moduleIdMap.entries()) {
       if (variantId) {
-        const variant = dataStore.getShipById(variantId);
+        const variant = appData.getShipById(variantId);
         const slotData = ship.value.allWeaponSlots.find(
           (it) => it.id === slotId
         );
@@ -169,10 +168,10 @@ const modules = computed(() => {
             <td>
               {{
                 ship.hasShield()
-                  ? '护盾角度'
-                  : ship.hasPhase()
-                    ? '相位线圈激活'
-                    : ''
+                ? '护盾角度'
+                : ship.hasPhase()
+                  ? '相位线圈激活'
+                  : ''
               }}
             </td>
             <td style="text-align: right">
@@ -192,10 +191,10 @@ const modules = computed(() => {
             <td>
               {{
                 ship.hasShield()
-                  ? '护盾维持(幅能/秒)'
-                  : ship.hasPhase()
-                    ? '相位线圈维持(幅能/秒)'
-                    : ''
+                ? '护盾维持(幅能/秒)'
+                : ship.hasPhase()
+                  ? '相位线圈维持(幅能/秒)'
+                  : ''
               }}
             </td>
             <td style="text-align: right">

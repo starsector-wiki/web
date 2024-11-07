@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ShipsDiv from 'src/components/ShipsDiv.vue';
 import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
@@ -16,13 +16,13 @@ onBeforeRouteUpdate(async (to) => {
 });
 
 const weapon = computed(() => {
-  return useDataStore().getWeaponById(id.value);
+  return appData.getWeaponById(id.value);
 });
 const ships = computed(() => {
-  return useDataStore().getShipsByIds(weapon.value?.shipIds ?? []);
+  return appData.getShipsByIds(weapon.value?.shipIds ?? []);
 });
 const variantShips = computed(() => {
-  return useDataStore().getShipsByIds(weapon.value?.variantIds ?? []);
+  return appData.getShipsByIds(weapon.value?.variantIds ?? []);
 });
 </script>
 

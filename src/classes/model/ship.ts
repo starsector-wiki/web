@@ -1,6 +1,6 @@
 import { plainToInstance, Type } from 'class-transformer';
 import 'reflect-metadata';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 import { HullSize, ShieldType, WeaponSize, WeaponSizeDisplay, WeaponType, WeaponTypeDisplay } from '../conts';
 import { ShipSystem } from './shipSystem';
 
@@ -191,11 +191,11 @@ export class Ship {
   }
 
   getSystem(): ShipSystem | undefined {
-    return useDataStore().getShipSystemById(this.shipSystemId);
+    return appData.getShipSystemById(this.shipSystemId);
   }
 
   getSystemDescription(): string {
-    const system = useDataStore().getShipSystemById(this.shipSystemId);
+    const system = appData.getShipSystemById(this.shipSystemId);
     if (system == undefined) {
       return ''
     } else {
@@ -208,11 +208,11 @@ export class Ship {
   }
 
   getDefense(): ShipSystem | undefined {
-    return useDataStore().getShipSystemById(this.shipDefenseId);
+    return appData.getShipSystemById(this.shipDefenseId);
   }
 
   getDefenseDescription(): string {
-    const system = useDataStore().getShipSystemById(this.shipDefenseId);
+    const system = appData.getShipSystemById(this.shipDefenseId);
     if (system == undefined) {
       return ''
     } else {
@@ -241,32 +241,30 @@ export class Ship {
   }
 
   getShipMods(): { id: string, name: string }[] {
-    const dataStore = useDataStore();
+    const dataStore = appData;
     return [...this.builtInMods, ...this.storyMods, ...this.nonBuiltInMods].filter(value => value != undefined)
       .map(id => {
         return {
           id: id,
-          name: dataStore.getShipModById(id)?.name ?? id
+          name: dataStore?.getShipModById(id)?.name ?? id
         }
       })
   }
 
   getShipModDescription(): string {
-    const dataStore = useDataStore();
     const modStrs: string[] = []
     if (this.builtInMods.length > 0) {
-      modStrs.push(...(this.builtInMods.map(value => dataStore.getShipModById(value)?.name).filter(value => value != undefined)))
+      modStrs.push(...(this.builtInMods.map(value => appData.getShipModById(value)?.name).filter(value => value != undefined)) as string[])
     }
     if (this.storyMods.length > 0) {
-      modStrs.push(...(this.storyMods.map(value => dataStore.getShipModById(value)?.name).filter(value => value != undefined)))
+      modStrs.push(...(this.storyMods.map(value => appData.getShipModById(value)?.name).filter(value => value != undefined)) as string[])
     }
     if (this.nonBuiltInMods.length > 0) {
-      modStrs.push(...(this.nonBuiltInMods.map(value => dataStore.getShipModById(value)?.name).filter(value => value != undefined)))
+      modStrs.push(...(this.nonBuiltInMods.map(value => appData.getShipModById(value)?.name).filter(value => value != undefined)) as string[])
     }
     return modStrs.join(', ');
   }
   getWeapons(): { id: string, name: string, count: number }[] {
-    const dataStore = useDataStore();
     const weaponMap = new Map<string, number>();
     this.weaponIdMap.forEach((weaponId) => {
       if (weaponId) {
@@ -279,7 +277,7 @@ export class Ship {
     weaponMap.forEach((count, weaponId) => {
       weapons.push({
         id: weaponId,
-        name: dataStore.getWeaponById(weaponId)?.name ?? weaponId,
+        name: appData.getWeaponById(weaponId)?.name ?? weaponId,
         count: count,
       });
     })
@@ -288,7 +286,6 @@ export class Ship {
 
 
   getWeaponDescription(): string {
-    const dataStore = useDataStore();
     const weaponMap = new Map<string, number>();
     this.weaponIdMap.forEach(weaponId => {
       if (weaponId) {
@@ -299,7 +296,7 @@ export class Ship {
     });
     const weaponStrs: string[] = []
     weaponMap.forEach((count, weaponId) => {
-      weaponStrs.push(`${count}x ${dataStore.getWeaponById(weaponId)?.name ?? weaponId}`)
+      weaponStrs.push(`${count}x ${appData.getWeaponById(weaponId)?.name ?? weaponId}`)
     })
     return weaponStrs.join(', ')
   }

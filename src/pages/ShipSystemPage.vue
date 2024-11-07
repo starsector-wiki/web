@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ShipsDiv from 'src/components/ShipsDiv.vue';
-import { useDataStore } from 'src/stores/dataStore';
+import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
@@ -15,13 +15,13 @@ onBeforeRouteUpdate(async (to) => {
 });
 
 const shipSystem = computed(() => {
-  return useDataStore().getShipSystemById(id.value);
+  return appData.getShipSystemById(id.value);
 });
 const ships = computed(() => {
-  return useDataStore().getShipsByIds(shipSystem.value?.shipIds ?? []);
+  return appData.getShipsByIds(shipSystem.value?.shipIds ?? []);
 });
 const defenseShips = computed(() => {
-  return useDataStore().getShipsByIds(shipSystem.value?.defenseShipIds ?? []);
+  return appData.getShipsByIds(shipSystem.value?.defenseShipIds ?? []);
 });
 </script>
 
