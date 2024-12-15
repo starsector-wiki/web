@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ShieldTypeDisplay } from 'src/classes/conts';
-import { Ship, WeaponSlot } from 'src/classes/model/ship';
 import MutableStatDiv from 'src/components/MutableStatDiv.vue';
 import ShipsDiv from 'src/components/ShipsDiv.vue';
-import ShipSpriteDiv from 'src/components/ShipSpriteDiv.vue';
 import { appData } from 'src/AppData';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 defineOptions({
@@ -16,6 +14,7 @@ const route = useRoute();
 let id = ref(route.params.id as string);
 onBeforeRouteUpdate(async (to) => {
   id.value = to.params.id as string;
+  drawCanvas();
 });
 const ship = computed(() => appData.getShipById(id.value));
 const skins = computed(() =>
@@ -24,43 +23,20 @@ const skins = computed(() =>
 const variants = computed(() =>
   appData.getShipsByIds(ship.value?.varinatIds ?? [])
 );
-const modules = computed(() => {
-  if (ship.value && ship.value.station) {
-    const result = [];
-    for (const [slotId, variantId] of ship.value.moduleIdMap.entries()) {
-      if (variantId) {
-        const variant = appData.getShipById(variantId);
-        const slotData = ship.value.allWeaponSlots.find(
-          (it) => it.id === slotId
-        );
-        if (variant && slotData) {
-          result.push([variant, slotData] as [Ship, WeaponSlot]);
-        }
-      }
+
+const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
+async function drawCanvas() {
+  if (canvas.value) {
+    let ctx = canvas.value.getContext('2d');
+    if (ctx && ship.value) {
+      const offscreenCanvas = await appData.getShipCanvas(ship.value);
+      canvas.value.width = offscreenCanvas.canvas.width;
+      canvas.value.height = offscreenCanvas.canvas.height;
+      ctx.drawImage(offscreenCanvas.canvas, 0, 0);
     }
-    return result.sort((a, b) => {
-      const aModule = a[0];
-      const bModule = b[0];
-      if (aModule.isUnderParent() !== bModule.isUnderParent()) {
-        //底部模块排在前面渲染
-        return aModule.isUnderParent() ? -1 : 1;
-      }
-      if (aModule.isEmptyModule() !== bModule.isEmptyModule()) {
-        //空模块排在前面渲染
-        return aModule.isEmptyModule() ? -1 : 1;
-      }
-      //越靠近外面的模块越后渲染，使其显示在顶层
-      const aLocation = a[1].location;
-      const bLocation = b[1].location;
-      if (aLocation.x !== bLocation.x) {
-        return Math.abs(bLocation.x) - Math.abs(aLocation.x);
-      }
-      return Math.abs(bLocation.y) - Math.abs(aLocation.y);
-    });
-  } else {
-    return [];
   }
-});
+}
+onMounted(drawCanvas);
 </script>
 
 <template>
@@ -75,27 +51,7 @@ const modules = computed(() => {
 
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
         <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ ship.description }}</span>
-        <div style="margin: auto; position: relative">
-          <div v-for="([module, slotData], index) in modules" :key="slotData.id" :style="{
-            position: 'absolute',
-            bottom: ship.center.y + 'px',
-            left: ship.center.x + 'px',
-            transformOrigin: `calc(${module.center.x}px - ${module.moduleAnchor?.y ?? 0
-              }px) calc(100% - ${module.center.y}px - ${module.moduleAnchor?.x ?? 0
-              }px)`,
-            transform:
-              `translate(${module.center.x * -1}px, ${module.center.y}px) ` +
-              `translate(${module.moduleAnchor?.y ?? 0}px, ${module.moduleAnchor?.x ?? 0
-              }px) ` +
-              `translate(${slotData.location.y * -1}px, ${slotData.location.x * -1
-              }px) ` +
-              `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
-            zIndex: module.isUnderParent() ? -1 : 2 + index,
-          }">
-            <ShipSpriteDiv :ship="module" />
-          </div>
-          <ShipSpriteDiv :ship="ship" />
-        </div>
+        <canvas id="canvas" ref="canvas"></canvas>
       </div>
 
       <br /><br />
@@ -168,10 +124,10 @@ const modules = computed(() => {
             <td>
               {{
                 ship.hasShield()
-                ? '护盾角度'
-                : ship.hasPhase()
-                  ? '相位线圈激活'
-                  : ''
+                  ? '护盾角度'
+                  : ship.hasPhase()
+                    ? '相位线圈激活'
+                    : ''
               }}
             </td>
             <td style="text-align: right">
@@ -191,10 +147,10 @@ const modules = computed(() => {
             <td>
               {{
                 ship.hasShield()
-                ? '护盾维持(幅能/秒)'
-                : ship.hasPhase()
-                  ? '相位线圈维持(幅能/秒)'
-                  : ''
+                  ? '护盾维持(幅能/秒)'
+                  : ship.hasPhase()
+                    ? '相位线圈维持(幅能/秒)'
+                    : ''
               }}
             </td>
             <td style="text-align: right">

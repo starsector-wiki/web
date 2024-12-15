@@ -1,9 +1,10 @@
 import { ref } from 'vue';
-import { Ship } from './classes/model/ship';
+import { Ship, WeaponSlot } from './classes/model/ship';
 import { ShipMod } from './classes/model/shipMod';
 import { ShipSystem } from './classes/model/shipSystem';
 import { Weapon } from './classes/model/weapon';
 import { api } from 'src/boot/axios';
+import { CanvasSprite, computeCanvasSprites, computeWeaponCanvasSprites, drawImage, drawWeapon, SpriteCanvas } from './classes/model/CanvasSprite';
 
 class AppData {
   ready = ref(false);
@@ -11,6 +12,9 @@ class AppData {
   shipSystemMap: Map<string, ShipSystem> = new Map();
   shipModMap: Map<string, ShipMod> = new Map();
   weaponMap: Map<string, Weapon> = new Map();
+  imgMap: Map<string, HTMLImageElement> = new Map();
+  weaponCanvasMap: Map<string, SpriteCanvas> = new Map();
+  shipCanvasMap: Map<string, SpriteCanvas> = new Map();
 
   sortdShips(): Ship[] {
     const result = [] as Ship[];
@@ -82,6 +86,227 @@ class AppData {
   }
   getWeaponById(id: string): Weapon | undefined {
     return this.weaponMap.get(id);
+  }
+
+  async getImage(src: string): Promise<HTMLImageElement> {
+    return new Promise((resolve) => {
+      const img = this.imgMap.get(src);
+      if (img) {
+        resolve(img);
+      } else {
+        const newImg = new Image();
+        this.imgMap.set(src, newImg);
+        newImg.onload = () => resolve(newImg);
+        newImg.src = src;
+      }
+    });
+  }
+  async getWeaponCanvas(weapon: Weapon, isHardPoint: boolean = false): Promise<SpriteCanvas> {
+    const weaponImgId = isHardPoint ? weapon.id + '_hard' : weapon.id;
+    const exitsCanvas = this.weaponCanvasMap.get(weaponImgId);
+    if (exitsCanvas) {
+      return exitsCanvas;
+    }
+
+    const underSprite = isHardPoint ? weapon.hardPointUnderSprite : weapon.turretUnderSprite;
+    const gunSprite = isHardPoint ? weapon.hardPointGunSprite : weapon.turretGunSprite;
+    const weaponSprite = isHardPoint ? weapon.hardPointSprite : weapon.turretSprite;
+
+    const imagePromises = [
+      this.getImage(weaponSprite),
+    ];
+    if (underSprite) {
+      imagePromises.push(this.getImage(underSprite));
+    }
+    if (gunSprite) {
+      imagePromises.push(this.getImage(gunSprite));
+    }
+    if (weapon.projSpriteName) {
+      imagePromises.push(this.getImage(weapon.projSpriteName));
+    }
+
+    const images = await Promise.all(imagePromises);
+    let index = 0;
+    const weaponSpriteImg = images[index++];
+    const underSpriteImg = underSprite ? images[index++] : undefined;
+    const gunSpriteImg = gunSprite ? images[index++] : undefined;
+    const projSpriteImg = weapon.projSpriteName ? images[index++] : undefined;
+
+    let offsetPairs: [number, number][] | undefined = undefined;
+    const showMissile =
+      weapon.renderHints.includes('RENDER_LOADED_MISSILES') ||
+      weapon.renderHints.includes('RENDER_LOADED_MISSILES_UNLESS_HIDDEN');
+    if (
+      showMissile &&
+      weapon.turretOffsets.length > 0 &&
+      weapon.projSpriteName
+    ) {
+      offsetPairs = [];
+      for (let i = 0; i < weapon.turretOffsets.length; i += 2) {
+        const top = isHardPoint ? weapon.turretOffsets[i] - weaponSpriteImg.naturalHeight / 4 : weapon.turretOffsets[i];
+        offsetPairs.push([top, weapon.turretOffsets[i + 1]]);
+      }
+    }
+
+    const canvasResult = computeWeaponCanvasSprites(underSpriteImg, gunSpriteImg, weaponSpriteImg, projSpriteImg, offsetPairs);
+    const width = canvasResult.left + canvasResult.right;
+    const height = canvasResult.top + canvasResult.bottom;
+    const offscreenCanvas = new OffscreenCanvas(width, height);
+    const ctx = offscreenCanvas.getContext('2d');
+    if (ctx) {
+      drawWeapon(underSpriteImg, gunSpriteImg, weaponSpriteImg, projSpriteImg, offsetPairs, {
+        ctx,
+        centerPointLeft: canvasResult.left,
+        centerPointTop: canvasResult.top
+      });
+    }
+    let top = canvasResult.top
+    if (isHardPoint) {
+      top += weaponSpriteImg.naturalHeight / 4;
+    }
+    const result: SpriteCanvas = {
+      canvas: offscreenCanvas,
+      left: canvasResult.left,
+      top
+    }
+    this.weaponCanvasMap.set(weaponImgId, result);
+    return result;
+  }
+  async getShipCanvas(ship: Ship): Promise<SpriteCanvas> {
+    const exitsCanvas = this.shipCanvasMap.get(ship.id);
+    if (exitsCanvas) {
+      return exitsCanvas;
+    }
+
+    const shipImg = await this.getImage(ship.sprite);
+
+    let weapons = []
+    for (const [slotId, weaponId] of ship.weaponIdMap.entries()) {
+      if (weaponId) {
+        const weapon = appData.getWeaponById(weaponId);
+        const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
+        if (weapon && slotData) {
+          const weaponCanvas = await this.getWeaponCanvas(weapon, slotData.hardPoint);
+          weapons.push([slotData, weaponCanvas] as [WeaponSlot, SpriteCanvas]);
+        }
+      }
+    }
+    weapons = weapons.sort((a, b) => {
+      //越靠近中间的武器越后渲染，使其显示在顶层
+      const aLocation = a[0].location;
+      const bLocation = b[0].location;
+      if (aLocation.x !== bLocation.x) {
+        return Math.abs(aLocation.x) - Math.abs(bLocation.x);
+      }
+      return Math.abs(aLocation.y) - Math.abs(bLocation.y);
+    });
+
+    let modules: [Ship, WeaponSlot, SpriteCanvas][] = [];
+    if (ship.station) {
+      for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
+        if (variantId) {
+          const variant = appData.getShipById(variantId);
+          const slotData = ship.allWeaponSlots.find(
+            (it) => it.id === slotId
+          );
+          if (variant && slotData) {
+            const moduleCanvas = await this.getShipCanvas(variant);
+            modules.push([variant, slotData, moduleCanvas] as [Ship, WeaponSlot, SpriteCanvas]);
+          }
+        }
+      }
+      modules = modules.sort((a, b) => {
+        const aModule = a[0];
+        const bModule = b[0];
+        if (aModule.isUnderParent() !== bModule.isUnderParent()) {
+          //底部模块排在前面渲染
+          return aModule.isUnderParent() ? -1 : 1;
+        }
+        if (aModule.isEmptyModule() !== bModule.isEmptyModule()) {
+          //空模块排在前面渲染
+          return aModule.isEmptyModule() ? -1 : 1;
+        }
+        //越靠近外面的模块越后渲染，使其显示在顶层
+        const aLocation = a[1].location;
+        const bLocation = b[1].location;
+        if (aLocation.x !== bLocation.x) {
+          return Math.abs(bLocation.x) - Math.abs(aLocation.x);
+        }
+        return Math.abs(bLocation.y) - Math.abs(aLocation.y);
+      });
+    }
+
+    const canvasSprites: CanvasSprite[] = [];
+    canvasSprites.push({
+      element: shipImg,
+      centerOffsetRight: ship.center.x - shipImg.naturalWidth / 2,
+      centerOffsetTop: ship.center.y - shipImg.naturalHeight / 2,
+      offsetRight: 0,
+      offsetTop: 0,
+      degree: 0
+    });
+    for (const weaponData of weapons) {
+      const weaponCanvas = weaponData[1];
+      const weaponSlot = weaponData[0];
+      canvasSprites.push({
+        element: {
+          naturalHeight: weaponCanvas.canvas.height,
+          naturalWidth: weaponCanvas.canvas.width
+        },
+        centerOffsetRight: weaponCanvas.left - weaponCanvas.canvas.width / 2,
+        centerOffsetTop: -(weaponCanvas.top - weaponCanvas.canvas.height / 2),
+        offsetRight: weaponSlot.location.x,
+        offsetTop: weaponSlot.location.y,
+        degree: weaponSlot.angle
+      });
+    }
+    for (const moduleData of modules) {
+      const moduleCanvas = moduleData[2];
+      const moduleSlot = moduleData[1];
+      canvasSprites.push({
+        element: {
+          naturalHeight: moduleCanvas.canvas.height,
+          naturalWidth: moduleCanvas.canvas.width
+        },
+        centerOffsetRight: moduleCanvas.left - moduleCanvas.canvas.width / 2,
+        centerOffsetTop: -(moduleCanvas.top - moduleCanvas.canvas.height / 2),
+        offsetRight: moduleSlot.location.x,
+        offsetTop: moduleSlot.location.y,
+        degree: moduleSlot.angle
+      });
+    }
+    const canvasResult = computeCanvasSprites(...canvasSprites);
+
+    const width = canvasResult.left + canvasResult.right;
+    const height = canvasResult.top + canvasResult.bottom;
+    const offscreenCanvas = new OffscreenCanvas(width, height);
+    const ctx = offscreenCanvas.getContext('2d');
+    if (ctx) {
+      const myCtx = {
+        ctx,
+        centerPointLeft: canvasResult.left,
+        centerPointTop: canvasResult.top
+      };
+      drawImage(myCtx, shipImg, ship.center.x, shipImg.naturalHeight - ship.center.y);
+      for (const weaponData of weapons) {
+        const weaponSlot = weaponData[0];
+        const weaponCanvas = weaponData[1];
+        drawImage(myCtx, weaponCanvas.canvas, weaponCanvas.left, weaponCanvas.top, -weaponSlot.location.y, weaponSlot.location.x, weaponSlot.angle);
+      }
+      for (const moduleData of modules) {
+        // const module = moduleData[0];
+        const moduleSlot = moduleData[1];
+        const moduleCanvas = moduleData[2];
+        drawImage(myCtx, moduleCanvas.canvas, moduleCanvas.left, moduleCanvas.top, -moduleSlot.location.y, moduleSlot.location.x, moduleSlot.angle);
+      }
+    }
+    const result: SpriteCanvas = {
+      canvas: offscreenCanvas,
+      left: canvasResult.left,
+      top: canvasResult.top
+    }
+    this.shipCanvasMap.set(ship.id, result);
+    return result;
   }
 
   async initData() {
