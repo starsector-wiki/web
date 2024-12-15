@@ -118,16 +118,9 @@ function rotateImage(img: HTMLImageElement | OffscreenCanvas, imgCenterLeft: num
   const offscreenCanvas = new OffscreenCanvas(diagonal * 2, diagonal * 2);
   const ctx = offscreenCanvas.getContext('2d');
   if (ctx) {
-    ctx.save()
     ctx.translate(offscreenCanvas.width / 2, offscreenCanvas.height / 2);
     ctx.rotate(angle * Math.PI / 180);
     ctx.drawImage(img, -imgCenterLeft, -imgCenterTop);
-    ctx.restore();
-
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = 'red';
-    ctx.strokeRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
-    ctx.strokeRect(offscreenCanvas.width / 2, offscreenCanvas.height / 2, 1, 1);
   }
   return {
     canvas: offscreenCanvas,

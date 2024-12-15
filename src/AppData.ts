@@ -239,8 +239,8 @@ class AppData {
     const canvasSprites: CanvasSprite[] = [];
     canvasSprites.push({
       element: shipImg,
-      centerOffsetRight: ship.center.x - shipImg.naturalWidth / 2,
-      centerOffsetTop: ship.center.y - shipImg.naturalHeight / 2,
+      centerOffsetRight: ship.center.x - shipImg.naturalWidth / 2 + (ship.moduleAnchor?.y ?? 0),
+      centerOffsetTop: ship.center.y - shipImg.naturalHeight / 2 + (ship.moduleAnchor?.x ?? 0),
       offsetRight: 0,
       offsetTop: 0,
       degree: 0
@@ -287,11 +287,24 @@ class AppData {
         centerPointLeft: canvasResult.left,
         centerPointTop: canvasResult.top
       };
-      drawImage(myCtx, shipImg, ship.center.x, shipImg.naturalHeight - ship.center.y);
+      drawImage(myCtx, shipImg, ship.center.x + (ship.moduleAnchor?.y ?? 0), shipImg.naturalHeight - ship.center.y - (ship.moduleAnchor?.x ?? 0));
+
+      // show ship center point
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'blue';
+      ctx.strokeRect(canvasResult.left, canvasResult.top, 1, 1);
+      ctx.strokeStyle = 'red';
+      ctx.strokeRect(canvasResult.left - (ship.moduleAnchor?.y ?? 0), canvasResult.top + (ship.moduleAnchor?.x ?? 0), 1, 1);
+
       for (const weaponData of weapons) {
+        const weaponCtx = {
+          ctx,
+          centerPointLeft: canvasResult.left - (ship.moduleAnchor?.y ?? 0),
+          centerPointTop: canvasResult.top + (ship.moduleAnchor?.x ?? 0)
+        };
         const weaponSlot = weaponData[0];
         const weaponCanvas = weaponData[1];
-        drawImage(myCtx, weaponCanvas.canvas, weaponCanvas.left, weaponCanvas.top, -weaponSlot.location.y, weaponSlot.location.x, weaponSlot.angle);
+        drawImage(weaponCtx, weaponCanvas.canvas, weaponCanvas.left, weaponCanvas.top, -weaponSlot.location.y, weaponSlot.location.x, weaponSlot.angle);
       }
       for (const moduleData of modules) {
         // const module = moduleData[0];
