@@ -87,18 +87,18 @@ function addCanvasSprite(canvasResult: CanvasResult, canvasSprite: CanvasSprite)
 
 export interface CanvasContext {
   ctx: OffscreenCanvasRenderingContext2D,
-  centerPointLeft: number,
-  centerPointTop: number,
+  left: number,
+  top: number,
 }
 
 export function drawImage(ctx: CanvasContext, img: HTMLImageElement | OffscreenCanvas, imgCenterLeft: number, imgCenterTop: number, translateRight: number = 0, translateTop: number = 0, angle: number = 0) {
-  const centerPointLeft = ctx.centerPointLeft - imgCenterLeft;
-  const centerPointTop = ctx.centerPointTop - imgCenterTop;
+  const centerPointLeft = ctx.left - imgCenterLeft;
+  const centerPointTop = ctx.top - imgCenterTop;
   let realAngle = angle % 360;
   if (realAngle !== 0) {
     realAngle = 360 - realAngle;
     const rotateImageCanvas = rotateImage(img, imgCenterLeft, imgCenterTop, realAngle);
-    ctx.ctx.drawImage(rotateImageCanvas.canvas, ctx.centerPointLeft - rotateImageCanvas.left + translateRight, ctx.centerPointTop - rotateImageCanvas.top - translateTop);
+    ctx.ctx.drawImage(rotateImageCanvas.canvas, ctx.left - rotateImageCanvas.left + translateRight, ctx.top - rotateImageCanvas.top - translateTop);
   } else {
     ctx.ctx.drawImage(img, centerPointLeft + translateRight, centerPointTop - translateTop);
   }
