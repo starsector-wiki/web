@@ -11,20 +11,20 @@ export interface SpriteCanvas {
 
 export interface CanvasSprite {
   element: HTMLImageElement | Element
-  centerOffsetRight: number
-  centerOffsetTop: number
-  offsetRight: number
-  offsetTop: number
+  centerOffsetX: number
+  centerOffsetY: number
+  translateX: number
+  translateY: number
   degree: number
 }
 
 export function defaultCanvasSprite(element: HTMLImageElement): CanvasSprite {
   return {
     element,
-    centerOffsetRight: 0,
-    centerOffsetTop: 0,
-    offsetRight: 0,
-    offsetTop: 0,
+    centerOffsetX: 0,
+    centerOffsetY: 0,
+    translateX: 0,
+    translateY: 0,
     degree: 0
   }
 }
@@ -46,7 +46,6 @@ export function computeCanvasSprites(...canvasSprites: CanvasSprite[]): CanvasRe
   for (const canvasSprite of canvasSprites) {
     result = addCanvasSprite(result, canvasSprite);
   }
-  console.log(canvasSprites, result);
   return result;
 }
 
@@ -56,10 +55,10 @@ function addCanvasSprite(canvasResult: CanvasResult, canvasSprite: CanvasSprite)
   let left = canvasSprite.element.naturalWidth / 2;
   let right = canvasSprite.element.naturalWidth / 2;
 
-  top -= canvasSprite.centerOffsetTop;
-  bottom += canvasSprite.centerOffsetTop;
-  left += canvasSprite.centerOffsetRight;
-  right -= canvasSprite.centerOffsetRight;
+  top -= canvasSprite.centerOffsetY;
+  bottom += canvasSprite.centerOffsetY;
+  left += canvasSprite.centerOffsetX;
+  right -= canvasSprite.centerOffsetX;
 
   if (canvasSprite.degree % 360 !== 0) {
     const diagonal1 = Math.sqrt(top ** 2 + right ** 2);
@@ -73,10 +72,10 @@ function addCanvasSprite(canvasResult: CanvasResult, canvasSprite: CanvasSprite)
     right = maxDiagonal;
   }
 
-  top += canvasSprite.offsetTop
-  bottom -= canvasSprite.offsetTop
-  left -= canvasSprite.offsetRight
-  right += canvasSprite.offsetRight
+  top += canvasSprite.translateY
+  bottom -= canvasSprite.translateY
+  left -= canvasSprite.translateX
+  right += canvasSprite.translateX
 
   return {
     left: Math.max(canvasResult.left, left),
@@ -118,6 +117,7 @@ function rotateImage(img: HTMLImageElement | OffscreenCanvas, imgCenterLeft: num
   const offscreenCanvas = new OffscreenCanvas(diagonal * 2, diagonal * 2);
   const ctx = offscreenCanvas.getContext('2d');
   if (ctx) {
+    ctx.imageSmoothingEnabled = false;
     ctx.translate(offscreenCanvas.width / 2, offscreenCanvas.height / 2);
     ctx.rotate(angle * Math.PI / 180);
     ctx.drawImage(img, -imgCenterLeft, -imgCenterTop);
@@ -140,10 +140,10 @@ export function computeWeaponCanvasSprites(underSpriteImg: HTMLImageElement | un
     for (const offsetPair of offsetPairs) {
       canvasSprites.push({
         element: projSpriteImg,
-        centerOffsetRight: 0,
-        centerOffsetTop: 0,
-        offsetRight: offsetPair[1],
-        offsetTop: offsetPair[0],
+        centerOffsetX: 0,
+        centerOffsetY: 0,
+        translateX: offsetPair[1],
+        translateY: offsetPair[0],
         degree: 0
       });
     }

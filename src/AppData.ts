@@ -154,6 +154,7 @@ class AppData {
     const offscreenCanvas = new OffscreenCanvas(width, height);
     const ctx = offscreenCanvas.getContext('2d');
     if (ctx) {
+      ctx.imageSmoothingEnabled = false;
       drawWeapon(underSpriteImg, gunSpriteImg, weaponSpriteImg, projSpriteImg, offsetPairs, {
         ctx,
         centerPointLeft: canvasResult.left,
@@ -239,10 +240,10 @@ class AppData {
     const canvasSprites: CanvasSprite[] = [];
     canvasSprites.push({
       element: shipImg,
-      centerOffsetRight: ship.center.x - shipImg.naturalWidth / 2 + (ship.moduleAnchor?.y ?? 0),
-      centerOffsetTop: ship.center.y - shipImg.naturalHeight / 2 + (ship.moduleAnchor?.x ?? 0),
-      offsetRight: 0,
-      offsetTop: 0,
+      centerOffsetX: ship.center.x - shipImg.naturalWidth / 2 + (ship.moduleAnchor?.y ?? 0),
+      centerOffsetY: ship.center.y - shipImg.naturalHeight / 2 + (ship.moduleAnchor?.x ?? 0),
+      translateX: 0,
+      translateY: 0,
       degree: 0
     });
     for (const weaponData of weapons) {
@@ -253,10 +254,10 @@ class AppData {
           naturalHeight: weaponCanvas.canvas.height,
           naturalWidth: weaponCanvas.canvas.width
         },
-        centerOffsetRight: weaponCanvas.left - weaponCanvas.canvas.width / 2,
-        centerOffsetTop: -(weaponCanvas.top - weaponCanvas.canvas.height / 2),
-        offsetRight: weaponSlot.location.x,
-        offsetTop: weaponSlot.location.y,
+        centerOffsetX: weaponCanvas.left - weaponCanvas.canvas.width / 2,
+        centerOffsetY: -(weaponCanvas.top - weaponCanvas.canvas.height / 2),
+        translateX: -weaponSlot.location.y,
+        translateY: weaponSlot.location.x,
         degree: weaponSlot.angle
       });
     }
@@ -268,10 +269,10 @@ class AppData {
           naturalHeight: moduleCanvas.canvas.height,
           naturalWidth: moduleCanvas.canvas.width
         },
-        centerOffsetRight: moduleCanvas.left - moduleCanvas.canvas.width / 2,
-        centerOffsetTop: -(moduleCanvas.top - moduleCanvas.canvas.height / 2),
-        offsetRight: moduleSlot.location.x,
-        offsetTop: moduleSlot.location.y,
+        centerOffsetX: moduleCanvas.left - moduleCanvas.canvas.width / 2,
+        centerOffsetY: -(moduleCanvas.top - moduleCanvas.canvas.height / 2),
+        translateX: -moduleSlot.location.y,
+        translateY: moduleSlot.location.x,
         degree: moduleSlot.angle
       });
     }
@@ -282,6 +283,7 @@ class AppData {
     const offscreenCanvas = new OffscreenCanvas(width, height);
     const ctx = offscreenCanvas.getContext('2d');
     if (ctx) {
+      ctx.imageSmoothingEnabled = false;
       const myCtx = {
         ctx,
         centerPointLeft: canvasResult.left,

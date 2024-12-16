@@ -29,6 +29,7 @@ async function drawCanvas() {
   if (canvas.value) {
     let ctx = canvas.value.getContext('2d');
     if (ctx && ship.value) {
+      ctx.imageSmoothingEnabled = false;
       const offscreenCanvas = await appData.getShipCanvas(ship.value);
       canvas.value.width = offscreenCanvas.canvas.width;
       canvas.value.height = offscreenCanvas.canvas.height;
