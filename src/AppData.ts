@@ -4,7 +4,7 @@ import { ShipMod } from './classes/model/shipMod';
 import { ShipSystem } from './classes/model/shipSystem';
 import { Weapon } from './classes/model/weapon';
 import { api } from 'src/boot/axios';
-import { CanvasSprite, computeCanvasSprites, computeWeaponCanvasSprites, drawImage, drawWeapon, SpriteCanvas } from './classes/model/CanvasSprite';
+import { CanvasSprite, computeCanvasSprites, defaultCanvasSprite, drawImage, SpriteCanvas } from './classes/model/CanvasSprite';
 
 class AppData {
   ready = ref(false);
@@ -148,18 +148,44 @@ class AppData {
       }
     }
 
-    const canvasResult = computeWeaponCanvasSprites(underSpriteImg, gunSpriteImg, weaponSpriteImg, projSpriteImg, offsetPairs);
+    const canvasSprites: CanvasSprite[] = [];
+    if (underSpriteImg) { canvasSprites.push(defaultCanvasSprite(underSpriteImg)); }
+    if (gunSpriteImg) {
+      canvasSprites.push(defaultCanvasSprite(gunSpriteImg));
+    }
+    canvasSprites.push(defaultCanvasSprite(weaponSpriteImg));
+    if (offsetPairs && offsetPairs.length > 0 && projSpriteImg) {
+      for (const offsetPair of offsetPairs) {
+        canvasSprites.push({
+          element: projSpriteImg,
+          centerOffsetX: 0,
+          centerOffsetY: 0,
+          translateX: offsetPair[1],
+          translateY: offsetPair[0],
+          degree: 0
+        });
+      }
+    }
+    const canvasResult = computeCanvasSprites(...canvasSprites);
     const width = canvasResult.left + canvasResult.right;
     const height = canvasResult.top + canvasResult.bottom;
     const offscreenCanvas = new OffscreenCanvas(width, height);
     const ctx = offscreenCanvas.getContext('2d');
     if (ctx) {
       ctx.imageSmoothingEnabled = false;
-      drawWeapon(underSpriteImg, gunSpriteImg, weaponSpriteImg, projSpriteImg, offsetPairs, {
+      const myCtx = {
         ctx,
         centerPointLeft: canvasResult.left,
         centerPointTop: canvasResult.top
-      });
+      };
+      if (underSpriteImg) { drawImage(myCtx, underSpriteImg, underSpriteImg.width / 2, underSpriteImg.height / 2); }
+      if (gunSpriteImg) { drawImage(myCtx, gunSpriteImg, gunSpriteImg.width / 2, gunSpriteImg.height / 2); }
+      drawImage(myCtx, weaponSpriteImg, weaponSpriteImg.width / 2, weaponSpriteImg.height / 2);
+      if (offsetPairs && offsetPairs.length > 0 && projSpriteImg) {
+        for (const offsetPair of offsetPairs) {
+          drawImage(myCtx, projSpriteImg, projSpriteImg.width / 2, projSpriteImg.height / 2, offsetPair[1], offsetPair[0]);
+        }
+      }
     }
     let top = canvasResult.top
     if (isHardPoint) {

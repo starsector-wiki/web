@@ -117,7 +117,6 @@ function rotateImage(img: HTMLImageElement | OffscreenCanvas, imgCenterLeft: num
   const offscreenCanvas = new OffscreenCanvas(diagonal * 2, diagonal * 2);
   const ctx = offscreenCanvas.getContext('2d');
   if (ctx) {
-    ctx.imageSmoothingEnabled = false;
     ctx.translate(offscreenCanvas.width / 2, offscreenCanvas.height / 2);
     ctx.rotate(angle * Math.PI / 180);
     ctx.drawImage(img, -imgCenterLeft, -imgCenterTop);
@@ -127,37 +126,4 @@ function rotateImage(img: HTMLImageElement | OffscreenCanvas, imgCenterLeft: num
     left: offscreenCanvas.width / 2,
     top: offscreenCanvas.height / 2
   };
-}
-
-export function computeWeaponCanvasSprites(underSpriteImg: HTMLImageElement | undefined, gunSpriteImg: HTMLImageElement | undefined, weaponSpriteImg: HTMLImageElement, projSpriteImg: HTMLImageElement | undefined, offsetPairs?: [number, number][]) {
-  const canvasSprites: CanvasSprite[] = [];
-  if (underSpriteImg) { canvasSprites.push(defaultCanvasSprite(underSpriteImg)); }
-  if (gunSpriteImg) {
-    canvasSprites.push(defaultCanvasSprite(gunSpriteImg));
-  }
-  canvasSprites.push(defaultCanvasSprite(weaponSpriteImg));
-  if (offsetPairs && offsetPairs.length > 0 && projSpriteImg) {
-    for (const offsetPair of offsetPairs) {
-      canvasSprites.push({
-        element: projSpriteImg,
-        centerOffsetX: 0,
-        centerOffsetY: 0,
-        translateX: offsetPair[1],
-        translateY: offsetPair[0],
-        degree: 0
-      });
-    }
-  }
-  return computeCanvasSprites(...canvasSprites);
-}
-
-export function drawWeapon(underSpriteImg: HTMLImageElement | undefined, gunSpriteImg: HTMLImageElement | undefined, weaponSpriteImg: HTMLImageElement, projSpriteImg: HTMLImageElement | undefined, offsetPairs: [number, number][] | undefined, myCtx: CanvasContext) {
-  if (underSpriteImg) { drawImage(myCtx, underSpriteImg, underSpriteImg.width / 2, underSpriteImg.height / 2); }
-  if (gunSpriteImg) { drawImage(myCtx, gunSpriteImg, gunSpriteImg.width / 2, gunSpriteImg.height / 2); }
-  drawImage(myCtx, weaponSpriteImg, weaponSpriteImg.width / 2, weaponSpriteImg.height / 2);
-  if (offsetPairs && offsetPairs.length > 0 && projSpriteImg) {
-    for (const offsetPair of offsetPairs) {
-      drawImage(myCtx, projSpriteImg, projSpriteImg.width / 2, projSpriteImg.height / 2, offsetPair[1], offsetPair[0]);
-    }
-  }
 }
