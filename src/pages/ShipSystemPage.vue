@@ -56,7 +56,7 @@ const defenseShips = computed(() => {
 
       <br /><br />
 
-      <pre><code>{{ JSON.stringify(shipSystem, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ JSON.stringify(shipSystem, null, 2) }}</code></pre>
     </template>
   </q-page>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { HullSize, HullSizeDisplay } from 'src/classes/conts';
 import { Ship } from 'src/classes/model/ship';
+import ShipSpriteDiv from './ShipSpriteDiv.vue';
 
 defineOptions({
   name: 'ShipsDiv',
@@ -33,16 +34,12 @@ function haveSize(hullSize: HullSize): boolean {
     <template v-if="haveSize(hullSize)">
       <h4>{{ HullSizeDisplay.get(hullSize) ?? hullSize }}</h4>
       <div class="items">
-        <q-btn
-          flat
-          class="item"
-          v-for="ship in getShipsBySize(hullSize)"
-          :key="ship.id"
-          :to="{ name: 'ship', params: { id: ship.id } }"
-        >
+        <q-btn flat class="item" v-for="ship in getShipsBySize(hullSize)" :key="ship.id"
+          :to="{ name: 'ship', params: { id: ship.id } }">
           <div>
             <div class="item_img_section">
-              <img decoding="async" :src="ship.sprite" />
+              <!-- <img :src="ship.sprite" /> -->
+              <ShipSpriteDiv :ship="ship" />
             </div>
             <span> {{ ship.getDisplayName() }} </span>
           </div>

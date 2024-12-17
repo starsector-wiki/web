@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import ShipsDiv from 'src/components/ShipsDiv.vue';
-import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
 import { appData } from 'src/AppData';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
 defineOptions({
@@ -13,6 +12,7 @@ const route = useRoute();
 let id = ref(route.params.id as string);
 onBeforeRouteUpdate(async (to) => {
   id.value = to.params.id as string;
+  drawCanvas();
 });
 
 const weapon = computed(() => {
@@ -24,6 +24,21 @@ const ships = computed(() => {
 const variantShips = computed(() => {
   return appData.getShipsByIds(weapon.value?.variantIds ?? []);
 });
+
+const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
+async function drawCanvas() {
+  if (canvas.value) {
+    let ctx = canvas.value.getContext('2d');
+    if (ctx && weapon.value) {
+      ctx.imageSmoothingEnabled = false;
+      const offscreenCanvas = (await appData.getWeaponCanvas(weapon.value))!;
+      canvas.value.width = offscreenCanvas.canvas.width;
+      canvas.value.height = offscreenCanvas.canvas.height;
+      ctx.drawImage(offscreenCanvas.canvas, 0, 0);
+    }
+  }
+}
+onMounted(drawCanvas);
 </script>
 
 <template>
@@ -38,7 +53,7 @@ const variantShips = computed(() => {
 
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
         <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ weapon.description }}</span>
-        <WeaponSpriteDiv :weapon="weapon" />
+        <canvas id="canvas" ref="canvas"></canvas>
       </div>
 
       <br /><br />
@@ -161,7 +176,7 @@ const variantShips = computed(() => {
 
       <br /><br />
 
-      <pre><code>{{ JSON.stringify(weapon, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ JSON.stringify(weapon, null, 2) }}</code></pre>
     </template>
   </q-page>
 </template>
