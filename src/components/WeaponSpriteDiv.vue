@@ -19,10 +19,15 @@ onMounted(async () => {
     let ctx = canvas.value.getContext('2d');
     if (ctx) {
       ctx.imageSmoothingEnabled = false;
-      const offscreenCanvas = await appData.getWeaponCanvas(weapon, isHardPoint);
+      const offscreenCanvas = (await appData.getWeaponCanvas(weapon, isHardPoint))!;
       canvas.value.width = offscreenCanvas.canvas.width;
       canvas.value.height = offscreenCanvas.canvas.height;
-      ctx.drawImage(offscreenCanvas.canvas, 0, 0);
+      try {
+        ctx.drawImage(offscreenCanvas.canvas, 0, 0);
+      } catch (error) {
+        console.log('draw weapon fail.', weapon.name, weapon.id);
+        throw error;
+      }
     }
   }
 })

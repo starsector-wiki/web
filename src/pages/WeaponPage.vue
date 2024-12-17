@@ -31,7 +31,7 @@ async function drawCanvas() {
     let ctx = canvas.value.getContext('2d');
     if (ctx && weapon.value) {
       ctx.imageSmoothingEnabled = false;
-      const offscreenCanvas = await appData.getWeaponCanvas(weapon.value);
+      const offscreenCanvas = (await appData.getWeaponCanvas(weapon.value))!;
       canvas.value.width = offscreenCanvas.canvas.width;
       canvas.value.height = offscreenCanvas.canvas.height;
       ctx.drawImage(offscreenCanvas.canvas, 0, 0);
@@ -176,7 +176,7 @@ onMounted(drawCanvas);
 
       <br /><br />
 
-      <pre><code>{{ JSON.stringify(weapon, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ JSON.stringify(weapon, null, 2) }}</code></pre>
     </template>
   </q-page>
 </template>

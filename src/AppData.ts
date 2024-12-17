@@ -7,6 +7,7 @@ import { api } from 'src/boot/axios';
 import { CanvasSprite, computeCanvasSprites, defaultCanvasSprite, drawImage, SpriteCanvas } from './classes/model/CanvasSprite';
 
 class AppData {
+  debug = false;
   ready = ref(false);
   shipMap: Map<string, Ship> = new Map();
   shipSystemMap: Map<string, ShipSystem> = new Map();
@@ -17,7 +18,7 @@ class AppData {
   shipCanvasMap: Map<string, SpriteCanvas> = new Map();
 
   sortdShips(): Ship[] {
-    const result = [] as Ship[];
+    const result: Ship[] = [];
     const sortedArray = Array.from(this.shipMap.entries());
     sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
     for (const [, value] of sortedArray) {
@@ -28,7 +29,7 @@ class AppData {
     return result;
   }
   sortdShipVarinats(): Ship[] {
-    const result = [] as Ship[];
+    const result: Ship[] = [];
     const sortedArray = Array.from(this.shipMap.entries());
     sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
     for (const [, value] of sortedArray) {
@@ -39,7 +40,7 @@ class AppData {
     return result;
   }
   sortdShipSystem(): ShipSystem[] {
-    const result = [] as ShipSystem[];
+    const result: ShipSystem[] = [];
     const sortedArray = Array.from(this.shipSystemMap.entries());
     sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
     for (const [, value] of sortedArray) {
@@ -48,7 +49,7 @@ class AppData {
     return result;
   }
   sortdShipMod(): ShipMod[] {
-    const result = [] as ShipMod[];
+    const result: ShipMod[] = [];
     const sortedArray = Array.from(this.shipModMap.entries());
     sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
     for (const [, value] of sortedArray) {
@@ -57,7 +58,7 @@ class AppData {
     return result;
   }
   sortdWeapon(): Weapon[] {
-    const result = [] as Weapon[];
+    const result: Weapon[] = [];
     const sortedArray = Array.from(this.weaponMap.entries());
     sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
     for (const [, value] of sortedArray) {
@@ -89,19 +90,22 @@ class AppData {
   }
 
   async getImage(src: string): Promise<HTMLImageElement> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const img = this.imgMap.get(src);
       if (img) {
         resolve(img);
       } else {
         const newImg = new Image();
-        this.imgMap.set(src, newImg);
-        newImg.onload = () => resolve(newImg);
+        newImg.onload = () => {
+          resolve(newImg);
+          this.imgMap.set(src, newImg);
+        }
+        newImg.onerror = (e) => reject(e);
         newImg.src = src;
       }
     });
   }
-  async getWeaponCanvas(weapon: Weapon, isHardPoint: boolean = false): Promise<SpriteCanvas> {
+  async getWeaponCanvas(weapon: Weapon, isHardPoint: boolean = false): Promise<SpriteCanvas | undefined> {
     const weaponImgId = isHardPoint ? weapon.id + '_hard' : weapon.id;
     const exitsCanvas = this.weaponCanvasMap.get(weaponImgId);
     if (exitsCanvas) {
@@ -111,6 +115,9 @@ class AppData {
     const underSprite = isHardPoint ? weapon.hardPointUnderSprite : weapon.turretUnderSprite;
     const gunSprite = isHardPoint ? weapon.hardPointGunSprite : weapon.turretGunSprite;
     const weaponSprite = isHardPoint ? weapon.hardPointSprite : weapon.turretSprite;
+    if (!weaponSprite) {
+      return undefined;
+    }
 
     const imagePromises = [
       this.getImage(weaponSprite),
@@ -207,14 +214,14 @@ class AppData {
 
     const shipImg = await this.getImage(ship.sprite);
 
-    let weapons = []
+    let weapons: [WeaponSlot, SpriteCanvas][] = []
     for (const [slotId, weaponId] of ship.weaponIdMap.entries()) {
       if (weaponId) {
         const weapon = appData.getWeaponById(weaponId);
         const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
         if (weapon && slotData) {
           const weaponCanvas = await this.getWeaponCanvas(weapon, slotData.hardPoint);
-          weapons.push([slotData, weaponCanvas] as [WeaponSlot, SpriteCanvas]);
+          if (weaponCanvas) { weapons.push([slotData, weaponCanvas]); }
         }
       }
     }
@@ -238,7 +245,7 @@ class AppData {
           );
           if (variant && slotData) {
             const moduleCanvas = await this.getShipCanvas(variant);
-            modules.push([variant, slotData, moduleCanvas] as [Ship, WeaponSlot, SpriteCanvas]);
+            modules.push([variant, slotData, moduleCanvas]);
           }
         }
       }
@@ -319,12 +326,14 @@ class AppData {
       };
       drawImage(myCtx, shipImg, ship.center.left + (ship.moduleAnchor?.x ?? 0), shipImg.naturalHeight - ship.center.bottom - (ship.moduleAnchor?.y ?? 0));
 
-      // show ship center point
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = 'blue';
-      ctx.strokeRect(canvasResult.left, canvasResult.top, 1, 1);
-      ctx.strokeStyle = 'red';
-      ctx.strokeRect(weaponSlotCenterLeft, weaponSlotCenterTop, 1, 1);
+      if (appData.debug) {
+        // show ship center point
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'blue';
+        ctx.strokeRect(canvasResult.left, canvasResult.top, 1, 1);
+        ctx.strokeStyle = 'red';
+        ctx.strokeRect(weaponSlotCenterLeft, weaponSlotCenterTop, 1, 1);
+      }
 
       for (const weaponData of weapons) {
         const weaponCtx = {

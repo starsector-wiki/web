@@ -87,7 +87,7 @@ const variantShips = computed(() => {
 
       <br /><br />
 
-      <pre><code>{{ JSON.stringify(shipMod, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ JSON.stringify(shipMod, null, 2) }}</code></pre>
     </template>
   </q-page>
 </template>

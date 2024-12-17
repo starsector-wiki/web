@@ -38,6 +38,7 @@ function haveSize(hullSize: HullSize): boolean {
           :to="{ name: 'ship', params: { id: ship.id } }">
           <div>
             <div class="item_img_section">
+              <!-- <img :src="ship.sprite" /> -->
               <ShipSpriteDiv :ship="ship" />
             </div>
             <span> {{ ship.getDisplayName() }} </span>
