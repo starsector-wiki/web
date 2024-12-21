@@ -6,7 +6,6 @@ export class Commodity {
   jsonType!: string;
   name!: string;
   description!: string;
-  origin!: string;
   iconName!: string;
   stackSize!: number;
   order!: number;

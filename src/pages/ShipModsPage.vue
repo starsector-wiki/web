@@ -93,7 +93,7 @@ function filterManufacturer(
     <br /><br />
     <h4 v-show="shipMods.normalMods.length > 0">可使用插件</h4>
     <div class="items">
-      <q-btn style="flex: 0.2 0 auto" v-for="shipMod in shipMods.normalMods" :key="shipMod.id"
+      <q-btn class="card-item" no-caps v-for="shipMod in shipMods.normalMods" :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
         <div class="item">
           <div class="item_img_section">
@@ -110,7 +110,7 @@ function filterManufacturer(
 
     <h4 v-show="shipMods.dMods.length > 0">D插件</h4>
     <div class="items">
-      <q-btn style="flex: 0.2 0 auto" v-for="shipMod in shipMods.dMods" :key="shipMod.id"
+      <q-btn class="card-item" no-caps v-for="shipMod in shipMods.dMods" :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
         <div class="item">
           <div class="item_img_section">
@@ -127,7 +127,7 @@ function filterManufacturer(
 
     <h4 v-show="shipMods.hiddenMods.length > 0">隐藏插件</h4>
     <div class="items">
-      <q-btn style="flex: 0.2 0 auto" v-for="shipMod in shipMods.hiddenMods" :key="shipMod.id"
+      <q-btn class="card-item" no-caps v-for="shipMod in shipMods.hiddenMods" :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
         <div class="item">
           <div class="item_img_section">

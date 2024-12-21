@@ -33,6 +33,7 @@ export class PlanetType {
   shieldThickness2!: number;
   doNotShowInCombat!: boolean;
   gasGiant!: boolean;
+  color!: string;
 
   static deserialize(object: object) {
     return plainToInstance(PlanetType, object);

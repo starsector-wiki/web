@@ -8,31 +8,11 @@ defineOptions({
 </script>
 
 <template>
-  <q-page padding style="
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: flex-start;
-      align-items: stretch;
-      gap: 10px 10px;
-    ">
-    <q-btn style="flex: 0.2 0 auto" v-for="planetType in appData.sortdPlanetType()" :key="planetType.id"
-      :to="{ name: 'ship_system', params: { id: planetType.id } }">
-      <div style="
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-flow: column nowrap;
-          align-items: center;
-          justify-content: flex-end;
-        ">
-        <div style="
-            flex: 1 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          ">
-          <img style="background-color: black;" decoding="async" :src="planetType.iconTexture" />
-        </div>
+  <q-page padding class="card-item-list-page">
+    <q-btn class="card-item" no-caps v-for="planetType in appData.sortdPlanetType()" :key="planetType.id"
+      :to="{ name: 'planet_type', params: { id: planetType.id } }">
+      <div class="card-item-content">
+        <img style="background-color: black;" decoding="async" :src="planetType.iconTexture" />
         <span>
           {{ planetType.name }}
         </span>

@@ -10,6 +10,10 @@ export class SubMarket {
   factionId!: string;
 
   static deserialize(object: object) {
-    return plainToInstance(SubMarket, object);
+    const result = plainToInstance(SubMarket, object)
+    if (!result.name) {
+      result.name = '军用市场';
+    }
+    return result;
   }
 }

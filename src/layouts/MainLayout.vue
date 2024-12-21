@@ -39,7 +39,7 @@ function toggleLeftDrawer() {
         <q-item clickable :to="{ name: 'weapons' }">
           <q-item-section> 武器数据 </q-item-section>
         </q-item>
-        <q-item clickable :to="{ name: 'specialItems' }">
+        <q-item clickable :to="{ name: 'special_items' }">
           <q-item-section> 特殊物品 </q-item-section>
         </q-item>
         <q-item clickable :to="{ name: 'commodites' }">
@@ -48,19 +48,19 @@ function toggleLeftDrawer() {
         <q-item clickable :to="{ name: 'industries' }">
           <q-item-section> 产业 </q-item-section>
         </q-item>
-        <q-item clickable :to="{ name: 'planetTypes' }">
+        <q-item clickable :to="{ name: 'planet_types' }">
           <q-item-section> 星球类型 </q-item-section>
         </q-item>
-        <q-item clickable :to="{ name: 'marketConditions' }">
+        <q-item clickable :to="{ name: 'market_conditions' }">
           <q-item-section> 星球特性 </q-item-section>
         </q-item>
-        <q-item clickable :to="{ name: 'subMarkets' }">
+        <q-item clickable :to="{ name: 'sub_markets' }">
           <q-item-section> 子市场类型 </q-item-section>
         </q-item>
         <q-item clickable :to="{ name: 'factions' }">
           <q-item-section> 派系 </q-item-section>
         </q-item>
-        <q-item clickable :to="{ name: 'starSystems' }">
+        <q-item clickable :to="{ name: 'star_systems' }">
           <q-item-section> 星系 </q-item-section>
         </q-item>
         <q-item clickable :to="{ name: 'planets' }">

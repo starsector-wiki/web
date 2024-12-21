@@ -89,7 +89,7 @@ class AppData {
   sortdSpecialItem(): SpecialItem[] {
     const result: SpecialItem[] = [];
     const sortedArray = Array.from(this.specialItemMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => b[1].order - a[1].order);
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -98,7 +98,7 @@ class AppData {
   sortdCommodity(): Commodity[] {
     const result: Commodity[] = [];
     const sortedArray = Array.from(this.commodityMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => b[1].order - a[1].order);
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -107,7 +107,7 @@ class AppData {
   sortdIndustry(): Industry[] {
     const result: Industry[] = [];
     const sortedArray = Array.from(this.industryMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => a[1].order - b[1].order);
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -125,7 +125,7 @@ class AppData {
   sortdMarketCondition(): MarketCondition[] {
     const result: MarketCondition[] = [];
     const sortedArray = Array.from(this.marketConditionMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => a[1].order - b[1].order);
     for (const [, value] of sortedArray) {
       result.push(value);
     }
