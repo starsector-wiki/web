@@ -39,6 +39,33 @@ function toggleLeftDrawer() {
         <q-item clickable :to="{ name: 'weapons' }">
           <q-item-section> 武器数据 </q-item-section>
         </q-item>
+        <q-item clickable :to="{ name: 'commodites' }">
+          <q-item-section> 商品 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'industries' }">
+          <q-item-section> 产业 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'planetTypes' }">
+          <q-item-section> 星球类型 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'marketConditions' }">
+          <q-item-section> 星球特性 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'subMarkets' }">
+          <q-item-section> 子市场类型 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'factions' }">
+          <q-item-section> 派系 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'starSystems' }">
+          <q-item-section> 星系 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'planets' }">
+          <q-item-section> 星球 </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'persons' }">
+          <q-item-section> 人物 </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 

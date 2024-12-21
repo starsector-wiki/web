@@ -5,6 +5,15 @@ import { ShipSystem } from './classes/model/shipSystem';
 import { Weapon } from './classes/model/weapon';
 import { api } from 'src/boot/axios';
 import { CanvasSprite, computeCanvasSprites, defaultCanvasSprite, drawImage, SpriteCanvas } from './classes/model/CanvasSprite';
+import { Commodity } from './classes/model/Commodity';
+import { Industry } from './classes/model/Industry';
+import { PlanetType } from './classes/model/PlanetType';
+import { MarketCondition } from './classes/model/MarketCondition';
+import { SubMarket } from './classes/model/SubMarket';
+import { Faction } from './classes/model/Faction';
+import { Person } from './classes/model/Person';
+import { Planet } from './classes/model/Planet';
+import { StarSystem } from './classes/model/StarSystem';
 
 class AppData {
   debug = false;
@@ -13,6 +22,15 @@ class AppData {
   shipSystemMap: Map<string, ShipSystem> = new Map();
   shipModMap: Map<string, ShipMod> = new Map();
   weaponMap: Map<string, Weapon> = new Map();
+  commodityMap: Map<string, Commodity> = new Map();
+  industryMap: Map<string, Industry> = new Map();
+  planetTypeMap: Map<string, PlanetType> = new Map();
+  marketConditionMap: Map<string, MarketCondition> = new Map();
+  subMarketMap: Map<string, SubMarket> = new Map();
+  factionMap: Map<string, Faction> = new Map();
+  starSystemMap: Map<string, StarSystem> = new Map();
+  planetMap: Map<string, Planet> = new Map();
+  personMap: Map<string, Person> = new Map();
   imgMap: Map<string, HTMLImageElement> = new Map();
   weaponCanvasMap: Map<string, SpriteCanvas> = new Map();
   shipCanvasMap: Map<string, SpriteCanvas> = new Map();
@@ -66,6 +84,87 @@ class AppData {
     }
     return result;
   }
+  sortdCommodity(): Commodity[] {
+    const result: Commodity[] = [];
+    const sortedArray = Array.from(this.commodityMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdIndustry(): Industry[] {
+    const result: Industry[] = [];
+    const sortedArray = Array.from(this.industryMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdPlanetType(): PlanetType[] {
+    const result: PlanetType[] = [];
+    const sortedArray = Array.from(this.planetTypeMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdMarketCondition(): MarketCondition[] {
+    const result: MarketCondition[] = [];
+    const sortedArray = Array.from(this.marketConditionMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdSubMarket(): SubMarket[] {
+    const result: SubMarket[] = [];
+    const sortedArray = Array.from(this.subMarketMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdFaction(): Faction[] {
+    const result: Faction[] = [];
+    const sortedArray = Array.from(this.factionMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdStarSystem(): StarSystem[] {
+    const result: StarSystem[] = [];
+    const sortedArray = Array.from(this.starSystemMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdPlanet(): Planet[] {
+    const result: Planet[] = [];
+    const sortedArray = Array.from(this.planetMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdPerson(): Person[] {
+    const result: Person[] = [];
+    const sortedArray = Array.from(this.personMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
   getShipById(id: string): Ship | undefined {
     return this.shipMap.get(id);
   }
@@ -87,6 +186,33 @@ class AppData {
   }
   getWeaponById(id: string): Weapon | undefined {
     return this.weaponMap.get(id);
+  }
+  getCommodityById(id: string): Commodity | undefined {
+    return this.commodityMap.get(id);
+  }
+  getIndustryById(id: string): Industry | undefined {
+    return this.industryMap.get(id);
+  }
+  getPlanetTypeById(id: string): PlanetType | undefined {
+    return this.planetTypeMap.get(id);
+  }
+  getMarketConditionById(id: string): MarketCondition | undefined {
+    return this.marketConditionMap.get(id);
+  }
+  getSubMarketById(id: string): SubMarket | undefined {
+    return this.subMarketMap.get(id);
+  }
+  getFactionById(id: string): Faction | undefined {
+    return this.factionMap.get(id);
+  }
+  getStarSystemById(id: string): StarSystem | undefined {
+    return this.starSystemMap.get(id);
+  }
+  getPlanetById(id: string): Planet | undefined {
+    return this.planetMap.get(id);
+  }
+  getPersonById(id: string): Person | undefined {
+    return this.personMap.get(id);
   }
 
   async getImage(src: string): Promise<HTMLImageElement> {
@@ -379,6 +505,33 @@ class AppData {
           } else if (jsonObject.jsonType === 'WEAPON') {
             const weapon = Weapon.deserialize(jsonObject);
             this.weaponMap.set(weapon.id, weapon);
+          } else if (jsonObject.jsonType === 'COMMODITY') {
+            const commodity = Commodity.deserialize(jsonObject);
+            this.commodityMap.set(commodity.id, commodity);
+          } else if (jsonObject.jsonType === 'INDUSTRY') {
+            const industry = Industry.deserialize(jsonObject);
+            this.industryMap.set(industry.id, industry);
+          } else if (jsonObject.jsonType === 'PLANET_TYPE') {
+            const planetType = PlanetType.deserialize(jsonObject);
+            this.planetTypeMap.set(planetType.id, planetType);
+          } else if (jsonObject.jsonType === 'MARKET_CONDITION') {
+            const marketCondition = MarketCondition.deserialize(jsonObject);
+            this.marketConditionMap.set(marketCondition.id, marketCondition);
+          } else if (jsonObject.jsonType === 'SUB_MARKET') {
+            const subMarket = SubMarket.deserialize(jsonObject);
+            this.subMarketMap.set(subMarket.id, subMarket);
+          } else if (jsonObject.jsonType === 'FACTION') {
+            const faction = Faction.deserialize(jsonObject);
+            this.factionMap.set(faction.id, faction);
+          } else if (jsonObject.jsonType === 'START_SYSTEM') {
+            const starSystem = StarSystem.deserialize(jsonObject);
+            this.starSystemMap.set(starSystem.id, starSystem);
+          } else if (jsonObject.jsonType === 'PLANET') {
+            const planet = Planet.deserialize(jsonObject);
+            this.planetMap.set(planet.id, planet);
+          } else if (jsonObject.jsonType === 'PERSON') {
+            const person = Person.deserialize(jsonObject);
+            this.personMap.set(person.id, person);
           }
         }
       }
