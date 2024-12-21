@@ -14,6 +14,7 @@ import { Faction } from './classes/model/Faction';
 import { Person } from './classes/model/Person';
 import { Planet } from './classes/model/Planet';
 import { StarSystem } from './classes/model/StarSystem';
+import { SpecialItem } from './classes/model/SpecialItem';
 
 class AppData {
   debug = false;
@@ -22,6 +23,7 @@ class AppData {
   shipSystemMap: Map<string, ShipSystem> = new Map();
   shipModMap: Map<string, ShipMod> = new Map();
   weaponMap: Map<string, Weapon> = new Map();
+  specialItemMap: Map<string, SpecialItem> = new Map();
   commodityMap: Map<string, Commodity> = new Map();
   industryMap: Map<string, Industry> = new Map();
   planetTypeMap: Map<string, PlanetType> = new Map();
@@ -78,6 +80,15 @@ class AppData {
   sortdWeapon(): Weapon[] {
     const result: Weapon[] = [];
     const sortedArray = Array.from(this.weaponMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdSpecialItem(): SpecialItem[] {
+    const result: SpecialItem[] = [];
+    const sortedArray = Array.from(this.specialItemMap.entries());
     sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
     for (const [, value] of sortedArray) {
       result.push(value);
@@ -186,6 +197,9 @@ class AppData {
   }
   getWeaponById(id: string): Weapon | undefined {
     return this.weaponMap.get(id);
+  }
+  getSpecialItemById(id: string): SpecialItem | undefined {
+    return this.specialItemMap.get(id);
   }
   getCommodityById(id: string): Commodity | undefined {
     return this.commodityMap.get(id);
@@ -505,6 +519,9 @@ class AppData {
           } else if (jsonObject.jsonType === 'WEAPON') {
             const weapon = Weapon.deserialize(jsonObject);
             this.weaponMap.set(weapon.id, weapon);
+          } else if (jsonObject.jsonType === 'SPECIAL_ITEM') {
+            const specialItem = SpecialItem.deserialize(jsonObject);
+            this.specialItemMap.set(specialItem.id, specialItem);
           } else if (jsonObject.jsonType === 'COMMODITY') {
             const commodity = Commodity.deserialize(jsonObject);
             this.commodityMap.set(commodity.id, commodity);

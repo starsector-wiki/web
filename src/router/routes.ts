@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       { name: 'ship_mod', path: 'ship_mods/:id', component: () => import('pages/ShipModPage.vue'), },
       { name: 'weapons', path: 'weapons', component: () => import('pages/WeaponsPage.vue'), },
       { name: 'weapon', path: 'weapons/:id', component: () => import('pages/WeaponPage.vue'), },
+      { name: 'specialItems', path: 'specialItems', component: () => import('pages/SpecialItemsPage.vue'), },
       { name: 'commodites', path: 'commodites', component: () => import('pages/CommoditesPage.vue'), },
       { name: 'industries', path: 'industries', component: () => import('pages/IndustriesPage.vue'), },
       { name: 'planetTypes', path: 'planetTypes', component: () => import('pages/PlanetTypesPage.vue'), },

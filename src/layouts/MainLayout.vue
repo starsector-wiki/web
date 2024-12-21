@@ -39,6 +39,9 @@ function toggleLeftDrawer() {
         <q-item clickable :to="{ name: 'weapons' }">
           <q-item-section> 武器数据 </q-item-section>
         </q-item>
+        <q-item clickable :to="{ name: 'specialItems' }">
+          <q-item-section> 特殊物品 </q-item-section>
+        </q-item>
         <q-item clickable :to="{ name: 'commodites' }">
           <q-item-section> 商品 </q-item-section>
         </q-item>
