@@ -16,6 +16,7 @@ export class StarSystem {
   tertiaryId!: string;
 
   procgen!: boolean;
+  iconColor: string = 'white';
 
   static deserialize(object: object) {
     return plainToInstance(StarSystem, object);

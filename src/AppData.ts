@@ -529,6 +529,16 @@ class AppData {
           }
         }
       }
+      for (const starSystem of this.starSystemMap.values()) {
+        const star = this.getPlanetById(starSystem.starId);
+        if (star) {
+          const planetType = this.getPlanetTypeById(star.typeId);
+          if (planetType) {
+            starSystem.iconColor = '#' + planetType.color;
+          }
+        }
+      }
+
       this.ready.value = true;
     } catch (error) {
       console.error(error);
