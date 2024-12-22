@@ -16,7 +16,7 @@ defineOptions({
       align-items: stretch;
       gap: 10px 10px;
     ">
-    <q-btn style="flex: 0.2 0 auto" v-for="weapon in appData.sortdWeapon()" :key="weapon.id"
+    <q-btn class="card-item" no-caps v-for="weapon in appData.sortdWeapon()" :key="weapon.id"
       :to="{ name: 'weapon', params: { id: weapon.id } }">
       <div style="
           width: 100%;

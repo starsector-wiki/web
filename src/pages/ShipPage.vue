@@ -3,8 +3,10 @@ import { ShieldTypeDisplay } from 'src/classes/conts';
 import MutableStatDiv from 'src/components/MutableStatDiv.vue';
 import ShipsDiv from 'src/components/ShipsDiv.vue';
 import { appData } from 'src/AppData';
-import { computed, onMounted, ref, useTemplateRef } from 'vue';
+import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
+import ShipSpriteDiv from 'src/components/ShipSpriteDiv.vue';
 
 defineOptions({
   name: 'ShipPage',
@@ -14,7 +16,6 @@ const route = useRoute();
 let id = ref(route.params.id as string);
 onBeforeRouteUpdate(async (to) => {
   id.value = to.params.id as string;
-  drawCanvas();
 });
 const ship = computed(() => appData.getShipById(id.value));
 const skins = computed(() =>
@@ -23,21 +24,6 @@ const skins = computed(() =>
 const variants = computed(() =>
   appData.getShipsByIds(ship.value?.varinatIds ?? [])
 );
-
-const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
-async function drawCanvas() {
-  if (canvas.value) {
-    let ctx = canvas.value.getContext('2d');
-    if (ctx && ship.value) {
-      ctx.imageSmoothingEnabled = false;
-      const offscreenCanvas = await appData.getShipCanvas(ship.value);
-      canvas.value.width = offscreenCanvas.canvas.width;
-      canvas.value.height = offscreenCanvas.canvas.height;
-      ctx.drawImage(offscreenCanvas.canvas, 0, 0);
-    }
-  }
-}
-onMounted(drawCanvas);
 </script>
 
 <template>
@@ -52,7 +38,7 @@ onMounted(drawCanvas);
 
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
         <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ ship.description }}</span>
-        <canvas id="canvas" ref="canvas"></canvas>
+        <ShipSpriteDiv :ship="ship" />
       </div>
 
       <br /><br />
@@ -292,7 +278,7 @@ onMounted(drawCanvas);
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(ship, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(ship) }}</code></pre>
     </template>
   </q-page>
 </template>

@@ -3,6 +3,7 @@ import ShipsDiv from 'src/components/ShipsDiv.vue';
 import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'ShipSystemPage',
@@ -56,7 +57,7 @@ const defenseShips = computed(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(shipSystem, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(shipSystem) }}</code></pre>
     </template>
   </q-page>
 </template>

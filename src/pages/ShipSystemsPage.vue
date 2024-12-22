@@ -15,7 +15,7 @@ defineOptions({
       align-items: stretch;
       gap: 10px 10px;
     ">
-    <q-btn style="flex: 0.2 0 auto" v-for="shipSystem in appData.sortdShipSystem()" :key="shipSystem.id"
+    <q-btn class="card-item" no-caps v-for="shipSystem in appData.sortdShipSystem()" :key="shipSystem.id"
       :to="{ name: 'ship_system', params: { id: shipSystem.id } }">
       <div style="
           width: 100%;

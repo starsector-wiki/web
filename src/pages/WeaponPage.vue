@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import ShipsDiv from 'src/components/ShipsDiv.vue';
 import { appData } from 'src/AppData';
-import { computed, onMounted, ref, useTemplateRef } from 'vue';
+import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
+import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
 
 defineOptions({
   name: 'WeaponPage',
@@ -12,33 +14,19 @@ const route = useRoute();
 let id = ref(route.params.id as string);
 onBeforeRouteUpdate(async (to) => {
   id.value = to.params.id as string;
-  drawCanvas();
 });
 
 const weapon = computed(() => {
   return appData.getWeaponById(id.value);
 });
 const ships = computed(() => {
-  return appData.getShipsByIds(weapon.value?.shipIds ?? []);
+  // return appData.getShipsByIds(weapon.value?.shipIds ?? []);
+  return [];
 });
 const variantShips = computed(() => {
-  return appData.getShipsByIds(weapon.value?.variantIds ?? []);
+  // return appData.getShipsByIds(weapon.value?.variantIds ?? []);
+  return [];
 });
-
-const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
-async function drawCanvas() {
-  if (canvas.value) {
-    let ctx = canvas.value.getContext('2d');
-    if (ctx && weapon.value) {
-      ctx.imageSmoothingEnabled = false;
-      const offscreenCanvas = (await appData.getWeaponCanvas(weapon.value))!;
-      canvas.value.width = offscreenCanvas.canvas.width;
-      canvas.value.height = offscreenCanvas.canvas.height;
-      ctx.drawImage(offscreenCanvas.canvas, 0, 0);
-    }
-  }
-}
-onMounted(drawCanvas);
 </script>
 
 <template>
@@ -53,7 +41,7 @@ onMounted(drawCanvas);
 
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
         <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ weapon.description }}</span>
-        <canvas id="canvas" ref="canvas"></canvas>
+        <WeaponSpriteDiv :weapon="weapon" />
       </div>
 
       <br /><br />
@@ -176,7 +164,7 @@ onMounted(drawCanvas);
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(weapon, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(weapon) }}</code></pre>
     </template>
   </q-page>
 </template>

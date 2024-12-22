@@ -34,7 +34,7 @@ function haveSize(hullSize: HullSize): boolean {
     <template v-if="haveSize(hullSize)">
       <h4>{{ HullSizeDisplay.get(hullSize) ?? hullSize }}</h4>
       <div class="items">
-        <q-btn flat class="item" v-for="ship in getShipsBySize(hullSize)" :key="ship.id"
+        <q-btn no-caps flat class="item" v-for="ship in getShipsBySize(hullSize)" :key="ship.id"
           :to="{ name: 'ship', params: { id: ship.id } }">
           <div>
             <div class="item_img_section">

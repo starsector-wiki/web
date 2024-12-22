@@ -4,18 +4,38 @@ import { ShipMod } from './classes/model/shipMod';
 import { ShipSystem } from './classes/model/shipSystem';
 import { Weapon } from './classes/model/weapon';
 import { api } from 'src/boot/axios';
-import { CanvasSprite, computeCanvasSprites, defaultCanvasSprite, drawImage, SpriteCanvas } from './classes/model/CanvasSprite';
+import { CanvasSprite, computeCanvasSprites, defaultCanvasSprite, CanvasResult } from './classes/model/CanvasSprite';
+import { Commodity } from './classes/model/Commodity';
+import { Industry } from './classes/model/Industry';
+import { PlanetType } from './classes/model/PlanetType';
+import { MarketCondition } from './classes/model/MarketCondition';
+import { SubMarket } from './classes/model/SubMarket';
+import { Faction } from './classes/model/Faction';
+import { Person } from './classes/model/Person';
+import { Planet } from './classes/model/Planet';
+import { StarSystem } from './classes/model/StarSystem';
+import { SpecialItem } from './classes/model/SpecialItem';
 
 class AppData {
-  debug = false;
+  debug = true;
   ready = ref(false);
   shipMap: Map<string, Ship> = new Map();
   shipSystemMap: Map<string, ShipSystem> = new Map();
   shipModMap: Map<string, ShipMod> = new Map();
   weaponMap: Map<string, Weapon> = new Map();
+  specialItemMap: Map<string, SpecialItem> = new Map();
+  commodityMap: Map<string, Commodity> = new Map();
+  industryMap: Map<string, Industry> = new Map();
+  planetTypeMap: Map<string, PlanetType> = new Map();
+  marketConditionMap: Map<string, MarketCondition> = new Map();
+  subMarketMap: Map<string, SubMarket> = new Map();
+  factionMap: Map<string, Faction> = new Map();
+  starSystemMap: Map<string, StarSystem> = new Map();
+  planetMap: Map<string, Planet> = new Map();
+  personMap: Map<string, Person> = new Map();
   imgMap: Map<string, HTMLImageElement> = new Map();
-  weaponCanvasMap: Map<string, SpriteCanvas> = new Map();
-  shipCanvasMap: Map<string, SpriteCanvas> = new Map();
+  weaponCanvasMap: Map<string, CanvasResult> = new Map();
+  shipCanvasMap: Map<string, CanvasResult> = new Map();
 
   sortdShips(): Ship[] {
     const result: Ship[] = [];
@@ -66,6 +86,96 @@ class AppData {
     }
     return result;
   }
+  sortdSpecialItem(): SpecialItem[] {
+    const result: SpecialItem[] = [];
+    const sortedArray = Array.from(this.specialItemMap.entries());
+    sortedArray.sort((a, b) => b[1].order - a[1].order);
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdCommodity(): Commodity[] {
+    const result: Commodity[] = [];
+    const sortedArray = Array.from(this.commodityMap.entries());
+    sortedArray.sort((a, b) => b[1].order - a[1].order);
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdIndustry(): Industry[] {
+    const result: Industry[] = [];
+    const sortedArray = Array.from(this.industryMap.entries());
+    sortedArray.sort((a, b) => a[1].order - b[1].order);
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdPlanetType(): PlanetType[] {
+    const result: PlanetType[] = [];
+    const sortedArray = Array.from(this.planetTypeMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdMarketCondition(): MarketCondition[] {
+    const result: MarketCondition[] = [];
+    const sortedArray = Array.from(this.marketConditionMap.entries());
+    sortedArray.sort((a, b) => a[1].order - b[1].order);
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdSubMarket(): SubMarket[] {
+    const result: SubMarket[] = [];
+    const sortedArray = Array.from(this.subMarketMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdFaction(): Faction[] {
+    const result: Faction[] = [];
+    const sortedArray = Array.from(this.factionMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdStarSystem(): StarSystem[] {
+    const result: StarSystem[] = [];
+    const sortedArray = Array.from(this.starSystemMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdPlanet(): Planet[] {
+    const result: Planet[] = [];
+    const sortedArray = Array.from(this.planetMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
+  sortdPerson(): Person[] {
+    const result: Person[] = [];
+    const sortedArray = Array.from(this.personMap.entries());
+    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    for (const [, value] of sortedArray) {
+      result.push(value);
+    }
+    return result;
+  }
   getShipById(id: string): Ship | undefined {
     return this.shipMap.get(id);
   }
@@ -88,6 +198,36 @@ class AppData {
   getWeaponById(id: string): Weapon | undefined {
     return this.weaponMap.get(id);
   }
+  getSpecialItemById(id: string): SpecialItem | undefined {
+    return this.specialItemMap.get(id);
+  }
+  getCommodityById(id: string): Commodity | undefined {
+    return this.commodityMap.get(id);
+  }
+  getIndustryById(id: string): Industry | undefined {
+    return this.industryMap.get(id);
+  }
+  getPlanetTypeById(id: string): PlanetType | undefined {
+    return this.planetTypeMap.get(id);
+  }
+  getMarketConditionById(id: string): MarketCondition | undefined {
+    return this.marketConditionMap.get(id);
+  }
+  getSubMarketById(id: string): SubMarket | undefined {
+    return this.subMarketMap.get(id);
+  }
+  getFactionById(id: string): Faction | undefined {
+    return this.factionMap.get(id);
+  }
+  getStarSystemById(id: string): StarSystem | undefined {
+    return this.starSystemMap.get(id);
+  }
+  getPlanetById(id: string): Planet | undefined {
+    return this.planetMap.get(id);
+  }
+  getPersonById(id: string): Person | undefined {
+    return this.personMap.get(id);
+  }
 
   async getImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
@@ -105,7 +245,7 @@ class AppData {
       }
     });
   }
-  async getWeaponCanvas(weapon: Weapon, isHardPoint: boolean = false): Promise<SpriteCanvas | undefined> {
+  async getWeaponCanvas(weapon: Weapon, isHardPoint: boolean = false): Promise<CanvasResult | undefined> {
     const weaponImgId = isHardPoint ? weapon.id + '_hard' : weapon.id;
     const exitsCanvas = this.weaponCanvasMap.get(weaponImgId);
     if (exitsCanvas) {
@@ -143,9 +283,10 @@ class AppData {
     const showMissile =
       weapon.renderHints.includes('RENDER_LOADED_MISSILES') ||
       weapon.renderHints.includes('RENDER_LOADED_MISSILES_UNLESS_HIDDEN');
+    const offsets = isHardPoint ? weapon.hardPointOffsets : weapon.turretOffsets;
     if (
       showMissile &&
-      weapon.turretOffsets.length > 0 &&
+      offsets.length > 0 &&
       weapon.projSpriteName
     ) {
       offsetPairs = [];
@@ -174,39 +315,24 @@ class AppData {
       }
     }
     const canvasResult = computeCanvasSprites(...canvasSprites);
-    const width = canvasResult.left + canvasResult.right;
-    const height = canvasResult.top + canvasResult.bottom;
-    const offscreenCanvas = new OffscreenCanvas(width, height);
-    const ctx = offscreenCanvas.getContext('2d');
-    if (ctx) {
-      ctx.imageSmoothingEnabled = false;
-      const myCtx = {
-        ctx,
-        left: canvasResult.left,
-        top: canvasResult.top
-      };
-      if (underSpriteImg) { drawImage(myCtx, underSpriteImg, underSpriteImg.width / 2, underSpriteImg.height / 2); }
-      if (gunSpriteImg) { drawImage(myCtx, gunSpriteImg, gunSpriteImg.width / 2, gunSpriteImg.height / 2); }
-      drawImage(myCtx, weaponSpriteImg, weaponSpriteImg.width / 2, weaponSpriteImg.height / 2);
-      if (offsetPairs && offsetPairs.length > 0 && projSpriteImg) {
-        for (const offsetPair of offsetPairs) {
-          drawImage(myCtx, projSpriteImg, projSpriteImg.width / 2, projSpriteImg.height / 2, offsetPair[1], offsetPair[0]);
-        }
-      }
-    }
     let top = canvasResult.top
     if (isHardPoint) {
       top += weaponSpriteImg.naturalHeight / 4;
     }
-    const result: SpriteCanvas = {
-      canvas: offscreenCanvas,
+    let bottom = canvasResult.bottom
+    if (isHardPoint) {
+      bottom -= weaponSpriteImg.naturalHeight / 4;
+    }
+    const result: CanvasResult = {
       left: canvasResult.left,
-      top
+      right: canvasResult.right,
+      top,
+      bottom
     }
     this.weaponCanvasMap.set(weaponImgId, result);
     return result;
   }
-  async getShipCanvas(ship: Ship): Promise<SpriteCanvas> {
+  async getShipCanvas(ship: Ship): Promise<CanvasResult> {
     const exitsCanvas = this.shipCanvasMap.get(ship.id);
     if (exitsCanvas) {
       return exitsCanvas;
@@ -214,7 +340,7 @@ class AppData {
 
     const shipImg = await this.getImage(ship.sprite);
 
-    let weapons: [WeaponSlot, SpriteCanvas][] = []
+    const weapons: [WeaponSlot, CanvasResult][] = []
     for (const [slotId, weaponId] of ship.weaponIdMap.entries()) {
       if (weaponId) {
         const weapon = appData.getWeaponById(weaponId);
@@ -225,17 +351,8 @@ class AppData {
         }
       }
     }
-    weapons = weapons.sort((a, b) => {
-      //越靠近中间的武器越后渲染，使其显示在顶层
-      const aLocation = a[0].location;
-      const bLocation = b[0].location;
-      if (aLocation.x !== bLocation.x) {
-        return Math.abs(aLocation.x) - Math.abs(bLocation.x);
-      }
-      return Math.abs(aLocation.y) - Math.abs(bLocation.y);
-    });
 
-    let modules: [Ship, WeaponSlot, SpriteCanvas][] = [];
+    const modules: [Ship, WeaponSlot, CanvasResult][] = [];
     if (ship.station) {
       for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
         if (variantId) {
@@ -249,25 +366,6 @@ class AppData {
           }
         }
       }
-      modules = modules.sort((a, b) => {
-        const aModule = a[0];
-        const bModule = b[0];
-        if (aModule.isUnderParent() !== bModule.isUnderParent()) {
-          //底部模块排在前面渲染
-          return aModule.isUnderParent() ? -1 : 1;
-        }
-        if (aModule.isEmptyModule() !== bModule.isEmptyModule()) {
-          //空模块排在前面渲染
-          return aModule.isEmptyModule() ? -1 : 1;
-        }
-        //越靠近外面的模块越后渲染，使其显示在顶层
-        const aLocation = a[1].location;
-        const bLocation = b[1].location;
-        if (aLocation.x !== bLocation.x) {
-          return Math.abs(bLocation.x) - Math.abs(aLocation.x);
-        }
-        return Math.abs(bLocation.y) - Math.abs(aLocation.y);
-      });
     }
 
     const canvasSprites: CanvasSprite[] = [];
@@ -282,13 +380,15 @@ class AppData {
     for (const weaponData of weapons) {
       const weaponCanvas = weaponData[1];
       const weaponSlot = weaponData[0];
+      const height = weaponCanvas.top + weaponCanvas.bottom;
+      const width = weaponCanvas.left + weaponCanvas.right;
       canvasSprites.push({
         element: {
-          naturalHeight: weaponCanvas.canvas.height,
-          naturalWidth: weaponCanvas.canvas.width
+          naturalHeight: height,
+          naturalWidth: width
         },
-        centerOffsetX: weaponCanvas.left - weaponCanvas.canvas.width / 2,
-        centerOffsetY: -(weaponCanvas.top - weaponCanvas.canvas.height / 2),
+        centerOffsetX: weaponCanvas.left - width / 2,
+        centerOffsetY: -(weaponCanvas.top - height / 2),
         translateX: weaponSlot.location.x,
         translateY: weaponSlot.location.y,
         degree: weaponSlot.angle
@@ -297,67 +397,24 @@ class AppData {
     for (const moduleData of modules) {
       const moduleCanvas = moduleData[2];
       const moduleSlot = moduleData[1];
+      const height = moduleCanvas.top + moduleCanvas.bottom;
+      const width = moduleCanvas.left + moduleCanvas.right;
       canvasSprites.push({
         element: {
-          naturalHeight: moduleCanvas.canvas.height,
-          naturalWidth: moduleCanvas.canvas.width
+          naturalHeight: height,
+          naturalWidth: width
         },
-        centerOffsetX: moduleCanvas.left - moduleCanvas.canvas.width / 2,
-        centerOffsetY: -(moduleCanvas.top - moduleCanvas.canvas.height / 2),
+        centerOffsetX: moduleCanvas.left - width / 2,
+        centerOffsetY: -(moduleCanvas.top - height / 2),
         translateX: moduleSlot.location.x,
         translateY: moduleSlot.location.y,
         degree: moduleSlot.angle
       });
     }
     const canvasResult = computeCanvasSprites(...canvasSprites);
-    const weaponSlotCenterLeft = canvasResult.left - (ship.moduleAnchor?.x ?? 0);
-    const weaponSlotCenterTop = canvasResult.top + (ship.moduleAnchor?.y ?? 0);
 
-    const width = canvasResult.left + canvasResult.right;
-    const height = canvasResult.top + canvasResult.bottom;
-    const offscreenCanvas = new OffscreenCanvas(width, height);
-    const ctx = offscreenCanvas.getContext('2d');
-    if (ctx) {
-      ctx.imageSmoothingEnabled = false;
-      const myCtx = {
-        ctx,
-        left: canvasResult.left,
-        top: canvasResult.top
-      };
-      drawImage(myCtx, shipImg, ship.center.left + (ship.moduleAnchor?.x ?? 0), shipImg.naturalHeight - ship.center.bottom - (ship.moduleAnchor?.y ?? 0));
-
-      if (appData.debug) {
-        // show ship center point
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = 'blue';
-        ctx.strokeRect(canvasResult.left, canvasResult.top, 1, 1);
-        ctx.strokeStyle = 'red';
-        ctx.strokeRect(weaponSlotCenterLeft, weaponSlotCenterTop, 1, 1);
-      }
-
-      for (const weaponData of weapons) {
-        const weaponCtx = {
-          ctx,
-          left: weaponSlotCenterLeft,
-          top: weaponSlotCenterTop
-        };
-        const weaponSlot = weaponData[0];
-        const weaponCanvas = weaponData[1];
-        drawImage(weaponCtx, weaponCanvas.canvas, weaponCanvas.left, weaponCanvas.top, weaponSlot.location.x, weaponSlot.location.y, weaponSlot.angle);
-      }
-      for (const moduleData of modules) {
-        const moduleSlot = moduleData[1];
-        const moduleCanvas = moduleData[2];
-        drawImage(myCtx, moduleCanvas.canvas, moduleCanvas.left, moduleCanvas.top, moduleSlot.location.x, moduleSlot.location.y, moduleSlot.angle);
-      }
-    }
-    const result: SpriteCanvas = {
-      canvas: offscreenCanvas,
-      left: canvasResult.left,
-      top: canvasResult.top
-    }
-    this.shipCanvasMap.set(ship.id, result);
-    return result;
+    this.shipCanvasMap.set(ship.id, canvasResult);
+    return canvasResult;
   }
 
   async initData() {
@@ -379,6 +436,36 @@ class AppData {
           } else if (jsonObject.jsonType === 'WEAPON') {
             const weapon = Weapon.deserialize(jsonObject);
             this.weaponMap.set(weapon.id, weapon);
+          } else if (jsonObject.jsonType === 'SPECIAL_ITEM') {
+            const specialItem = SpecialItem.deserialize(jsonObject);
+            this.specialItemMap.set(specialItem.id, specialItem);
+          } else if (jsonObject.jsonType === 'COMMODITY') {
+            const commodity = Commodity.deserialize(jsonObject);
+            this.commodityMap.set(commodity.id, commodity);
+          } else if (jsonObject.jsonType === 'INDUSTRY') {
+            const industry = Industry.deserialize(jsonObject);
+            this.industryMap.set(industry.id, industry);
+          } else if (jsonObject.jsonType === 'PLANET_TYPE') {
+            const planetType = PlanetType.deserialize(jsonObject);
+            this.planetTypeMap.set(planetType.id, planetType);
+          } else if (jsonObject.jsonType === 'MARKET_CONDITION') {
+            const marketCondition = MarketCondition.deserialize(jsonObject);
+            this.marketConditionMap.set(marketCondition.id, marketCondition);
+          } else if (jsonObject.jsonType === 'SUB_MARKET') {
+            const subMarket = SubMarket.deserialize(jsonObject);
+            this.subMarketMap.set(subMarket.id, subMarket);
+          } else if (jsonObject.jsonType === 'FACTION') {
+            const faction = Faction.deserialize(jsonObject);
+            this.factionMap.set(faction.id, faction);
+          } else if (jsonObject.jsonType === 'START_SYSTEM') {
+            const starSystem = StarSystem.deserialize(jsonObject);
+            this.starSystemMap.set(starSystem.id, starSystem);
+          } else if (jsonObject.jsonType === 'PLANET') {
+            const planet = Planet.deserialize(jsonObject);
+            this.planetMap.set(planet.id, planet);
+          } else if (jsonObject.jsonType === 'PERSON') {
+            const person = Person.deserialize(jsonObject);
+            this.personMap.set(person.id, person);
           }
         }
       }

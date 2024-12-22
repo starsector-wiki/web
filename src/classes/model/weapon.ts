@@ -22,6 +22,7 @@ export class Weapon {
   renderHints!: string[];
   //    导弹位置
   turretOffsets!: number[];
+  hardPointOffsets!: number[];
   projSpriteName?: string;
 
   //    战术应用
