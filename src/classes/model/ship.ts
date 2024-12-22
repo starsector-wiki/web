@@ -150,6 +150,7 @@ export class Ship {
 
   skinIds: string[] = [];
   varinatIds: string[] = [];
+  isModule: boolean = false;
 
   static deserialize(object: object) {
     return plainToInstance(Ship, object);

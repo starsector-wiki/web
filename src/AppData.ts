@@ -353,7 +353,7 @@ class AppData {
     }
 
     const modules: [Ship, WeaponSlot, CanvasResult][] = [];
-    if (ship.station) {
+    if (ship.moduleIdMap.size > 0) {
       for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
         if (variantId) {
           const variant = appData.getShipById(variantId);
@@ -481,6 +481,18 @@ class AppData {
           ship.skinIds = Array.from(this.shipMap.values())
             .filter(it => it.isSkin() && it.emptyHullVariant && it.baseHullId === ship.hullId)
             .map(it => it.id);
+        }
+        if (ship.moduleIdMap.size > 0) {
+          for (const entry of ship.moduleIdMap.entries()) {
+            const variantId = entry[1];
+            const variant = this.getShipById(variantId);
+            if (variant) {
+              variant.isModule = true;
+            }
+          }
+        }
+        if (ship.moduleAnchor) {
+          ship.isModule = true;
         }
         //ship system
         if (ship.hasSystem() && ship.emptyHullVariant) {
