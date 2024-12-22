@@ -2,7 +2,7 @@
 import { CanvasResult } from 'src/classes/model/CanvasSprite';
 import { Weapon } from 'src/classes/model/weapon';
 import { computeWeaponSize } from 'src/classes/utils';
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 
 defineOptions({
   name: 'WeaponSpriteDiv',
@@ -38,9 +38,9 @@ const gunSprite = computed(() => isHardPoint ? weapon.hardPointGunSprite : weapo
 const weaponSprite = computed(() => isHardPoint ? weapon.hardPointSprite : weapon.turretSprite);
 
 const canvasResult = ref(undefined as CanvasResult | undefined);
-(async () => {
+watchEffect(async () => {
   canvasResult.value = await computeWeaponSize(weapon, isHardPoint);
-})()
+});
 </script>
 
 <template>
