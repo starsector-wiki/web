@@ -1,16 +1,8 @@
-export interface Element {
-  naturalHeight: number;
-  naturalWidth: number;
-}
-
-export interface SpriteCanvas {
-  canvas: OffscreenCanvas
-  left: number
-  top: number
-}
-
 export interface CanvasSprite {
-  element: HTMLImageElement | Element
+  element: {
+    naturalHeight: number;
+    naturalWidth: number;
+  }
   centerOffsetX: number
   centerOffsetY: number
   translateX: number
@@ -83,47 +75,4 @@ function addCanvasSprite(canvasResult: CanvasResult, canvasSprite: CanvasSprite)
     top: Math.max(canvasResult.top, top),
     bottom: Math.max(canvasResult.bottom, bottom)
   }
-}
-
-export interface CanvasContext {
-  ctx: OffscreenCanvasRenderingContext2D,
-  left: number,
-  top: number,
-}
-
-export function drawImage(ctx: CanvasContext, img: HTMLImageElement | OffscreenCanvas, imgCenterLeft: number, imgCenterTop: number, translateRight: number = 0, translateTop: number = 0, angle: number = 0) {
-  const centerPointLeft = ctx.left - imgCenterLeft;
-  const centerPointTop = ctx.top - imgCenterTop;
-  let realAngle = angle % 360;
-  if (realAngle !== 0) {
-    realAngle = 360 - realAngle;
-    const rotateImageCanvas = rotateImage(img, imgCenterLeft, imgCenterTop, realAngle);
-    ctx.ctx.drawImage(rotateImageCanvas.canvas, ctx.left - rotateImageCanvas.left + translateRight, ctx.top - rotateImageCanvas.top - translateTop);
-  } else {
-    ctx.ctx.drawImage(img, centerPointLeft + translateRight, centerPointTop - translateTop);
-  }
-}
-
-function rotateImage(img: HTMLImageElement | OffscreenCanvas, imgCenterLeft: number, imgCenterTop: number, angle: number): SpriteCanvas {
-  const top = imgCenterTop;
-  const bottom = img.height - imgCenterTop;
-  const left = imgCenterLeft;
-  const right = img.width - imgCenterLeft;
-  const diagonal1 = Math.sqrt(top ** 2 + right ** 2);
-  const diagonal2 = Math.sqrt(right ** 2 + bottom ** 2);
-  const diagonal3 = Math.sqrt(bottom ** 2 + left ** 2);
-  const diagonal4 = Math.sqrt(left ** 2 + top ** 2);
-  const diagonal = Math.max(diagonal1, diagonal2, diagonal3, diagonal4);
-  const offscreenCanvas = new OffscreenCanvas(diagonal * 2, diagonal * 2);
-  const ctx = offscreenCanvas.getContext('2d');
-  if (ctx) {
-    ctx.translate(offscreenCanvas.width / 2, offscreenCanvas.height / 2);
-    ctx.rotate(angle * Math.PI / 180);
-    ctx.drawImage(img, -imgCenterLeft, -imgCenterTop);
-  }
-  return {
-    canvas: offscreenCanvas,
-    left: offscreenCanvas.width / 2,
-    top: offscreenCanvas.height / 2
-  };
 }
