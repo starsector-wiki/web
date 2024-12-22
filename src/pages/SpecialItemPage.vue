@@ -2,6 +2,7 @@
 import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'SpecialItemPage',
@@ -77,7 +78,7 @@ const specialItem = computed(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(specialItem, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(specialItem) }}</code></pre>
     </template>
   </q-page>
 </template>

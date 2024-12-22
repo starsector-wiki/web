@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { appData } from 'src/AppData';
+import { debugJson } from 'src/classes/utils';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 
@@ -69,7 +70,7 @@ const commodity = computed(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(commodity, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(commodity) }}</code></pre>
     </template>
   </q-page>
 </template>

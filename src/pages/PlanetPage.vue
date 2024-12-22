@@ -2,6 +2,7 @@
 import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'PlanetPage',
@@ -38,7 +39,7 @@ const planet = computed(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(planet, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(planet) }}</code></pre>
     </template>
   </q-page>
 </template>

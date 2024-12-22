@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import * as THREE from 'three';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'PlanetTypePage',
@@ -76,7 +77,7 @@ onMounted(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(planetType, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(planetType) }}</code></pre>
     </template>
   </q-page>
 </template>

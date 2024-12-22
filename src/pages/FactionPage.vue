@@ -2,6 +2,7 @@
 import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'FactionPage',
@@ -57,7 +58,7 @@ const faction = computed(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(faction, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(faction) }}</code></pre>
     </template>
   </q-page>
 </template>

@@ -3,6 +3,7 @@ import ShipsDiv from 'src/components/ShipsDiv.vue';
 import { appData } from 'src/AppData';
 import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'WeaponPage',
@@ -176,7 +177,7 @@ onMounted(drawCanvas);
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(weapon, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(weapon) }}</code></pre>
     </template>
   </q-page>
 </template>

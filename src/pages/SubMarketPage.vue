@@ -2,6 +2,7 @@
 import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'SubMarketPage',
@@ -39,7 +40,7 @@ const subMarket = computed(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(subMarket, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(subMarket) }}</code></pre>
     </template>
   </q-page>
 </template>

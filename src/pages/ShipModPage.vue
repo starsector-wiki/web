@@ -3,6 +3,7 @@ import ShipsDiv from 'src/components/ShipsDiv.vue';
 import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'ShipModPage',
@@ -87,7 +88,7 @@ const variantShips = computed(() => {
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(shipMod, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(shipMod) }}</code></pre>
     </template>
   </q-page>
 </template>

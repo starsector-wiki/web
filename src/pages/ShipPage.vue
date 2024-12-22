@@ -5,6 +5,7 @@ import ShipsDiv from 'src/components/ShipsDiv.vue';
 import { appData } from 'src/AppData';
 import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { debugJson } from 'src/classes/utils';
 
 defineOptions({
   name: 'ShipPage',
@@ -292,7 +293,7 @@ onMounted(drawCanvas);
 
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ JSON.stringify(ship, null, 2) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(ship) }}</code></pre>
     </template>
   </q-page>
 </template>
