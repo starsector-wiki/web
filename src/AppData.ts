@@ -17,7 +17,7 @@ import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
 
 class AppData {
-  debug = true;
+  debug = false;
   ready = ref(false);
   shipMap: Map<string, Ship> = new Map();
   shipSystemMap: Map<string, ShipSystem> = new Map();
@@ -353,7 +353,7 @@ class AppData {
     }
 
     const modules: [Ship, WeaponSlot, CanvasResult][] = [];
-    if (ship.station) {
+    if (ship.moduleIdMap.size > 0) {
       for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
         if (variantId) {
           const variant = appData.getShipById(variantId);
@@ -457,7 +457,7 @@ class AppData {
           } else if (jsonObject.jsonType === 'FACTION') {
             const faction = Faction.deserialize(jsonObject);
             this.factionMap.set(faction.id, faction);
-          } else if (jsonObject.jsonType === 'START_SYSTEM') {
+          } else if (jsonObject.jsonType === 'STAR_SYSTEM') {
             const starSystem = StarSystem.deserialize(jsonObject);
             this.starSystemMap.set(starSystem.id, starSystem);
           } else if (jsonObject.jsonType === 'PLANET') {
@@ -481,6 +481,18 @@ class AppData {
           ship.skinIds = Array.from(this.shipMap.values())
             .filter(it => it.isSkin() && it.emptyHullVariant && it.baseHullId === ship.hullId)
             .map(it => it.id);
+        }
+        if (ship.moduleIdMap.size > 0) {
+          for (const entry of ship.moduleIdMap.entries()) {
+            const variantId = entry[1];
+            const variant = this.getShipById(variantId);
+            if (variant) {
+              variant.isModule = true;
+            }
+          }
+        }
+        if (ship.moduleAnchor) {
+          ship.isModule = true;
         }
         //ship system
         if (ship.hasSystem() && ship.emptyHullVariant) {
@@ -517,6 +529,31 @@ class AppData {
           }
         }
       }
+      for (const planet of this.planetMap.values()) {
+        const planetType = this.getPlanetTypeById(planet.typeId);
+        if (planetType) {
+          planet.type = planetType;
+        }
+        const starSystem = this.getStarSystemById(planet.starSystemId);
+        if (starSystem) {
+          planet.starSystem = starSystem;
+        }
+      }
+      for (const starSystem of this.starSystemMap.values()) {
+        const star = this.getPlanetById(starSystem.starId);
+        if (star) {
+          starSystem.star = star;
+        }
+        const secondaryStar = this.getPlanetById(starSystem.secondaryId);
+        if (secondaryStar) {
+          starSystem.secondaryStar = secondaryStar;
+        }
+        const tertiaryStar = this.getPlanetById(starSystem.tertiaryId);
+        if (tertiaryStar) {
+          starSystem.tertiaryStar = tertiaryStar;
+        }
+      }
+
       this.ready.value = true;
     } catch (error) {
       console.error(error);

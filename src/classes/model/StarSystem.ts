@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import 'reflect-metadata';
+import { Planet } from './Planet';
 
 export class StarSystem {
   id!: string;
@@ -16,6 +17,9 @@ export class StarSystem {
   tertiaryId!: string;
 
   procgen!: boolean;
+  star!: Planet;
+  secondaryStar?: Planet;
+  tertiaryStar?: Planet;
 
   static deserialize(object: object) {
     return plainToInstance(StarSystem, object);

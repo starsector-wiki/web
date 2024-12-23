@@ -53,7 +53,7 @@ async function getWeapons() {
 
 async function getModules() {
   let modules1: [Ship, WeaponSlot, CanvasResult][] = [];
-  if (ship.station) {
+  if (ship.moduleIdMap.size > 0) {
     for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
       if (variantId) {
         const variant = appData.getShipById(variantId);

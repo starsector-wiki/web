@@ -107,7 +107,7 @@ export async function computeShipSize(ship: Ship): Promise<CanvasResult> {
   });
 
   let modules: [Ship, WeaponSlot, CanvasResult][] = [];
-  if (ship.station) {
+  if (ship.moduleIdMap.size > 0) {
     for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
       if (variantId) {
         const variant = appData.getShipById(variantId);

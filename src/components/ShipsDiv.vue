@@ -22,6 +22,7 @@ const showHullSize = [
 function getShipsBySize(hullSize: HullSize): Ship[] {
   return ships
     .filter((it) => it.size == hullSize)
+    .filter((it) => !it.isModule)
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 function haveSize(hullSize: HullSize): boolean {
