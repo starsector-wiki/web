@@ -17,7 +17,7 @@ import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
 
 class AppData {
-  debug = true;
+  debug = false;
   ready = ref(false);
   shipMap: Map<string, Ship> = new Map();
   shipSystemMap: Map<string, ShipSystem> = new Map();
