@@ -457,7 +457,7 @@ class AppData {
           } else if (jsonObject.jsonType === 'FACTION') {
             const faction = Faction.deserialize(jsonObject);
             this.factionMap.set(faction.id, faction);
-          } else if (jsonObject.jsonType === 'START_SYSTEM') {
+          } else if (jsonObject.jsonType === 'STAR_SYSTEM') {
             const starSystem = StarSystem.deserialize(jsonObject);
             this.starSystemMap.set(starSystem.id, starSystem);
           } else if (jsonObject.jsonType === 'PLANET') {
@@ -529,13 +529,28 @@ class AppData {
           }
         }
       }
+      for (const planet of this.planetMap.values()) {
+        const planetType = this.getPlanetTypeById(planet.typeId);
+        if (planetType) {
+          planet.type = planetType;
+        }
+        const starSystem = this.getStarSystemById(planet.starSystemId);
+        if (starSystem) {
+          planet.starSystem = starSystem;
+        }
+      }
       for (const starSystem of this.starSystemMap.values()) {
         const star = this.getPlanetById(starSystem.starId);
         if (star) {
-          const planetType = this.getPlanetTypeById(star.typeId);
-          if (planetType) {
-            starSystem.iconColor = '#' + planetType.color;
-          }
+          starSystem.star = star;
+        }
+        const secondaryStar = this.getPlanetById(starSystem.secondaryId);
+        if (secondaryStar) {
+          starSystem.secondaryStar = secondaryStar;
+        }
+        const tertiaryStar = this.getPlanetById(starSystem.tertiaryId);
+        if (tertiaryStar) {
+          starSystem.tertiaryStar = tertiaryStar;
         }
       }
 
