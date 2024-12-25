@@ -20,6 +20,7 @@ export class StarSystem {
   star!: Planet;
   secondaryStar?: Planet;
   tertiaryStar?: Planet;
+  planets: Planet[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(StarSystem, object);
