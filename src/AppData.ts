@@ -552,6 +552,12 @@ class AppData {
         if (tertiaryStar) {
           starSystem.tertiaryStar = tertiaryStar;
         }
+        for (const planetId of starSystem.planetIds) {
+          const planet = this.getPlanetById(planetId);
+          if (planet) {
+            starSystem.planets.push(planet);
+          }
+        }
       }
 
       this.ready.value = true;

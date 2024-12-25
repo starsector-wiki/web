@@ -29,6 +29,21 @@ const starSystem = computed(() => {
         {{ starSystem.name }}
       </h4>
 
+      <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
+        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{
+          starSystem.star.customDescription ?? starSystem.star.type.description }}</span>
+      </div>
+
+      <br /><br />
+
+      <ul>
+        <li v-for="planet in starSystem.planets" :key="planet.id">
+          <q-btn no-caps :to="{ name: 'planet', params: { id: planet.id } }">
+            {{ planet.name }}
+          </q-btn>
+        </li>
+      </ul>
+
       <br /><br />
 
       <pre v-if="appData.debug"><code>{{ debugJson(starSystem) }}</code></pre>
