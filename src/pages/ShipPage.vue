@@ -283,7 +283,7 @@ const variants = computed(() =>
   </q-page>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 table {
   width: 100%;
   border-collapse: collapse;
@@ -297,9 +297,7 @@ td {
 th {
   border: 1px solid;
 }
-</style>
 
-<style lang="scss">
 img {
   display: block;
 }
