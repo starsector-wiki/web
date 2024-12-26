@@ -15,6 +15,7 @@ import { Person } from './classes/model/Person';
 import { Planet } from './classes/model/Planet';
 import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
+import { HullSize } from './classes/conts';
 
 class AppData {
   debug = false;
@@ -40,7 +41,18 @@ class AppData {
   sortdShips(): Ship[] {
     const result: Ship[] = [];
     const sortedArray = Array.from(this.shipMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => {
+      if (a[1].size != b[1].size) {
+        if (a[1].size === HullSize.FIGHTER) {
+          return -1;
+        } else if (b[1].size === HullSize.FIGHTER) {
+          return 1;
+        }
+        return b[1].size.localeCompare(a[1].size);
+      } else {
+        return a[1].id.localeCompare(a[1].id);
+      }
+    });
     for (const [, value] of sortedArray) {
       if (value.emptyHullVariant) {
         result.push(value);

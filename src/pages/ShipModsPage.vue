@@ -92,13 +92,11 @@ function filterManufacturer(
 
     <br /><br />
     <h4 v-show="shipMods.normalMods.length > 0">可使用插件</h4>
-    <div class="items">
+    <div class="card-item-list-page">
       <q-btn class="card-item" no-caps v-for="shipMod in shipMods.normalMods" :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
-        <div class="item">
-          <div class="item_img_section">
-            <img decoding="async" :src="shipMod.icon" />
-          </div>
+        <div class="card-item-content">
+          <img decoding="async" :src="shipMod.icon" />
           <span>
             {{ shipMod.name }}
           </span>
@@ -109,13 +107,11 @@ function filterManufacturer(
     <br /><br />
 
     <h4 v-show="shipMods.dMods.length > 0">D插件</h4>
-    <div class="items">
+    <div class="card-item-list-page">
       <q-btn class="card-item" no-caps v-for="shipMod in shipMods.dMods" :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
-        <div class="item">
-          <div class="item_img_section">
-            <img decoding="async" :src="shipMod.icon" />
-          </div>
+        <div class="card-item-content">
+          <img decoding="async" :src="shipMod.icon" />
           <span>
             {{ shipMod.name }}
           </span>
@@ -126,13 +122,11 @@ function filterManufacturer(
     <br /><br />
 
     <h4 v-show="shipMods.hiddenMods.length > 0">隐藏插件</h4>
-    <div class="items">
+    <div class="card-item-list-page">
       <q-btn class="card-item" no-caps v-for="shipMod in shipMods.hiddenMods" :key="shipMod.id"
         :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
-        <div class="item">
-          <div class="item_img_section">
-            <img decoding="async" :src="shipMod.icon" />
-          </div>
+        <div class="card-item-content">
+          <img decoding="async" :src="shipMod.icon" />
           <span>
             {{ shipMod.name }}
           </span>
@@ -141,29 +135,3 @@ function filterManufacturer(
     </div>
   </q-page>
 </template>
-
-<style lang="scss">
-.items {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-  align-items: stretch;
-  gap: 10px 10px;
-}
-
-.item {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.item_img_section {
-  flex: 10 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
