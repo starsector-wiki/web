@@ -8,31 +8,11 @@ defineOptions({
 </script>
 
 <template>
-  <q-page padding style="
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: flex-start;
-      align-items: stretch;
-      gap: 10px 10px;
-    ">
+  <q-page padding class="card-item-list-page">
     <q-btn class="card-item" no-caps v-for="shipSystem in appData.sortdShipSystem()" :key="shipSystem.id"
       :to="{ name: 'ship_system', params: { id: shipSystem.id } }">
-      <div style="
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-flow: column nowrap;
-          align-items: center;
-          justify-content: flex-end;
-        ">
-        <div style="
-            flex: 1 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          ">
-          <img style="background-color: black" decoding="async" :src="shipSystem.icon" />
-        </div>
+      <div class="card-item-content">
+        <img style="background-color: black;width: 64px;height: 64px;" decoding="async" :src="shipSystem.icon" />
         <span>
           {{ shipSystem.name }}
         </span>
