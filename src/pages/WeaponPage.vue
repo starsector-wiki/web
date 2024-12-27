@@ -20,12 +20,10 @@ const weapon = computed(() => {
   return appData.getWeaponById(id.value);
 });
 const ships = computed(() => {
-  // return appData.getShipsByIds(weapon.value?.shipIds ?? []);
-  return [];
+  return appData.getShipsByIds(weapon.value?.shipIds ?? []);
 });
 const variantShips = computed(() => {
-  // return appData.getShipsByIds(weapon.value?.variantIds ?? []);
-  return [];
+  return appData.getShipsByIds(weapon.value?.variantIds ?? []);
 });
 </script>
 

@@ -1,5 +1,6 @@
 import { plainToInstance, Type } from 'class-transformer';
 import 'reflect-metadata';
+import { WeaponSize, WeaponType } from '../conts';
 
 export class Weapon {
   id!: string;
@@ -28,8 +29,8 @@ export class Weapon {
   //    战术应用
   primaryRoleStr!: string;
   //    安装类型
-  size!: string;
-  mountType!: string;
+  size!: WeaponSize;
+  mountType!: WeaponType;
   //    部署点
   ordnancePoint!: number;
 
