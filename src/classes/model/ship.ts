@@ -13,6 +13,7 @@ export class Ship {
   designation!: string;
   description!: string;
   sprite!: string;
+  manufacturer!: string;
   center!: { left: number; bottom: number; };
   moduleAnchor?: { x: number; y: number; };
 
@@ -140,6 +141,7 @@ export class Ship {
   station!: boolean;
   civilian!: boolean;
   combat!: boolean;
+  DHull!: boolean;
   //    自动分
   fleetPoints!: number;
   //    基础价值

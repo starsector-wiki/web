@@ -16,6 +16,7 @@ export class Faction {
 
   pickPersonality!: string;
 
+  @Type(() => Map)
   relationshipMap!: Map<string, number>;
   illegalCommodityIds!: string[];
 

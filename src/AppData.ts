@@ -15,7 +15,7 @@ import { Person } from './classes/model/Person';
 import { Planet } from './classes/model/Planet';
 import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
-import { HullSize } from './classes/conts';
+import { compareFaction, compareShip, compareShipMod, compareWeapon } from './classes/utils';
 
 class AppData {
   debug = false;
@@ -41,31 +41,9 @@ class AppData {
   sortdShips(): Ship[] {
     const result: Ship[] = [];
     const sortedArray = Array.from(this.shipMap.entries());
-    sortedArray.sort((a, b) => {
-      if (a[1].size != b[1].size) {
-        if (a[1].size === HullSize.FIGHTER) {
-          return -1;
-        } else if (b[1].size === HullSize.FIGHTER) {
-          return 1;
-        }
-        return b[1].size.localeCompare(a[1].size);
-      } else {
-        return a[1].id.localeCompare(a[1].id);
-      }
-    });
+    sortedArray.sort((a, b) => compareShip(a[1], b[1]));
     for (const [, value] of sortedArray) {
       if (value.emptyHullVariant) {
-        result.push(value);
-      }
-    }
-    return result;
-  }
-  sortdShipVarinats(): Ship[] {
-    const result: Ship[] = [];
-    const sortedArray = Array.from(this.shipMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
-    for (const [, value] of sortedArray) {
-      if (!value.emptyHullVariant) {
         result.push(value);
       }
     }
@@ -83,7 +61,7 @@ class AppData {
   sortdShipMod(): ShipMod[] {
     const result: ShipMod[] = [];
     const sortedArray = Array.from(this.shipModMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => compareShipMod(a[1], b[1]));
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -92,15 +70,7 @@ class AppData {
   sortdWeapon(): Weapon[] {
     const result: Weapon[] = [];
     const sortedArray = Array.from(this.weaponMap.entries());
-    sortedArray.sort((a, b) => {
-      if (a[1].size != b[1].size) {
-        return b[1].size.localeCompare(a[1].size);
-      } else if (a[1].mountType != b[1].mountType) {
-        return a[1].mountType.localeCompare(b[1].mountType);
-      } else {
-        return a[1].id.localeCompare(a[1].id);
-      }
-    });
+    sortedArray.sort((a, b) => compareWeapon(a[1], b[1]));
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -163,7 +133,7 @@ class AppData {
   sortdFaction(): Faction[] {
     const result: Faction[] = [];
     const sortedArray = Array.from(this.factionMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => compareFaction(a[1], b[1]));
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -513,6 +483,9 @@ class AppData {
         }
         if (ship.moduleAnchor) {
           ship.isModule = true;
+        }
+        if (ship.moduleIdMap && ship.moduleIdMap.size > 0) {
+          ship.station = true;
         }
         //ship system
         if (ship.hasSystem() && ship.emptyHullVariant) {

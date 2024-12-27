@@ -2,6 +2,9 @@ import { appData } from 'src/AppData';
 import { CanvasResult, CanvasSprite, computeCanvasSprites, defaultCanvasSprite } from './model/CanvasSprite';
 import { Weapon } from './model/weapon';
 import { Ship, WeaponSlot } from './model/ship';
+import { Faction } from './model/Faction';
+import { ShipMod } from './model/shipMod';
+import { HullSize } from './conts';
 
 export function round(value: number): number {
   return parseFloat(value.toFixed(2))
@@ -185,4 +188,71 @@ export async function computeShipSize(ship: Ship): Promise<CanvasResult> {
     });
   }
   return computeCanvasSprites(...canvasSprites);
+}
+
+export function compareShip(a: Ship, b: Ship): number {
+  if (a.size !== b.size) {
+    if (a.size === HullSize.FIGHTER) {
+      return -1;
+    } else if (b.size === HullSize.FIGHTER) {
+      return 1;
+    }
+    return b.size.localeCompare(a.size);
+  } else if (a.station !== b.station) {
+    if (a.station) {
+      return 1;
+    } else {
+      return -1;
+    }
+  } else {
+    return a.id.localeCompare(b.id);
+  }
+}
+
+export function compareFaction(a: Faction, b: Faction): number {
+  return a.id.localeCompare(b.id);
+}
+
+export function compareWeapon(a: Weapon, b: Weapon): number {
+  if (a.size != b.size) {
+    return b.size.localeCompare(a.size);
+  } else if (a.mountType != b.mountType) {
+    return a.mountType.localeCompare(b.mountType);
+  } else {
+    return a.id.localeCompare(a.id);
+  }
+}
+
+export function compareShipMod(a: ShipMod, b: ShipMod): number {
+  if (a.hidden !== b.hidden) {
+    if (a.hidden) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+  if (a.tags.includes('dmod') !== b.tags.includes('dmod')) {
+    if (a.tags.includes('dmod')) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+  return a.id.localeCompare(b.id);
+}
+
+export function convertOptions(rows: {
+  label: string,
+  value: string
+}[], filterFun: (arg0: string) => number): {
+  label: string,
+  value: string
+}[] {
+  return rows
+    .filter(row => filterFun(row.value) > 0).map(row => {
+      return {
+        label: `${row.label}(${filterFun(row.value)})`,
+        value: row.value
+      }
+    });
 }
