@@ -205,7 +205,7 @@ export function compareShip(a: Ship, b: Ship): number {
       return -1;
     }
   } else {
-    return a.id.localeCompare(a.id);
+    return a.id.localeCompare(b.id);
   }
 }
 

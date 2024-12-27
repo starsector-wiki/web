@@ -94,7 +94,7 @@ const faction = computed(() => {
 
       <br /><br />
 
-      <pre><code>{{ debugJson(faction) }}</code></pre>
+      <pre v-if="appData.debug"><code>{{ debugJson(faction) }}</code></pre>
     </template>
   </q-page>
 </template>
