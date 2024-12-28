@@ -38,4 +38,19 @@ export class PlanetType {
   static deserialize(object: object) {
     return plainToInstance(PlanetType, object);
   }
+
+  static fakeStation(): PlanetType {
+    const result = new PlanetType();
+
+    result.id = 'STATION';
+    result.name = 'Station';
+    result.jsonType = 'PLANET_TYPE';
+    result.descriptionId = '';
+    result.description = '';
+    result.star = false;
+    result.iconTexture = 'graphics/icons/station0.png';
+    result.color = '696969';
+
+    return result;
+  }
 }

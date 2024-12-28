@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
+import PersonsDiv from 'src/components/listDiv/PersonsDiv.vue';
 
 defineOptions({
   name: 'PlanetPage',
@@ -34,11 +35,53 @@ const planet = computed(() => {
         <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{
           planet.customDescription ?? planet.type.description }}</span>
         <div style="margin: auto">
+          <div :style="{
+            width: 50 + 'px',
+            height: 50 + 'px',
+            backgroundColor: '#' + planet.type.color,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            maskImage: `url(${planet.type.iconTexture})`,
+            maskSize: 'cover',
+          }"></div>
         </div>
       </div>
 
+      <br /><br />
+
+
+      <q-btn no-caps flat :to="{ name: 'star_system', params: { id: planet.starSystemId } }">
+        <div class="card-item-content">
+          <div :style="{
+            width: 50 + 'px',
+            height: 50 + 'px',
+            backgroundColor: '#' + planet.starSystem.star.type.color,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            maskImage: `url(${planet.starSystem.star.type.iconTexture})`,
+            maskSize: 'cover',
+          }"></div>
+          <span>
+            {{ planet.starSystem.name }}
+          </span>
+        </div>
+      </q-btn>
 
       <br /><br />
+
+
+      <q-btn class="card-item" no-caps :to="{ name: 'faction', params: { id: planet.faction.id } }">
+        <div class="card-item-content">
+          <img decoding="async" :src="planet.faction.crest" />
+          <span>
+            {{ planet.faction.displayName }}
+          </span>
+        </div>
+      </q-btn>
+
+      <br /><br />
+
+      <PersonsDiv :person-values="planet.persons" />
 
       <pre v-if="appData.debug"><code>{{ debugJson(planet) }}</code></pre>
     </template>

@@ -6,6 +6,8 @@ import { debugJson } from 'src/classes/utils';
 import ShipsDiv from 'src/components/ShipsDiv.vue';
 import WeaponsDiv from 'src/components/listDiv/WeaponsDiv.vue';
 import ShipModsDiv from 'src/components/listDiv/ShipModsDiv.vue';
+import PlanetsDiv from 'src/components/listDiv/PlanetsDiv.vue';
+import PersonsDiv from 'src/components/listDiv/PersonsDiv.vue';
 
 defineOptions({
   name: 'FactionPage',
@@ -58,7 +60,7 @@ const faction = computed(() => {
         </div>
         <div style="display: grid; grid-template-columns: 1fr 6fr">
           <div>势力关系</div>
-          <div style="column-count: 6;">
+          <div>
             <q-btn v-for="[factionId, relationship] in faction.relationshipMap.entries()" :key="factionId"
               :to="{ name: 'faction', params: { id: factionId } }">
               <img style="width: 64px;height: 40px;" :src="appData.getFactionById(factionId)?.logo" />
@@ -67,6 +69,20 @@ const faction = computed(() => {
           </div>
         </div>
       </div>
+
+      <br /><br />
+
+      <template v-if="faction.planets.length > 0">
+        <h4>殖民地</h4>
+        <PlanetsDiv :planet-values="faction.planets" />
+      </template>
+
+      <br /><br />
+
+      <template v-if="faction.persons.length > 0">
+        <h4>人物</h4>
+        <PersonsDiv :person-values="faction.persons" />
+      </template>
 
       <br /><br />
       <template v-if="faction.knownShipIds.length > 0">

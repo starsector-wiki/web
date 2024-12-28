@@ -20,4 +20,5 @@ export class Market {
   hidden!: boolean;
 
   tags!: string[];
+  planetConditionMarketOnly!: boolean;
 }

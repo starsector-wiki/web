@@ -1,5 +1,7 @@
 import { plainToInstance, Type } from 'class-transformer';
 import 'reflect-metadata';
+import { Planet } from './Planet';
+import { Person } from './Person';
 
 export class Faction {
   id!: string;
@@ -48,6 +50,9 @@ export class Faction {
   playerFaction!: boolean;
   showInIntelTab!: boolean;
   neutralFaction!: boolean;
+  color!: string;
+  planets: Planet[] = [];
+  persons: Person[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(Faction, object);

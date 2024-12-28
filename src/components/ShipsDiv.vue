@@ -105,8 +105,7 @@ function filterType(
     </template>
     <template v-if="sizeOptions.length > 2">
       <span>大小:</span>
-      <q-option-group name="accepted_uiTags" v-model="selectSize" :options="sizeOptions" type="radio" color="primary"
-        inline />
+      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary" inline />
     </template>
     <template v-if="manufacturerOptions.length > 2">
       <span>设计类型:</span>

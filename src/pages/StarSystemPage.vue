@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
+import PlanetsDiv from 'src/components/listDiv/PlanetsDiv.vue';
 
 defineOptions({
   name: 'StarSystemPage',
@@ -32,17 +33,22 @@ const starSystem = computed(() => {
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
         <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{
           starSystem.star.customDescription ?? starSystem.star.type.description }}</span>
+        <div style="margin: auto">
+          <div :style="{
+            width: 50 + 'px',
+            height: 50 + 'px',
+            backgroundColor: '#' + starSystem.star.type.color,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            maskImage: `url(${starSystem.star.type.iconTexture})`,
+            maskSize: 'cover',
+          }"></div>
+        </div>
       </div>
 
       <br /><br />
 
-      <ul>
-        <li v-for="planet in starSystem.planets" :key="planet.id">
-          <q-btn no-caps :to="{ name: 'planet', params: { id: planet.id } }">
-            {{ planet.name }}
-          </q-btn>
-        </li>
-      </ul>
+      <PlanetsDiv :planet-values="starSystem.planets" />
 
       <br /><br />
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { appData } from 'src/AppData';
+import PersonsDiv from 'src/components/listDiv/PersonsDiv.vue';
 
 defineOptions({
   name: 'PersonsPage',
@@ -8,15 +9,7 @@ defineOptions({
 </script>
 
 <template>
-  <q-page padding class="card-item-list-page">
-    <q-btn class="card-item" no-caps v-for="person in appData.sortdPerson()" :key="person.id"
-      :to="{ name: 'person', params: { id: person.id } }">
-      <div class="card-item-content">
-        <img decoding="async" :src="person.portraitSprite" />
-        <span>
-          {{ person.firstName }} {{ person.lastName }}
-        </span>
-      </div>
-    </q-btn>
+  <q-page padding>
+    <PersonsDiv :person-values="appData.sortdPerson()" />
   </q-page>
 </template>

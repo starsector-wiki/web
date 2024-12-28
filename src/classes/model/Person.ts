@@ -1,5 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import 'reflect-metadata';
+import { Faction } from './Faction';
+import { Planet } from './Planet';
 
 export class Person {
   id!: string;
@@ -24,7 +26,12 @@ export class Person {
   importance!: number;
   contactWeight!: number;
   tags!: string[];
+  marketId!: string;
+  aiCore!: boolean;
+  defaults!: boolean;
 
+  faction!: Faction;
+  planet!: Planet;
 
   static deserialize(object: object) {
     return plainToInstance(Person, object);

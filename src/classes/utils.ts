@@ -5,6 +5,8 @@ import { Ship, WeaponSlot } from './model/ship';
 import { Faction } from './model/Faction';
 import { ShipMod } from './model/shipMod';
 import { HullSize } from './conts';
+import { Planet } from './model/Planet';
+import { Person } from './model/Person';
 
 export function round(value: number): number {
   return parseFloat(value.toFixed(2))
@@ -237,6 +239,34 @@ export function compareShipMod(a: ShipMod, b: ShipMod): number {
     } else {
       return -1;
     }
+  }
+  return a.id.localeCompare(b.id);
+}
+
+export function comparePlanet(a: Planet, b: Planet): number {
+  if ((a.isStation()) !== (b.isStation())) {
+    if (a.isStation()) {
+      return 1;
+    } else {
+      return -1;
+    }
+  } else if ((a.market === null) !== (b.market === null)) {
+    if (a.market) {
+      return -1;
+    } else {
+      return 1;
+    }
+  } else if (a.market && b.market) {
+    return b.market.size - a.market.size
+  } else if (a.factionId !== b.factionId) {
+    return a.factionId.localeCompare(b.factionId);
+  }
+  return a.id.localeCompare(b.id);
+}
+
+export function comparePerson(a: Person, b: Person): number {
+  if (a.lastName !== b.lastName) {
+    return a.lastName.localeCompare(b.lastName);
   }
   return a.id.localeCompare(b.id);
 }
