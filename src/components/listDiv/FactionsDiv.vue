@@ -46,7 +46,7 @@ function filterIsHidden(factions: Faction[], value: string): Faction[] {
 
 <template>
   <template v-if="!hiddenOptions">
-    <span>是否显示:</span>
+    <span>显示在列表中:</span>
     <q-option-group v-model="selectIsHidden" :options="isHiddenOptions" type="radio" color="primary" inline />
   </template>
 
@@ -55,7 +55,7 @@ function filterIsHidden(factions: Faction[], value: string): Faction[] {
       :to="{ name: 'faction', params: { id: faction.id } }">
       <div class="card-item-content">
         <img decoding="async" :src="img === 'logo' ? faction.logo : faction.crest" />
-        <span>
+        <span :style="{ color: '#' + faction.color }">
           {{ faction.displayName }}
         </span>
       </div>

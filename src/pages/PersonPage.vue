@@ -37,6 +37,24 @@ const person = computed(() => {
         </div>
       </div>
 
+      <br /><br />
+
+      <q-btn no-caps flat :to="{ name: 'planet', params: { id: person.planet.id } }">
+        <div class="card-item-content">
+          <div :style="{
+            width: 50 + 'px',
+            height: 50 + 'px',
+            backgroundColor: '#' + person.planet.type.color,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            maskImage: `url(${person.planet.type.iconTexture})`,
+            maskSize: 'cover',
+          }"></div>
+          <span :style="{ color: '#' + person.planet.faction.color }">
+            {{ person.planet.name }}
+          </span>
+        </div>
+      </q-btn>
 
       <br /><br />
 

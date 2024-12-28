@@ -15,7 +15,7 @@ import { Person } from './classes/model/Person';
 import { Planet } from './classes/model/Planet';
 import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
-import { compareFaction, compareShip, compareShipMod, compareWeapon } from './classes/utils';
+import { compareFaction, comparePerson, comparePlanet, compareShip, compareShipMod, compareWeapon } from './classes/utils';
 
 class AppData {
   debug = false;
@@ -151,7 +151,7 @@ class AppData {
   sortdPlanet(): Planet[] {
     const result: Planet[] = [];
     const sortedArray = Array.from(this.planetMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => comparePlanet(a[1], b[1]));
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -160,7 +160,7 @@ class AppData {
   sortdPerson(): Person[] {
     const result: Person[] = [];
     const sortedArray = Array.from(this.personMap.entries());
-    sortedArray.sort(([key1], [key2]) => key1.localeCompare(key2));
+    sortedArray.sort((a, b) => comparePerson(a[1], b[1]));
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -438,6 +438,7 @@ class AppData {
           } else if (jsonObject.jsonType === 'PLANET_TYPE') {
             const planetType = PlanetType.deserialize(jsonObject);
             this.planetTypeMap.set(planetType.id, planetType);
+            this.planetTypeMap.set('STATION', PlanetType.fakeStation());
           } else if (jsonObject.jsonType === 'MARKET_CONDITION') {
             const marketCondition = MarketCondition.deserialize(jsonObject);
             this.marketConditionMap.set(marketCondition.id, marketCondition);
@@ -455,7 +456,9 @@ class AppData {
             this.planetMap.set(planet.id, planet);
           } else if (jsonObject.jsonType === 'PERSON') {
             const person = Person.deserialize(jsonObject);
-            this.personMap.set(person.id, person);
+            if (person.firstName.length > 0 || person.lastName.length > 0) {
+              this.personMap.set(person.id, person);
+            }
           }
         }
       }
@@ -531,6 +534,24 @@ class AppData {
         if (starSystem) {
           planet.starSystem = starSystem;
         }
+        const faction = this.getFactionById(planet.factionId);
+        if (faction) {
+          planet.faction = faction;
+          faction.planets.push(planet);
+        }
+      }
+      const marketIdSet = new Set();
+      for (const planet of this.planetMap.values()) {
+        if (!planet.isStation() && planet.market) {
+          marketIdSet.add(planet.market.id);
+        }
+      }
+      for (const planet of this.planetMap.values()) {
+        if (planet.isStation() && planet.market) {
+          if (marketIdSet.has(planet.market.id)) {
+            planet.isSubStation = true;
+          }
+        }
       }
       for (const starSystem of this.starSystemMap.values()) {
         const star = this.getPlanetById(starSystem.starId);
@@ -549,6 +570,20 @@ class AppData {
           const planet = this.getPlanetById(planetId);
           if (planet) {
             starSystem.planets.push(planet);
+          }
+        }
+      }
+      for (const person of this.personMap.values()) {
+        const faction = this.getFactionById(person.factionId);
+        if (faction) {
+          person.faction = faction;
+          faction.persons.push(person);
+        }
+        for (const planet of this.sortdPlanet()) {
+          if (!planet.isSubStation && planet.market && !planet.market.planetConditionMarketOnly && planet.market.id === person.marketId) {
+            person.planet = planet;
+            planet.persons.push(person);
+            break;
           }
         }
       }

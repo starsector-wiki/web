@@ -3,6 +3,8 @@ import 'reflect-metadata';
 import { Market } from './Market';
 import { PlanetType } from './PlanetType';
 import { StarSystem } from './StarSystem';
+import { Faction } from './Faction';
+import { Person } from './Person';
 
 export class Planet {
   id!: string;
@@ -27,8 +29,15 @@ export class Planet {
   location!: { x: number; y: number; };
   locationInHyperspace!: { x: number; y: number; };
   starSystem!: StarSystem;
+  isSubStation: boolean = false;
+  faction!: Faction;
+  persons: Person[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(Planet, object);
+  }
+
+  isStation(): boolean {
+    return this.typeId === 'STATION';
   }
 }

@@ -12,7 +12,15 @@ defineOptions({
     <q-btn class="card-item" no-caps v-for="planetType in appData.sortdPlanetType()" :key="planetType.id"
       :to="{ name: 'planet_type', params: { id: planetType.id } }">
       <div class="card-item-content">
-        <img style="background-color: black;" decoding="async" :src="planetType.iconTexture" />
+        <div :style="{
+          width: 50 + 'px',
+          height: 50 + 'px',
+          backgroundColor: '#' + planetType.color,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          maskImage: `url(${planetType.iconTexture})`,
+          maskSize: 'cover',
+        }"></div>
         <span>
           {{ planetType.name }}
         </span>
