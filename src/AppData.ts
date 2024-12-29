@@ -533,6 +533,7 @@ class AppData {
         const starSystem = this.getStarSystemById(planet.starSystemId);
         if (starSystem) {
           planet.starSystem = starSystem;
+          starSystem.planets.push(planet);
         }
         const faction = this.getFactionById(planet.factionId);
         if (faction) {
@@ -565,12 +566,6 @@ class AppData {
         const tertiaryStar = this.getPlanetById(starSystem.tertiaryId);
         if (tertiaryStar) {
           starSystem.tertiaryStar = tertiaryStar;
-        }
-        for (const planetId of starSystem.planetIds) {
-          const planet = this.getPlanetById(planetId);
-          if (planet) {
-            starSystem.planets.push(planet);
-          }
         }
       }
       for (const person of this.personMap.values()) {
