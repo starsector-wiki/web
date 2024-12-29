@@ -7,6 +7,7 @@ import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
 import ShipSpriteDiv from 'src/components/ShipSpriteDiv.vue';
+import FactionsDiv from 'src/components/listDiv/FactionsDiv.vue';
 
 defineOptions({
   name: 'ShipPage',
@@ -282,7 +283,7 @@ const variants = computed(() =>
 
       <template v-if="ship.factions.length > 0">
         <h4>拥有势力</h4>
-        <FactionsDiv :faction-values="ship.factions" />
+        <FactionsDiv :faction-values="ship.factions" img="crest" />
       </template>
 
       <br /><br />
