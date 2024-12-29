@@ -587,6 +587,26 @@ class AppData {
           }
         }
       }
+      for (const faction of this.factionMap.values()) {
+        for (const weaponId of faction.knownWeaponIds) {
+          const weapon = this.getWeaponById(weaponId);
+          if (weapon) {
+            weapon.factions.push(faction);
+          }
+        }
+        for (const shipId of faction.knownShipIds) {
+          const ship = this.getShipById(shipId + '_Hull');
+          if (ship) {
+            ship.factions.push(faction);
+          }
+        }
+        for (const fighterId of faction.knownFighterIds) {
+          const fighter = this.getShipById(fighterId.replace('_wing', '_Hull'));
+          if (fighter) {
+            fighter.factions.push(faction);
+          }
+        }
+      }
 
       this.ready.value = true;
     } catch (error) {

@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
 import WeaponSpriteDiv from 'src/components/WeaponSpriteDiv.vue';
+import FactionsDiv from 'src/components/listDiv/FactionsDiv.vue';
 
 defineOptions({
   name: 'WeaponPage',
@@ -155,9 +156,18 @@ const variantShips = computed(() => {
         <ShipsDiv :ships="ships" />
       </template>
 
+      <br /><br />
+
       <template v-if="variantShips.length > 0">
         <h4>被用于舰船装配</h4>
         <ShipsDiv :ships="variantShips" />
+      </template>
+
+      <br /><br />
+
+      <template v-if="weapon.factions.length > 0">
+        <h4>拥有势力</h4>
+        <FactionsDiv :faction-values="weapon.factions" />
       </template>
 
       <br /><br />
