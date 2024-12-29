@@ -167,7 +167,7 @@ const variantShips = computed(() => {
 
       <template v-if="weapon.factions.length > 0">
         <h4>拥有势力</h4>
-        <FactionsDiv :faction-values="weapon.factions" />
+        <FactionsDiv :faction-values="weapon.factions" img="crest" />
       </template>
 
       <br /><br />

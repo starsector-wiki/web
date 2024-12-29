@@ -606,6 +606,12 @@ class AppData {
             fighter.factions.push(faction);
           }
         }
+        for (const hullModId of faction.knownHullModIds) {
+          const hullMod = this.getShipModById(hullModId);
+          if (hullMod) {
+            hullMod.factions.push(faction);
+          }
+        }
       }
 
       this.ready.value = true;

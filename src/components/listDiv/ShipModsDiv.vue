@@ -107,7 +107,7 @@ function filterType(
 
   <div class="card-item-list-page">
     <q-btn class="card-item" style="align-self: stretch;" no-caps v-for="shipMod in shipMods" :key="shipMod.id"
-      :to="{ name: 'weapon', params: { id: shipMod.id } }">
+      :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
       <div class="card-item-content">
         <div style="margin: auto;">
           <img decoding="async" :src="shipMod.icon" />
