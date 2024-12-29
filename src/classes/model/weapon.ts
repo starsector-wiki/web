@@ -1,6 +1,7 @@
 import { plainToInstance, Type } from 'class-transformer';
 import 'reflect-metadata';
 import { WeaponSize, WeaponType } from '../conts';
+import { Faction } from './Faction';
 
 export class Weapon {
   id!: string;
@@ -78,8 +79,10 @@ export class Weapon {
 
   tags!: string[];
 
-  shipIds: string[] = []
-  variantIds: string[] = []
+  shipIds: string[] = [];
+  variantIds: string[] = [];
+
+  factions: Faction[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(Weapon, object);

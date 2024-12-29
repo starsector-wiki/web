@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import 'reflect-metadata';
+import { Faction } from './Faction';
 
 export class ShipMod {
   id!: string;
@@ -7,7 +8,7 @@ export class ShipMod {
   name!: string;
   description!: string;
   icon!: string;
-  manufacturer!:string;
+  manufacturer!: string;
 
   haveSModEffect!: boolean;
   alwaysUnlocked!: boolean;
@@ -32,8 +33,9 @@ export class ShipMod {
   tags!: string[];
   uiTags!: string[];
 
-  shipIds: string[] = []
-  variantIds: string[] = []
+  shipIds: string[] = [];
+  variantIds: string[] = [];
+  factions: Faction[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(ShipMod, object);

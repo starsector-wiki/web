@@ -271,9 +271,18 @@ const variants = computed(() =>
         <ShipsDiv :ships="skins" />
       </template>
 
+      <br /><br />
+
       <template v-if="variants.length > 0">
         <h4>装配</h4>
         <ShipsDiv :ships="variants" />
+      </template>
+
+      <br /><br />
+
+      <template v-if="ship.factions.length > 0">
+        <h4>拥有势力</h4>
+        <FactionsDiv :faction-values="ship.factions" />
       </template>
 
       <br /><br />

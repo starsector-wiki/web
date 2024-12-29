@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { appData } from 'src/AppData';
 import { HullSize, ShieldType, WeaponSize, WeaponSizeDisplay, WeaponType, WeaponTypeDisplay } from '../conts';
 import { ShipSystem } from './shipSystem';
+import { Faction } from './Faction';
 
 export class Ship {
   id!: string;
@@ -153,6 +154,8 @@ export class Ship {
   skinIds: string[] = [];
   varinatIds: string[] = [];
   isModule: boolean = false;
+
+  factions: Faction[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(Ship, object);
