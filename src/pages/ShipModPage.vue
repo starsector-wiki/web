@@ -4,6 +4,7 @@ import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
+import FactionsDiv from 'src/components/listDiv/FactionsDiv.vue';
 
 defineOptions({
   name: 'ShipModPage',
@@ -81,9 +82,18 @@ const variantShips = computed(() => {
         <ShipsDiv :ships="ships" />
       </template>
 
+      <br /><br />
+
       <template v-if="variantShips.length > 0">
         <h4>被用于舰船装配</h4>
         <ShipsDiv :ships="variantShips" />
+      </template>
+
+      <br /><br />
+
+      <template v-if="shipMod.factions.length > 0">
+        <h4>拥有势力</h4>
+        <FactionsDiv :faction-values="shipMod.factions" img="crest" />
       </template>
 
       <br /><br />
