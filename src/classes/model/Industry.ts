@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import 'reflect-metadata';
+import { Planet } from './Planet';
 
 export class Industry {
   id!: string;
@@ -18,6 +19,8 @@ export class Industry {
   order!: number;
   data!: string;
   disruptDanger!: string;
+
+  planets: Planet[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(Industry, object);

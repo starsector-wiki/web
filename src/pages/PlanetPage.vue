@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
 import PersonsDiv from 'src/components/listDiv/PersonsDiv.vue';
+import IndustriesDiv from 'src/components/listDiv/IndustriesDiv.vue';
 
 defineOptions({
   name: 'PlanetPage',
@@ -70,6 +71,8 @@ const planet = computed(() => {
       <br /><br />
 
 
+
+      <h4>势力</h4>
       <q-btn class="card-item" no-caps :to="{ name: 'faction', params: { id: planet.faction.id } }">
         <div class="card-item-content">
           <img decoding="async" :src="planet.faction.crest" />
@@ -81,7 +84,17 @@ const planet = computed(() => {
 
       <br /><br />
 
-      <PersonsDiv :person-values="planet.persons" />
+      <template v-if="planet.persons.length > 0">
+        <h4>人物</h4>
+        <PersonsDiv :person-values="planet.persons" />
+      </template>
+
+      <br /><br />
+
+      <template v-if="planet.market && planet.market.industryIds.length > 0">
+        <h4>产业</h4>
+        <IndustriesDiv :industryValues="planet.market.industryIds" />
+      </template>
 
       <pre v-if="appData.debug"><code>{{ debugJson(planet) }}</code></pre>
     </template>

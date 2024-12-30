@@ -7,6 +7,7 @@ import { ShipMod } from './model/shipMod';
 import { HullSize } from './conts';
 import { Planet } from './model/Planet';
 import { Person } from './model/Person';
+import { Industry } from './model/Industry';
 
 export function round(value: number): number {
   return parseFloat(value.toFixed(2))
@@ -269,6 +270,10 @@ export function comparePerson(a: Person, b: Person): number {
     return a.lastName.localeCompare(b.lastName);
   }
   return a.id.localeCompare(b.id);
+}
+
+export function compareIndustry(a: Industry, b: Industry): number {
+  return a.order - b.order;
 }
 
 export function convertOptions(rows: {

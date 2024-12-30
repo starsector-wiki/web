@@ -15,7 +15,7 @@ import { Person } from './classes/model/Person';
 import { Planet } from './classes/model/Planet';
 import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
-import { compareFaction, comparePerson, comparePlanet, compareShip, compareShipMod, compareWeapon } from './classes/utils';
+import { compareFaction, compareIndustry, comparePerson, comparePlanet, compareShip, compareShipMod, compareWeapon } from './classes/utils';
 
 class AppData {
   debug = false;
@@ -97,7 +97,7 @@ class AppData {
   sortdIndustry(): Industry[] {
     const result: Industry[] = [];
     const sortedArray = Array.from(this.industryMap.entries());
-    sortedArray.sort((a, b) => a[1].order - b[1].order);
+    sortedArray.sort((a, b) => compareIndustry(a[1], b[1]));
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -539,6 +539,14 @@ class AppData {
         if (faction) {
           planet.faction = faction;
           faction.planets.push(planet);
+        }
+        if (planet.market && planet.market.industryIds.length > 0) {
+          for (const industryId of planet.market.industryIds) {
+            const industry = this.getIndustryById(industryId);
+            if (industry) {
+              industry.planets.push(planet);
+            }
+          }
         }
       }
       const marketIdSet = new Set();

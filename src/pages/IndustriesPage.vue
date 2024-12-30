@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { appData } from 'src/AppData';
+import IndustriesDiv from 'src/components/listDiv/IndustriesDiv.vue';
 
 defineOptions({
   name: 'IndustriesPage',
@@ -7,15 +8,7 @@ defineOptions({
 </script>
 
 <template>
-  <q-page padding class="card-item-list-page">
-    <q-btn class="card-item" no-caps v-for="industry in appData.sortdIndustry()" :key="industry.id"
-      :to="{ name: 'industry', params: { id: industry.id } }">
-      <div class="card-item-content">
-        <img decoding="async" :src="industry.imageName" />
-        <span>
-          {{ industry.name }}
-        </span>
-      </div>
-    </q-btn>
+  <q-page padding>
+    <IndustriesDiv :industryValues="appData.sortdIndustry()" />
   </q-page>
 </template>
