@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
+import PlanetsDiv from 'src/components/listDiv/PlanetsDiv.vue';
 
 defineOptions({
   name: 'IndustryPage',
@@ -39,7 +40,6 @@ const industry = computed(() => {
 
       <br /><br />
 
-
       <div style="column-count: 2">
         <div style="display: grid; grid-template-columns: 1fr 1fr">
           <div>建造花费</div>
@@ -67,6 +67,12 @@ const industry = computed(() => {
         </div>
       </div>
 
+      <br /><br />
+
+      <template v-if="industry.planets.length > 0">
+        <h4>殖民地</h4>
+        <PlanetsDiv :planet-values="industry.planets" />
+      </template>
 
       <br /><br />
 
