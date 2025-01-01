@@ -45,6 +45,7 @@ const planet = computed(() => {
             maskImage: `url(${planet.type.iconTexture})`,
             maskSize: 'cover',
           }"></div>
+          <span>{{ planet.type.name }}</span>
         </div>
       </div>
 

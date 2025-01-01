@@ -18,6 +18,7 @@ const { planetValues, hiddenOptions = false } = defineProps<Props>();
 const ALL = '全部';
 const selectFaction = ref(ALL);
 const selectSize = ref(ALL);
+const selectType = ref(ALL);
 
 const factionOptions = computed(() => {
   const set = new Set(allPlanets.value.map((it) => it.faction));
@@ -46,9 +47,22 @@ const sizeOptions = computed(() => {
     };
   });
 });
+const typeOptions = computed(() => {
+  const set = new Set(allPlanets.value.map((it) => it.type));
+  const options = [...set].map(it => {
+    return {
+      label: it.name + '(' + filterType(allPlanets.value, it.id).length + ')',
+      value: it.id,
+    }
+  });
+  return [{
+    label: ALL + '(' + filterType(allPlanets.value, ALL).length + ')',
+    value: ALL,
+  }, ...options];
+});
 
 const allPlanets = computed(() => planetValues.map(it => typeof it === 'string' ? appData.getPlanetById(it) : it).filter(it => it !== undefined).filter(it => !it.isSubStation).sort(comparePlanet));
-const finalPlanets = computed(() => filterSize(filterFaction(allPlanets.value, selectFaction.value), selectSize.value));
+const finalPlanets = computed(() => filterType(filterSize(filterFaction(allPlanets.value, selectFaction.value), selectSize.value), selectType.value));
 
 function filterFaction(
   planets: Planet[],
@@ -73,6 +87,17 @@ function filterSize(
     return false;
   });
 }
+function filterType(
+  planets: Planet[],
+  value: string): Planet[] {
+  return planets.filter((planet) => {
+    if (value === ALL) {
+      return true;
+    } else {
+      return planet.typeId === value;
+    }
+  });
+}
 </script>
 
 <template>
@@ -84,6 +109,10 @@ function filterSize(
     <template v-if="sizeOptions.length > 2">
       <span>殖民地大小:</span>
       <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary" inline />
+    </template>
+    <template v-if="typeOptions.length > 2">
+      <span>星球类型:</span>
+      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary" inline />
     </template>
   </template>
 

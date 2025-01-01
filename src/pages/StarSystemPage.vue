@@ -43,6 +43,7 @@ const starSystem = computed(() => {
             maskImage: `url(${starSystem.star.type.iconTexture})`,
             maskSize: 'cover',
           }"></div>
+          <span>{{ starSystem.star.type.name }}</span>
         </div>
       </div>
 

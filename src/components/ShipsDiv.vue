@@ -19,7 +19,7 @@ const { ships, hiddenOptions = false } = defineProps<Props>();
 const ALL = '全部';
 const selectSize = ref(ALL);
 const selectManufacturer = ref(ALL);
-const selectType = ref('normal');
+const selectType = ref(ALL);
 const rowTypeOptions = [{
   label: ALL,
   value: ALL
