@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
+import PlanetsDiv from 'src/components/listDiv/PlanetsDiv.vue';
 
 defineOptions({
   name: 'MarketConditionPage',
@@ -46,6 +47,13 @@ const marketCondition = computed(() => {
           <div>{{ marketCondition.order }}</div>
         </div>
       </div>
+
+      <br /><br />
+
+      <template v-if="marketCondition.planets.length > 0">
+        <h4>殖民地</h4>
+        <PlanetsDiv :planet-values="marketCondition.planets" />
+      </template>
 
 
       <br /><br />

@@ -5,6 +5,7 @@ import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { debugJson } from 'src/classes/utils';
 import PersonsDiv from 'src/components/listDiv/PersonsDiv.vue';
 import IndustriesDiv from 'src/components/listDiv/IndustriesDiv.vue';
+import MarketConditionsDiv from 'src/components/listDiv/MarketConditionsDiv.vue';
 
 defineOptions({
   name: 'PlanetPage',
@@ -88,6 +89,13 @@ const planet = computed(() => {
       <template v-if="planet.persons.length > 0">
         <h4>人物</h4>
         <PersonsDiv :person-values="planet.persons" />
+      </template>
+
+      <br /><br />
+
+      <template v-if="planet.market && planet.market.marketConditionIds.length > 0">
+        <h4>特性</h4>
+        <MarketConditionsDiv :marketConditionValues="planet.market.marketConditionIds" />
       </template>
 
       <br /><br />
