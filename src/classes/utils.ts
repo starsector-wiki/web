@@ -278,7 +278,7 @@ export function compareIndustry(a: Industry, b: Industry): number {
 }
 
 export function compareMarketCondition(a: MarketCondition, b: MarketCondition): number {
-  return a.id.localeCompare(b.id);
+  return a.order - b.order;
 }
 
 export function convertOptions(rows: {
