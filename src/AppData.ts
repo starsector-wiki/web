@@ -15,7 +15,7 @@ import { Person } from './classes/model/Person';
 import { Planet } from './classes/model/Planet';
 import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
-import { compareFaction, compareIndustry, comparePerson, comparePlanet, compareShip, compareShipMod, compareWeapon } from './classes/utils';
+import { compareFaction, compareIndustry, compareMarketCondition, comparePerson, comparePlanet, compareShip, compareShipMod, compareWeapon } from './classes/utils';
 
 class AppData {
   debug = false;
@@ -115,7 +115,7 @@ class AppData {
   sortdMarketCondition(): MarketCondition[] {
     const result: MarketCondition[] = [];
     const sortedArray = Array.from(this.marketConditionMap.entries());
-    sortedArray.sort((a, b) => a[1].order - b[1].order);
+    sortedArray.sort((a, b) => compareMarketCondition(a[1], b[1]));
     for (const [, value] of sortedArray) {
       result.push(value);
     }
@@ -545,6 +545,14 @@ class AppData {
             const industry = this.getIndustryById(industryId);
             if (industry) {
               industry.planets.push(planet);
+            }
+          }
+        }
+        if (planet.market && planet.market.marketConditionIds.length > 0) {
+          for (const marketConditionId of planet.market.marketConditionIds) {
+            const marketCondition = this.getMarketConditionById(marketConditionId);
+            if (marketCondition) {
+              marketCondition.planets.push(planet);
             }
           }
         }
