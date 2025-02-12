@@ -265,6 +265,14 @@ const variants = computed(() =>
         </tbody>
       </table>
 
+      <br />
+      <div style="column-count: 2">
+        <div style="display: grid; grid-template-columns: 1fr 1fr">
+          <div>价值</div>
+          <div>{{ ship.baseValue }}</div>
+        </div>
+      </div>
+
       <br /><br />
 
       <template v-if="skins.length > 0">
