@@ -7,6 +7,7 @@ import {
 } from 'vue-router';
 
 import routes from './routes';
+import { appData } from 'src/AppData';
 
 /*
  * If not building with SSR mode, you can
@@ -31,6 +32,12 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
+
+  Router.beforeEach(async (to) => {
+    if (to.meta.requireGameData && ['none', 'loading'].includes(appData.status.value)) {
+      return '/load'
+    }
+  })
 
   return Router;
 });
