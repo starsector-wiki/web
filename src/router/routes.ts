@@ -1,9 +1,11 @@
+import LoadPage from 'src/pages/LoadPage.vue';
 import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requireGameData: true },
     children: [
       { path: '', component: () => import('pages/StarSystemsPage.vue') },
       { name: 'ships', path: 'ships', component: () => import('pages/ShipsPage.vue'), },
@@ -35,6 +37,10 @@ const routes: RouteRecordRaw[] = [
       { name: 'persons', path: 'persons', component: () => import('pages/PersonsPage.vue'), },
       { name: 'person', path: 'person/:id', component: () => import('pages/PersonPage.vue'), },
     ],
+  },
+  {
+    path: '/load',
+    component: LoadPage,
   },
 
   // Always leave this as last one,

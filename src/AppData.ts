@@ -19,7 +19,7 @@ import { compareFaction, compareIndustry, compareMarketCondition, comparePerson,
 
 class AppData {
   debug = false;
-  ready = ref(false);
+  status = ref('none' as 'none' | 'loading' | 'finish' | 'fail');
   shipMap: Map<string, Ship> = new Map();
   shipSystemMap: Map<string, ShipSystem> = new Map();
   shipModMap: Map<string, ShipMod> = new Map();
@@ -408,6 +408,7 @@ class AppData {
   }
 
   async initData() {
+    this.status.value = 'loading'
     try {
       const response = await api.get('data/data.json');
       const jsonArray: WikiJsonObject[] = response.data;
@@ -625,8 +626,9 @@ class AppData {
         }
       }
 
-      this.ready.value = true;
+      this.status.value = 'finish'
     } catch (error) {
+      this.status.value = 'fail'
       console.error(error);
     }
   }
