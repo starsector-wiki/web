@@ -42,20 +42,27 @@ const rowIsAiOptions = [{
 }];
 
 const factionOptions = computed(() => {
+  const basePersons = filterIsAi(filterIsDefault(allPersons.value, selectIsDefault.value), selectIsAi.value);
   const set = new Set(allPersons.value.map((it) => it.faction));
   const factions = [...set].map(it => {
     return {
-      label: it.displayName + '(' + filterFaction(allPersons.value, it.id).length + ')',
+      label: it.displayName + '(' + filterFaction(basePersons, it.id).length + ')',
       value: it.id,
     };
   });
   return [{
-    label: ALL + '(' + filterFaction(allPersons.value, ALL).length + ')',
+    label: ALL + '(' + filterFaction(basePersons, ALL).length + ')',
     value: ALL,
   }, ...factions];
 });
-const isDefaultOptions = computed(() => convertOptions(rowIsDefaultOptions, (v) => filterIsDefault(allPersons.value, v).length));
-const isAiOptions = computed(() => convertOptions(rowIsAiOptions, (v) => filterIsAi(allPersons.value, v).length));
+const isDefaultOptions = computed(() => {
+  const basePersons = filterIsAi(filterFaction(allPersons.value, selectFaction.value), selectIsAi.value);
+  return convertOptions(rowIsDefaultOptions, (v) => filterIsDefault(basePersons, v).length);
+});
+const isAiOptions = computed(() => {
+  const basePersons = filterIsDefault(filterFaction(allPersons.value, selectFaction.value), selectIsDefault.value);
+  return convertOptions(rowIsAiOptions, (v) => filterIsAi(basePersons, v).length);
+});
 
 const allPersons = computed(() => planetValues.map(it => typeof it === 'string' ? appData.getPersonById(it) : it).filter(it => it !== undefined).sort(comparePerson));
 const finalPersons = computed(() => filterIsAi(filterIsDefault(filterFaction(allPersons.value, selectFaction.value), selectIsDefault.value), selectIsAi.value));

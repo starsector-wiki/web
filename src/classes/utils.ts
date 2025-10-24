@@ -288,11 +288,11 @@ export function convertOptions(rows: {
   label: string,
   value: string
 }[] {
-  return rows
-    .filter(row => filterFun(row.value) > 0).map(row => {
-      return {
-        label: `${row.label}(${filterFun(row.value)})`,
-        value: row.value
-      }
-    });
+  return rows.map(row => {
+    const count = filterFun(row.value);
+    return {
+      label: `${row.label}(${count})`,
+      value: row.value
+    };
+  });
 }

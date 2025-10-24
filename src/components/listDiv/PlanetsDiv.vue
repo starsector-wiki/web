@@ -21,19 +21,21 @@ const selectSize = ref(ALL);
 const selectType = ref(ALL);
 
 const factionOptions = computed(() => {
+  const basePlanets = filterType(filterSize(allPlanets.value, selectSize.value), selectType.value);
   const set = new Set(allPlanets.value.map((it) => it.faction));
   const factions = [...set].map(it => {
     return {
-      label: it.displayName + '(' + filterFaction(allPlanets.value, it.id).length + ')',
+      label: it.displayName + '(' + filterFaction(basePlanets, it.id).length + ')',
       value: it.id,
     };
   });
   return [{
-    label: ALL + '(' + filterFaction(allPlanets.value, ALL).length + ')',
+    label: ALL + '(' + filterFaction(basePlanets, ALL).length + ')',
     value: ALL,
   }, ...factions];
 });
 const sizeOptions = computed(() => {
+  const basePlanets = filterType(filterFaction(allPlanets.value, selectFaction.value), selectType.value);
   const set = new Set(allPlanets.value.map((it) => {
     if (it.market && !it.market.planetConditionMarketOnly && it.market.size >= 3) {
       return it.market.size.toString();
@@ -42,21 +44,22 @@ const sizeOptions = computed(() => {
   }).filter(it => it !== undefined));
   return [ALL, ...set].map(it => {
     return {
-      label: it + '(' + filterSize(allPlanets.value, it).length + ')',
+      label: it + '(' + filterSize(basePlanets, it).length + ')',
       value: it,
     };
   });
 });
 const typeOptions = computed(() => {
+  const basePlanets = filterFaction(filterSize(allPlanets.value, selectSize.value), selectFaction.value);
   const set = new Set(allPlanets.value.map((it) => it.type));
   const options = [...set].map(it => {
     return {
-      label: it.name + '(' + filterType(allPlanets.value, it.id).length + ')',
+      label: it.name + '(' + filterType(basePlanets, it.id).length + ')',
       value: it.id,
     }
   });
   return [{
-    label: ALL + '(' + filterType(allPlanets.value, ALL).length + ')',
+    label: ALL + '(' + filterType(basePlanets, ALL).length + ')',
     value: ALL,
   }, ...options];
 });

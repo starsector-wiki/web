@@ -22,22 +22,26 @@ const selectSize = ref(ALL);
 const selectType = ref(ALL);
 
 const sizeOptions = computed(() => {
+  const baseWeapons = filterType(allWeapons.value, selectType.value);
   const set = new Set(allWeapons.value.map((it) => it.size));
   return ([[ALL, ALL], ...[...set].map((it) => [WeaponSizeDisplay.get(it) ?? it, it])])
     .map((it) => {
+      const value = it[1];
       return {
-        label: it[0] + '(' + filterSize(allWeapons.value, it[1]).length + ')',
-        value: it[1],
+        label: it[0] + '(' + filterSize(baseWeapons, value).length + ')',
+        value,
       };
     });
 });
 const typeOptions = computed(() => {
+  const baseWeapons = filterSize(allWeapons.value, selectSize.value);
   const set = new Set(allWeapons.value.map((it) => it.mountType));
   return ([[ALL, ALL], ...[...set].map((it) => [WeaponTypeDisplay.get(it) ?? it, it])])
     .map((it) => {
+      const value = it[1];
       return {
-        label: it[0] + '(' + filterType(allWeapons.value, it[1]).length + ')',
-        value: it[1],
+        label: it[0] + '(' + filterType(baseWeapons, value).length + ')',
+        value,
       };
     });
 });

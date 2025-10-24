@@ -19,7 +19,7 @@ const { ships, hiddenOptions = false } = defineProps<Props>();
 const ALL = '全部';
 const selectSize = ref(ALL);
 const selectManufacturer = ref(ALL);
-const selectType = ref(ALL);
+const selectType = ref('normal');
 const rowTypeOptions = [{
   label: ALL,
   value: ALL
@@ -35,25 +35,31 @@ const rowTypeOptions = [{
 }];
 
 const sizeOptions = computed(() => {
+  const baseShips = filterType(filterManufacturer(allShips.value, selectManufacturer.value), selectType.value);
   const set = new Set(allShips.value.map((it) => it.size));
   return ([[ALL, ALL], ...[...set].map((it) => [HullSizeDisplay.get(it) ?? it, it])])
     .map((it) => {
+      const value = it[1];
       return {
-        label: it[0] + '(' + filterSize(allShips.value, it[1]).length + ')',
-        value: it[1],
+        label: it[0] + '(' + filterSize(baseShips, value).length + ')',
+        value,
       };
     });
 });
 const manufacturerOptions = computed(() => {
+  const baseShips = filterType(filterSize(allShips.value, selectSize.value), selectType.value);
   const set = new Set(allShips.value.map((it) => it.manufacturer).sort());
   return [ALL, ...set].map((it) => {
     return {
-      label: it + '(' + filterManufacturer(allShips.value, it).length + ')',
+      label: it + '(' + filterManufacturer(baseShips, it).length + ')',
       value: it,
     };
   });
 });
-const typeOptions = computed(() => convertOptions(rowTypeOptions, (v) => filterType(allShips.value, v).length));
+const typeOptions = computed(() => {
+  const baseShips = filterManufacturer(filterSize(allShips.value, selectSize.value), selectManufacturer.value);
+  return convertOptions(rowTypeOptions, (v) => filterType(baseShips, v).length);
+});
 
 const allShips = computed(() => ships.map(it => typeof it === 'string' ? appData.getShipById(it) : it).filter(it => it !== undefined).sort(compareShip));
 const finalShips = computed(() => filterType(filterManufacturer(filterSize(allShips.value, selectSize.value), selectManufacturer.value), selectType.value));

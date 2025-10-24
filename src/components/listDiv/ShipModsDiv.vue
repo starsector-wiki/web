@@ -34,24 +34,29 @@ const rowTypeOptions = [{
 }];
 
 const uiTagOptions = computed(() => {
+  const baseShipMods = filterType(filterManufacturer(allShipMods.value, selectManufacturer.value), selectType.value);
   const set = new Set(allShipMods.value.flatMap((it) => it.uiTags).sort());
   return [ALL, ...set].map((it) => {
     return {
-      label: it + '(' + filterUiTag(allShipMods.value, it).length + ')',
+      label: it + '(' + filterUiTag(baseShipMods, it).length + ')',
       value: it,
     };
   });
 });
 const manufacturerOptions = computed(() => {
+  const baseShipMods = filterType(filterUiTag(allShipMods.value, selectUiTag.value), selectType.value);
   const set = new Set(allShipMods.value.map((it) => it.manufacturer).sort());
   return [ALL, ...set].map((it) => {
     return {
-      label: it + '(' + filterManufacturer(allShipMods.value, it).length + ')',
+      label: it + '(' + filterManufacturer(baseShipMods, it).length + ')',
       value: it,
     };
   });
 });
-const typeOptions = computed(() => convertOptions(rowTypeOptions, (v) => filterType(allShipMods.value, v).length));
+const typeOptions = computed(() => {
+  const baseShipMods = filterManufacturer(filterUiTag(allShipMods.value, selectUiTag.value), selectManufacturer.value);
+  return convertOptions(rowTypeOptions, (v) => filterType(baseShipMods, v).length);
+});
 
 const allShipMods = computed(() => shipModValues.map(it => typeof it === 'string' ? appData.getShipModById(it) : it).filter(it => it !== undefined).sort(compareShipMod));
 const shipMods = computed(() => filterType(filterManufacturer(filterUiTag(allShipMods.value, selectUiTag.value), selectManufacturer.value), selectType.value));
