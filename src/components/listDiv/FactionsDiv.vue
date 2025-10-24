@@ -18,12 +18,8 @@ interface Props {
 const { factionValues, img = 'logo', hiddenOptions = false } = defineProps<Props>();
 const $q = useQuasar();
 
-const ALL = '全部';
-const selectIsHidden = ref(ALL);
+const selectIsHidden = ref<string[]>([]);
 const rowIsHiddenOptions = [{
-  label: ALL,
-  value: ALL
-}, {
   label: '是',
   value: 'Y'
 }, {
@@ -32,26 +28,32 @@ const rowIsHiddenOptions = [{
 }];
 
 const allFactions = computed(() => factionValues.map(it => typeof it === 'string' ? appData.getFactionById(it) : it).filter(it => it !== undefined).sort(compareFaction));
-const isHiddenOptions = computed(() => convertOptions(rowIsHiddenOptions, (v) => filterIsHidden(allFactions.value, v).length));
+const isHiddenOptions = computed(() => convertOptions(rowIsHiddenOptions, (v) => filterIsHidden(allFactions.value, [v]).length));
 const factions = computed(() => filterIsHidden(allFactions.value, selectIsHidden.value));
 
-function filterIsHidden(factions: Faction[], value: string): Faction[] {
-  return factions.filter((faction) => {
-    if (value === ALL) {
-      return true;
-    } else {
-      return value === 'Y' ? faction.showInIntelTab : !faction.showInIntelTab;
-    }
-  });
+function filterIsHidden(factions: Faction[], values: readonly string[] | null | undefined): Faction[] {
+  if (!values || values.length === 0) {
+    return factions;
+  }
+  const includesYes = values.includes('Y');
+  const includesNo = values.includes('N');
+  if (includesYes && includesNo) {
+    return factions;
+  }
+  if (includesYes) {
+    return factions.filter((faction) => faction.showInIntelTab);
+  }
+  return factions.filter((faction) => !faction.showInIntelTab);
 }
 </script>
 
 <template>
   <div v-if="!hiddenOptions" class="filter-toolbar">
-    <div class="filter-block">
+    <div class="filter-block" v-if="isHiddenOptions.length">
       <span>显示在列表中:</span>
-      <q-option-group v-model="selectIsHidden" :options="isHiddenOptions" type="radio" color="primary"
-        :inline="!$q.screen.lt.sm" />
+      <q-select v-model="selectIsHidden" :options="isHiddenOptions" multiple emit-value map-options use-chips dense
+        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
+        placeholder="全部" />
     </div>
   </div>
 

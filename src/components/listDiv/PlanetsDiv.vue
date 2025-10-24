@@ -17,53 +17,49 @@ interface Props {
 const { planetValues, hiddenOptions = false } = defineProps<Props>();
 const $q = useQuasar();
 
-const ALL = '全部';
-const selectFaction = ref(ALL);
-const selectSize = ref(ALL);
-const selectType = ref(ALL);
+const selectFaction = ref<string[]>([]);
+const selectSize = ref<string[]>([]);
+const selectType = ref<string[]>([]);
 
 const factionOptions = computed(() => {
   const basePlanets = filterType(filterSize(allPlanets.value, selectSize.value), selectType.value);
-  const set = new Set(allPlanets.value.map((it) => it.faction));
-  const factions = [...set].map(it => {
-    return {
-      label: it.displayName + '(' + filterFaction(basePlanets, it.id).length + ')',
+  const values = new Map<string, { id: string, name: string }>();
+  for (const planet of allPlanets.value) {
+    values.set(planet.factionId, { id: planet.factionId, name: planet.faction.displayName });
+  }
+  return Array.from(values.values())
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((it) => ({
+      label: `${it.name}(${filterFaction(basePlanets, [it.id]).length})`,
       value: it.id,
-    };
-  });
-  return [{
-    label: ALL + '(' + filterFaction(basePlanets, ALL).length + ')',
-    value: ALL,
-  }, ...factions];
+    }));
 });
 const sizeOptions = computed(() => {
   const basePlanets = filterType(filterFaction(allPlanets.value, selectFaction.value), selectType.value);
-  const set = new Set(allPlanets.value.map((it) => {
-    if (it.market && !it.market.planetConditionMarketOnly && it.market.size >= 3) {
-      return it.market.size.toString();
+  const set = new Set<string>();
+  for (const planet of allPlanets.value) {
+    if (planet.market && !planet.market.planetConditionMarketOnly && planet.market.size >= 3) {
+      set.add(planet.market.size.toString());
     }
-    return undefined;
-  }).filter(it => it !== undefined));
-  return [ALL, ...set].map(it => {
-    return {
-      label: it + '(' + filterSize(basePlanets, it).length + ')',
-      value: it,
-    };
-  });
+  }
+  const values = Array.from(set).sort((a, b) => Number(a) - Number(b));
+  return values.map((it) => ({
+    label: `${it}(${filterSize(basePlanets, [it]).length})`,
+    value: it,
+  }));
 });
 const typeOptions = computed(() => {
   const basePlanets = filterFaction(filterSize(allPlanets.value, selectSize.value), selectFaction.value);
-  const set = new Set(allPlanets.value.map((it) => it.type));
-  const options = [...set].map(it => {
-    return {
-      label: it.name + '(' + filterType(basePlanets, it.id).length + ')',
+  const values = new Map<string, { id: string, name: string }>();
+  for (const planet of allPlanets.value) {
+    values.set(planet.typeId, { id: planet.typeId, name: planet.type.name });
+  }
+  return Array.from(values.values())
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((it) => ({
+      label: `${it.name}(${filterType(basePlanets, [it.id]).length})`,
       value: it.id,
-    }
-  });
-  return [{
-    label: ALL + '(' + filterType(basePlanets, ALL).length + ')',
-    value: ALL,
-  }, ...options];
+    }));
 });
 
 const allPlanets = computed(() => planetValues.map(it => typeof it === 'string' ? appData.getPlanetById(it) : it).filter(it => it !== undefined).filter(it => !it.isSubStation).sort(comparePlanet));
@@ -71,56 +67,54 @@ const finalPlanets = computed(() => filterType(filterSize(filterFaction(allPlane
 
 function filterFaction(
   planets: Planet[],
-  value: string): Planet[] {
-  return planets.filter((planet) => {
-    if (value === ALL) {
-      return true;
-    } else {
-      return planet.factionId === value;
-    }
-  });
+  values: readonly string[] | null | undefined): Planet[] {
+  if (!values || values.length === 0) {
+    return planets;
+  }
+  return planets.filter((planet) => values.includes(planet.factionId));
 }
 function filterSize(
   planets: Planet[],
-  value: string): Planet[] {
+  values: readonly string[] | null | undefined): Planet[] {
+  if (!values || values.length === 0) {
+    return planets;
+  }
   return planets.filter((planet) => {
-    if (value === ALL) {
-      return true;
-    } else if (planet.market && !planet.market.planetConditionMarketOnly) {
-      return planet.market.size.toString() === value;
+    if (!planet.market || planet.market.planetConditionMarketOnly) {
+      return false;
     }
-    return false;
+    return values.includes(planet.market.size.toString());
   });
 }
 function filterType(
   planets: Planet[],
-  value: string): Planet[] {
-  return planets.filter((planet) => {
-    if (value === ALL) {
-      return true;
-    } else {
-      return planet.typeId === value;
-    }
-  });
+  values: readonly string[] | null | undefined): Planet[] {
+  if (!values || values.length === 0) {
+    return planets;
+  }
+  return planets.filter((planet) => values.includes(planet.typeId));
 }
 </script>
 
 <template>
   <div v-if="!hiddenOptions" class="filter-toolbar">
-    <div v-if="factionOptions.length > 2" class="filter-block">
+    <div v-if="factionOptions.length" class="filter-block">
       <span>势力:</span>
-      <q-option-group v-model="selectFaction" :options="factionOptions" type="radio" color="primary"
-        :inline="!$q.screen.lt.sm" />
+      <q-select v-model="selectFaction" :options="factionOptions" multiple emit-value map-options use-chips dense
+        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
+        placeholder="全部" />
     </div>
-    <div v-if="sizeOptions.length > 2" class="filter-block">
+    <div v-if="sizeOptions.length" class="filter-block">
       <span>殖民地大小:</span>
-      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary"
-        :inline="!$q.screen.lt.sm" />
+      <q-select v-model="selectSize" :options="sizeOptions" multiple emit-value map-options use-chips dense
+        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
+        placeholder="全部" />
     </div>
-    <div v-if="typeOptions.length > 2" class="filter-block">
+    <div v-if="typeOptions.length" class="filter-block">
       <span>星球类型:</span>
-      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary"
-        :inline="!$q.screen.lt.sm" />
+      <q-select v-model="selectType" :options="typeOptions" multiple emit-value map-options use-chips dense
+        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
+        placeholder="全部" />
     </div>
   </div>
 

@@ -44,6 +44,10 @@ a {
   white-space: nowrap;
 }
 
+.filter-block .q-field {
+  width: 100%;
+}
+
 @media (max-width: 600px) {
   .filter-toolbar {
     flex-direction: column;

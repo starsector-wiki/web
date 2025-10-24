@@ -18,14 +18,10 @@ interface Props {
 const { ships, hiddenOptions = false } = defineProps<Props>();
 const $q = useQuasar();
 
-const ALL = '全部';
-const selectSize = ref(ALL);
-const selectManufacturer = ref(ALL);
-const selectType = ref('normal');
+const selectSize = ref<string[]>([]);
+const selectManufacturer = ref<(string | null)[]>([]);
+const selectType = ref<string[]>(['normal']);
 const rowTypeOptions = [{
-  label: ALL,
-  value: ALL
-}, {
   label: '普通',
   value: 'normal'
 }, {
@@ -38,89 +34,91 @@ const rowTypeOptions = [{
 
 const sizeOptions = computed(() => {
   const baseShips = filterType(filterManufacturer(allShips.value, selectManufacturer.value), selectType.value);
-  const set = new Set(allShips.value.map((it) => it.size));
-  return ([[ALL, ALL], ...[...set].map((it) => [HullSizeDisplay.get(it) ?? it, it])])
-    .map((it) => {
-      const value = it[1];
-      return {
-        label: it[0] + '(' + filterSize(baseShips, value).length + ')',
-        value,
-      };
-    });
+  const values = Array.from(new Set(allShips.value.map((it) => it.size)));
+  return values.map((value) => {
+    const label = HullSizeDisplay.get(value) ?? value;
+    return {
+      label: `${label}(${filterSize(baseShips, [value]).length})`,
+      value,
+    };
+  });
 });
 const manufacturerOptions = computed(() => {
   const baseShips = filterType(filterSize(allShips.value, selectSize.value), selectType.value);
-  const set = new Set(allShips.value.map((it) => it.manufacturer).sort());
-  return [ALL, ...set].map((it) => {
+  const values = Array.from(new Set(allShips.value.map((it) => it.manufacturer ?? null))).sort((a, b) => {
+    const left = a ?? '';
+    const right = b ?? '';
+    return left.localeCompare(right);
+  });
+  return values.map((value) => {
+    const label = value && value.length > 0 ? value : '未知';
     return {
-      label: it + '(' + filterManufacturer(baseShips, it).length + ')',
-      value: it,
+      label: `${label}(${filterManufacturer(baseShips, [value]).length})`,
+      value,
     };
   });
 });
 const typeOptions = computed(() => {
   const baseShips = filterManufacturer(filterSize(allShips.value, selectSize.value), selectManufacturer.value);
-  return convertOptions(rowTypeOptions, (v) => filterType(baseShips, v).length);
+  return convertOptions(rowTypeOptions, (v) => filterType(baseShips, [v]).length);
 });
 
 const allShips = computed(() => ships.map(it => typeof it === 'string' ? appData.getShipById(it) : it).filter(it => it !== undefined).sort(compareShip));
 const finalShips = computed(() => filterType(filterManufacturer(filterSize(allShips.value, selectSize.value), selectManufacturer.value), selectType.value));
 
-function filterSize(ships: Ship[], size: string): Ship[] {
-  return ships.filter((ship) => {
-    if (size === ALL) {
-      return true;
-    } else {
-      return ship.size === size;
-    }
-  });
+function filterSize(ships: Ship[], sizes: readonly string[] | null | undefined): Ship[] {
+  if (!sizes || sizes.length === 0) {
+    return ships;
+  }
+  return ships.filter((ship) => sizes.includes(ship.size));
 }
 function filterManufacturer(
   ships: Ship[],
-  value: string
+  values: readonly (string | null)[] | null | undefined
 ): Ship[] {
-  return ships.filter((shipMod) => {
-    if (value === ALL) {
-      return true;
-    } else {
-      return shipMod.manufacturer === value;
-    }
+  if (!values || values.length === 0) {
+    return ships;
+  }
+  return ships.filter((ship) => {
+    const manufacturer = ship.manufacturer ?? null;
+    return values.includes(manufacturer);
   });
 }
 function filterType(
   ships: Ship[],
-  type: string
+  types: readonly string[] | null | undefined
 ): Ship[] {
+  if (!types || types.length === 0) {
+    return ships;
+  }
   return ships.filter((ship) => {
-    if (type === ALL) {
-      return true;
-    } else if (type === 'station') {
-      return ship.station;
-    } else if (type === 'module') {
-      return ship.isModule;
-    } else {
-      return !ship.station && !ship.isModule;
-    }
+    const matchesStation = ship.station && types.includes('station');
+    const matchesModule = ship.isModule && types.includes('module');
+    const matchesNormal = !ship.station && !ship.isModule && types.includes('normal');
+    return matchesStation || matchesModule || matchesNormal;
   });
 }
 </script>
 
 <template>
   <div v-if="!hiddenOptions" class="filter-toolbar">
-    <div v-if="typeOptions.length > 2" class="filter-block">
+    <div v-if="typeOptions.length" class="filter-block">
       <span>类型:</span>
-      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary"
-        :inline="!$q.screen.lt.sm" />
+      <q-select v-model="selectType" :options="typeOptions" multiple emit-value map-options use-chips dense
+        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
+        placeholder="全部" />
     </div>
-    <div v-if="sizeOptions.length > 2" class="filter-block">
+    <div v-if="sizeOptions.length" class="filter-block">
       <span>大小:</span>
-      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary"
-        :inline="!$q.screen.lt.sm" />
+      <q-select v-model="selectSize" :options="sizeOptions" multiple emit-value map-options use-chips dense
+        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
+        placeholder="全部" />
     </div>
-    <div v-if="manufacturerOptions.length > 2" class="filter-block">
+    <div v-if="manufacturerOptions.length" class="filter-block">
       <span>设计类型:</span>
-      <q-option-group v-model="selectManufacturer" :options="manufacturerOptions" type="radio" color="primary"
-        :inline="!$q.screen.lt.sm" />
+      <q-select v-model="selectManufacturer" :options="manufacturerOptions" multiple emit-value map-options use-chips
+        dense options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close"
+        :clear-value="[]" placeholder="全部" />
     </div>
   </div>
 
