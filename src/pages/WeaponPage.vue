@@ -39,7 +39,10 @@ const variantShips = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ weapon.description }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ weapon.description }}</span
+        >
         <WeaponSpriteDiv :weapon="weapon" />
       </div>
 

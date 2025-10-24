@@ -33,37 +33,45 @@ const planet = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
-
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{
-          planet.customDescription ?? planet.type.description }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ planet.customDescription ?? planet.type.description }}</span
+        >
         <div style="margin: auto">
-          <div :style="{
-            width: 50 + 'px',
-            height: 50 + 'px',
-            backgroundColor: '#' + planet.type.color,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            maskImage: `url(${planet.type.iconTexture})`,
-            maskSize: 'cover',
-          }"></div>
+          <div
+            :style="{
+              width: 50 + 'px',
+              height: 50 + 'px',
+              backgroundColor: '#' + planet.type.color,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              maskImage: `url(${planet.type.iconTexture})`,
+              maskSize: 'cover',
+            }"
+          ></div>
           <span>{{ planet.type.name }}</span>
         </div>
       </div>
 
       <br /><br />
 
-
-      <q-btn no-caps flat :to="{ name: 'star_system', params: { id: planet.starSystemId } }">
+      <q-btn
+        no-caps
+        flat
+        :to="{ name: 'star_system', params: { id: planet.starSystemId } }"
+      >
         <div class="card-item-content">
-          <div :style="{
-            width: 50 + 'px',
-            height: 50 + 'px',
-            backgroundColor: '#' + planet.starSystem.star.type.color,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            maskImage: `url(${planet.starSystem.star.type.iconTexture})`,
-            maskSize: 'cover',
-          }"></div>
+          <div
+            :style="{
+              width: 50 + 'px',
+              height: 50 + 'px',
+              backgroundColor: '#' + planet.starSystem.star.type.color,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              maskImage: `url(${planet.starSystem.star.type.iconTexture})`,
+              maskSize: 'cover',
+            }"
+          ></div>
           <span>
             {{ planet.starSystem.name }}
           </span>
@@ -72,10 +80,12 @@ const planet = computed(() => {
 
       <br /><br />
 
-
-
       <h4>势力</h4>
-      <q-btn class="card-item" no-caps :to="{ name: 'faction', params: { id: planet.faction.id } }">
+      <q-btn
+        class="card-item"
+        no-caps
+        :to="{ name: 'faction', params: { id: planet.faction.id } }"
+      >
         <div class="card-item-content">
           <img decoding="async" :src="planet.faction.crest" />
           <span>
@@ -93,9 +103,13 @@ const planet = computed(() => {
 
       <br /><br />
 
-      <template v-if="planet.market && planet.market.marketConditionIds.length > 0">
+      <template
+        v-if="planet.market && planet.market.marketConditionIds.length > 0"
+      >
         <h4>特性</h4>
-        <MarketConditionsDiv :marketConditionValues="planet.market.marketConditionIds" />
+        <MarketConditionsDiv
+          :marketConditionValues="planet.market.marketConditionIds"
+        />
       </template>
 
       <br /><br />

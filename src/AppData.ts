@@ -4,7 +4,12 @@ import { ShipMod } from './classes/model/shipMod';
 import { ShipSystem } from './classes/model/shipSystem';
 import { Weapon } from './classes/model/weapon';
 import { api } from 'src/boot/axios';
-import { CanvasSprite, computeCanvasSprites, defaultCanvasSprite, CanvasResult } from './classes/model/CanvasSprite';
+import {
+  CanvasSprite,
+  computeCanvasSprites,
+  defaultCanvasSprite,
+  CanvasResult,
+} from './classes/model/CanvasSprite';
 import { Commodity } from './classes/model/Commodity';
 import { Industry } from './classes/model/Industry';
 import { PlanetType } from './classes/model/PlanetType';
@@ -15,7 +20,16 @@ import { Person } from './classes/model/Person';
 import { Planet } from './classes/model/Planet';
 import { StarSystem } from './classes/model/StarSystem';
 import { SpecialItem } from './classes/model/SpecialItem';
-import { compareFaction, compareIndustry, compareMarketCondition, comparePerson, comparePlanet, compareShip, compareShipMod, compareWeapon } from './classes/utils';
+import {
+  compareFaction,
+  compareIndustry,
+  compareMarketCondition,
+  comparePerson,
+  comparePlanet,
+  compareShip,
+  compareShipMod,
+  compareWeapon,
+} from './classes/utils';
 
 class AppData {
   debug = false;
@@ -170,7 +184,7 @@ class AppData {
     return this.shipMap.get(id);
   }
   getShipsByIds(ids: string[]): Ship[] {
-    const result = []
+    const result = [];
     for (const id of ids) {
       const ship = this.getShipById(id);
       if (ship) {
@@ -229,29 +243,36 @@ class AppData {
         newImg.onload = () => {
           resolve(newImg);
           this.imgMap.set(src, newImg);
-        }
+        };
         newImg.onerror = (e) => reject(e);
         newImg.src = src;
       }
     });
   }
-  async getWeaponCanvas(weapon: Weapon, isHardPoint: boolean = false): Promise<CanvasResult | undefined> {
+  async getWeaponCanvas(
+    weapon: Weapon,
+    isHardPoint: boolean = false
+  ): Promise<CanvasResult | undefined> {
     const weaponImgId = isHardPoint ? weapon.id + '_hard' : weapon.id;
     const exitsCanvas = this.weaponCanvasMap.get(weaponImgId);
     if (exitsCanvas) {
       return exitsCanvas;
     }
 
-    const underSprite = isHardPoint ? weapon.hardPointUnderSprite : weapon.turretUnderSprite;
-    const gunSprite = isHardPoint ? weapon.hardPointGunSprite : weapon.turretGunSprite;
-    const weaponSprite = isHardPoint ? weapon.hardPointSprite : weapon.turretSprite;
+    const underSprite = isHardPoint
+      ? weapon.hardPointUnderSprite
+      : weapon.turretUnderSprite;
+    const gunSprite = isHardPoint
+      ? weapon.hardPointGunSprite
+      : weapon.turretGunSprite;
+    const weaponSprite = isHardPoint
+      ? weapon.hardPointSprite
+      : weapon.turretSprite;
     if (!weaponSprite) {
       return undefined;
     }
 
-    const imagePromises = [
-      this.getImage(weaponSprite),
-    ];
+    const imagePromises = [this.getImage(weaponSprite)];
     if (underSprite) {
       imagePromises.push(this.getImage(underSprite));
     }
@@ -273,21 +294,23 @@ class AppData {
     const showMissile =
       weapon.renderHints.includes('RENDER_LOADED_MISSILES') ||
       weapon.renderHints.includes('RENDER_LOADED_MISSILES_UNLESS_HIDDEN');
-    const offsets = isHardPoint ? weapon.hardPointOffsets : weapon.turretOffsets;
-    if (
-      showMissile &&
-      offsets.length > 0 &&
-      weapon.projSpriteName
-    ) {
+    const offsets = isHardPoint
+      ? weapon.hardPointOffsets
+      : weapon.turretOffsets;
+    if (showMissile && offsets.length > 0 && weapon.projSpriteName) {
       offsetPairs = [];
       for (let i = 0; i < weapon.turretOffsets.length; i += 2) {
-        const top = isHardPoint ? weapon.turretOffsets[i] - weaponSpriteImg.naturalHeight / 4 : weapon.turretOffsets[i];
+        const top = isHardPoint
+          ? weapon.turretOffsets[i] - weaponSpriteImg.naturalHeight / 4
+          : weapon.turretOffsets[i];
         offsetPairs.push([top, weapon.turretOffsets[i + 1]]);
       }
     }
 
     const canvasSprites: CanvasSprite[] = [];
-    if (underSpriteImg) { canvasSprites.push(defaultCanvasSprite(underSpriteImg)); }
+    if (underSpriteImg) {
+      canvasSprites.push(defaultCanvasSprite(underSpriteImg));
+    }
     if (gunSpriteImg) {
       canvasSprites.push(defaultCanvasSprite(gunSpriteImg));
     }
@@ -300,16 +323,16 @@ class AppData {
           centerOffsetY: 0,
           translateX: offsetPair[1],
           translateY: offsetPair[0],
-          degree: 0
+          degree: 0,
         });
       }
     }
     const canvasResult = computeCanvasSprites(...canvasSprites);
-    let top = canvasResult.top
+    let top = canvasResult.top;
     if (isHardPoint) {
       top += weaponSpriteImg.naturalHeight / 4;
     }
-    let bottom = canvasResult.bottom
+    let bottom = canvasResult.bottom;
     if (isHardPoint) {
       bottom -= weaponSpriteImg.naturalHeight / 4;
     }
@@ -317,8 +340,8 @@ class AppData {
       left: canvasResult.left,
       right: canvasResult.right,
       top,
-      bottom
-    }
+      bottom,
+    };
     this.weaponCanvasMap.set(weaponImgId, result);
     return result;
   }
@@ -330,14 +353,19 @@ class AppData {
 
     const shipImg = await this.getImage(ship.sprite);
 
-    const weapons: [WeaponSlot, CanvasResult][] = []
+    const weapons: [WeaponSlot, CanvasResult][] = [];
     for (const [slotId, weaponId] of ship.weaponIdMap.entries()) {
       if (weaponId) {
         const weapon = appData.getWeaponById(weaponId);
         const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
         if (weapon && slotData) {
-          const weaponCanvas = await this.getWeaponCanvas(weapon, slotData.hardPoint);
-          if (weaponCanvas) { weapons.push([slotData, weaponCanvas]); }
+          const weaponCanvas = await this.getWeaponCanvas(
+            weapon,
+            slotData.hardPoint
+          );
+          if (weaponCanvas) {
+            weapons.push([slotData, weaponCanvas]);
+          }
         }
       }
     }
@@ -347,9 +375,7 @@ class AppData {
       for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
         if (variantId) {
           const variant = appData.getShipById(variantId);
-          const slotData = ship.allWeaponSlots.find(
-            (it) => it.id === slotId
-          );
+          const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
           if (variant && slotData) {
             const moduleCanvas = await this.getShipCanvas(variant);
             modules.push([variant, slotData, moduleCanvas]);
@@ -361,11 +387,17 @@ class AppData {
     const canvasSprites: CanvasSprite[] = [];
     canvasSprites.push({
       element: shipImg,
-      centerOffsetX: ship.center.left - shipImg.naturalWidth / 2 + (ship.moduleAnchor?.x ?? 0),
-      centerOffsetY: ship.center.bottom - shipImg.naturalHeight / 2 + (ship.moduleAnchor?.y ?? 0),
+      centerOffsetX:
+        ship.center.left -
+        shipImg.naturalWidth / 2 +
+        (ship.moduleAnchor?.x ?? 0),
+      centerOffsetY:
+        ship.center.bottom -
+        shipImg.naturalHeight / 2 +
+        (ship.moduleAnchor?.y ?? 0),
       translateX: 0,
       translateY: 0,
-      degree: 0
+      degree: 0,
     });
     for (const weaponData of weapons) {
       const weaponCanvas = weaponData[1];
@@ -375,13 +407,13 @@ class AppData {
       canvasSprites.push({
         element: {
           naturalHeight: height,
-          naturalWidth: width
+          naturalWidth: width,
         },
         centerOffsetX: weaponCanvas.left - width / 2,
         centerOffsetY: -(weaponCanvas.top - height / 2),
         translateX: weaponSlot.location.x,
         translateY: weaponSlot.location.y,
-        degree: weaponSlot.angle
+        degree: weaponSlot.angle,
       });
     }
     for (const moduleData of modules) {
@@ -392,13 +424,13 @@ class AppData {
       canvasSprites.push({
         element: {
           naturalHeight: height,
-          naturalWidth: width
+          naturalWidth: width,
         },
         centerOffsetX: moduleCanvas.left - width / 2,
         centerOffsetY: -(moduleCanvas.top - height / 2),
         translateX: moduleSlot.location.x,
         translateY: moduleSlot.location.y,
-        degree: moduleSlot.angle
+        degree: moduleSlot.angle,
       });
     }
     const canvasResult = computeCanvasSprites(...canvasSprites);
@@ -408,7 +440,7 @@ class AppData {
   }
 
   async initData() {
-    this.status.value = 'loading'
+    this.status.value = 'loading';
     try {
       const response = await api.get('data/data.json');
       const jsonArray: WikiJsonObject[] = response.data;
@@ -468,13 +500,18 @@ class AppData {
         //ship
         if (ship.emptyHullVariant) {
           ship.varinatIds = Array.from(this.shipMap.values())
-            .filter(it => !it.emptyHullVariant && it.hullId === ship.hullId)
-            .map(it => it.id);
+            .filter((it) => !it.emptyHullVariant && it.hullId === ship.hullId)
+            .map((it) => it.id);
         }
         if (!ship.isSkin()) {
           ship.skinIds = Array.from(this.shipMap.values())
-            .filter(it => it.isSkin() && it.emptyHullVariant && it.baseHullId === ship.hullId)
-            .map(it => it.id);
+            .filter(
+              (it) =>
+                it.isSkin() &&
+                it.emptyHullVariant &&
+                it.baseHullId === ship.hullId
+            )
+            .map((it) => it.id);
         }
         if (ship.moduleIdMap.size > 0) {
           for (const entry of ship.moduleIdMap.entries()) {
@@ -493,21 +530,22 @@ class AppData {
         }
         //ship system
         if (ship.hasSystem() && ship.emptyHullVariant) {
-          const shipSystem = this.getShipSystemById(ship.shipSystemId)
-          shipSystem?.shipIds.push(ship.id)
+          const shipSystem = this.getShipSystemById(ship.shipSystemId);
+          shipSystem?.shipIds.push(ship.id);
         }
         if (ship.hasDefense() && ship.emptyHullVariant) {
-          const shipDefenseSystem = this.getShipSystemById(ship.shipDefenseId)
-          shipDefenseSystem?.defenseShipIds.push(ship.id)
+          const shipDefenseSystem = this.getShipSystemById(ship.shipDefenseId);
+          shipDefenseSystem?.defenseShipIds.push(ship.id);
         }
         //ship mod
-        for (const modId of ship.builtInMods.concat(ship.storyMods).concat(ship.nonBuiltInMods)) {
-          const shipMod = this.getShipModById(modId)
+        for (const modId of ship.builtInMods
+          .concat(ship.storyMods)
+          .concat(ship.nonBuiltInMods)) {
+          const shipMod = this.getShipModById(modId);
           if (ship.emptyHullVariant) {
-            shipMod?.shipIds.push(ship.id)
-          }
-          else {
-            shipMod?.variantIds.push(ship.id)
+            shipMod?.shipIds.push(ship.id);
+          } else {
+            shipMod?.variantIds.push(ship.id);
           }
         }
         //weapon
@@ -520,9 +558,9 @@ class AppData {
         for (const weaponId of weaponSet) {
           const weapon = this.getWeaponById(weaponId);
           if (ship.emptyHullVariant) {
-            weapon?.shipIds.push(ship.id)
+            weapon?.shipIds.push(ship.id);
           } else {
-            weapon?.variantIds.push(ship.id)
+            weapon?.variantIds.push(ship.id);
           }
         }
       }
@@ -551,7 +589,8 @@ class AppData {
         }
         if (planet.market && planet.market.marketConditionIds.length > 0) {
           for (const marketConditionId of planet.market.marketConditionIds) {
-            const marketCondition = this.getMarketConditionById(marketConditionId);
+            const marketCondition =
+              this.getMarketConditionById(marketConditionId);
             if (marketCondition) {
               marketCondition.planets.push(planet);
             }
@@ -592,7 +631,12 @@ class AppData {
           faction.persons.push(person);
         }
         for (const planet of this.sortdPlanet()) {
-          if (!planet.isSubStation && planet.market && !planet.market.planetConditionMarketOnly && planet.market.id === person.marketId) {
+          if (
+            !planet.isSubStation &&
+            planet.market &&
+            !planet.market.planetConditionMarketOnly &&
+            planet.market.id === person.marketId
+          ) {
             person.planet = planet;
             planet.persons.push(person);
             break;
@@ -626,9 +670,9 @@ class AppData {
         }
       }
 
-      this.status.value = 'finish'
+      this.status.value = 'finish';
     } catch (error) {
-      this.status.value = 'fail'
+      this.status.value = 'fail';
       console.error(error);
     }
   }

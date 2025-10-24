@@ -23,17 +23,36 @@ const planets = computed(() => {
 
 <template>
   <q-page padding>
-    <div style="width: 1200px;height: 800px;position: relative;background-color: dimgrey;">
-      <q-btn v-for="[planet, starSystem, offset] in planets" :key="starSystem.id" no-caps unelevated round
-        :to="{ name: 'star_system', params: { id: starSystem.id } }" :style="{
+    <div
+      style="
+        width: 1200px;
+        height: 800px;
+        position: relative;
+        background-color: dimgrey;
+      "
+    >
+      <q-btn
+        v-for="[planet, starSystem, offset] in planets"
+        :key="starSystem.id"
+        no-caps
+        unelevated
+        round
+        :to="{ name: 'star_system', params: { id: starSystem.id } }"
+        :style="{
           position: 'absolute',
           top: '25%',
           left: '62%',
-          transform: 'translate(-50%, -50%) ' +
-            `translate(${starSystem.location.x / 30 + offset}px, ${-starSystem.location.y / 30 + offset}px)`,
-        }">
+          transform:
+            'translate(-50%, -50%) ' +
+            `translate(${starSystem.location.x / 30 + offset}px, ${
+              -starSystem.location.y / 30 + offset
+            }px)`,
+        }"
+      >
         <PlanetIconDiv :planet="planet" />
-        <p style="position:absolute; top:100%;color: white;">{{ planet.name }}</p>
+        <p style="position: absolute; top: 100%; color: white">
+          {{ planet.name }}
+        </p>
       </q-btn>
     </div>
   </q-page>

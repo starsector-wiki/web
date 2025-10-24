@@ -30,15 +30,16 @@ const specialItem = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
-
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ specialItem.desc }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ specialItem.desc }}</span
+        >
         <div style="margin: auto">
           <img decoding="async" :src="specialItem.iconName" />
         </div>
       </div>
 
       <br /><br />
-
 
       <div style="column-count: 2">
         <div style="display: grid; grid-template-columns: 1fr 1fr">
@@ -74,7 +75,6 @@ const specialItem = computed(() => {
           <div>{{ specialItem.tags.join(', ') }}</div>
         </div>
       </div>
-
 
       <br /><br />
 

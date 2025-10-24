@@ -2,7 +2,6 @@
 import { appData } from 'src/AppData';
 import ShipModsDiv from 'src/components/listDiv/ShipModsDiv.vue';
 
-
 defineOptions({
   name: 'ShipModsPage',
 });

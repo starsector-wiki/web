@@ -1,7 +1,14 @@
 import { plainToInstance, Type } from 'class-transformer';
 import 'reflect-metadata';
 import { appData } from 'src/AppData';
-import { HullSize, ShieldType, WeaponSize, WeaponSizeDisplay, WeaponType, WeaponTypeDisplay } from '../conts';
+import {
+  HullSize,
+  ShieldType,
+  WeaponSize,
+  WeaponSizeDisplay,
+  WeaponType,
+  WeaponTypeDisplay,
+} from '../conts';
 import { ShipSystem } from './shipSystem';
 import { Faction } from './Faction';
 
@@ -15,8 +22,8 @@ export class Ship {
   description!: string;
   sprite!: string;
   manufacturer!: string;
-  center!: { left: number; bottom: number; };
-  moduleAnchor?: { x: number; y: number; };
+  center!: { left: number; bottom: number };
+  moduleAnchor?: { x: number; y: number };
 
   hullId!: string;
   baseHullId!: string;
@@ -162,7 +169,7 @@ export class Ship {
   }
 
   isSkin(): boolean {
-    return this.hullId !== this.baseHullId
+    return this.hullId !== this.baseHullId;
   }
 
   isUnderParent(): boolean {
@@ -176,24 +183,29 @@ export class Ship {
   getDisplayName(): string {
     let result = this.name + '-级';
     if (!this.emptyHullVariant) {
-      result += ' ' + this.variantName
+      result += ' ' + this.variantName;
     }
     if (this.designation) {
-      result += ' ' + this.designation
+      result += ' ' + this.designation;
     }
-    return result
+    return result;
   }
 
   hasShield(): boolean {
-    return this.shieldType === ShieldType.FRONT || this.shieldType === ShieldType.OMNI
+    return (
+      this.shieldType === ShieldType.FRONT ||
+      this.shieldType === ShieldType.OMNI
+    );
   }
 
   hasPhase(): boolean {
-    return this.shieldType == ShieldType.PHASE && this.shipDefenseId == 'phasecloak'
+    return (
+      this.shieldType == ShieldType.PHASE && this.shipDefenseId == 'phasecloak'
+    );
   }
 
   hasSystem(): boolean {
-    return this.shipSystemId.length > 0
+    return this.shipSystemId.length > 0;
   }
 
   getSystem(): ShipSystem | undefined {
@@ -203,14 +215,14 @@ export class Ship {
   getSystemDescription(): string {
     const system = appData.getShipSystemById(this.shipSystemId);
     if (system == undefined) {
-      return ''
+      return '';
     } else {
-      return `${system.shortDescription}\n\n系统激活:${this.systemFluxPerUse}, 系统维持(幅能/每秒):${this.systemFluxPerSecond}, 次数:${this.systemMaxUses}, 恢复速度(秒):${this.systemRegen}, 冷却(秒):${this.systemCooldown}`
+      return `${system.shortDescription}\n\n系统激活:${this.systemFluxPerUse}, 系统维持(幅能/每秒):${this.systemFluxPerSecond}, 次数:${this.systemMaxUses}, 恢复速度(秒):${this.systemRegen}, 冷却(秒):${this.systemCooldown}`;
     }
   }
 
   hasDefense(): boolean {
-    return this.shipDefenseId.length > 0
+    return this.shipDefenseId.length > 0;
   }
 
   getDefense(): ShipSystem | undefined {
@@ -220,91 +232,110 @@ export class Ship {
   getDefenseDescription(): string {
     const system = appData.getShipSystemById(this.shipDefenseId);
     if (system == undefined) {
-      return ''
+      return '';
     } else {
-      return `${system.shortDescription}\n\n系统激活:${this.systemFluxPerUse}, 系统维持(幅能/每秒):${this.systemFluxPerSecond}, 次数:${this.systemMaxUses}, 恢复速度(秒):${this.systemRegen}, 冷却(秒):${this.systemCooldown}`
+      return `${system.shortDescription}\n\n系统激活:${this.systemFluxPerUse}, 系统维持(幅能/每秒):${this.systemFluxPerSecond}, 次数:${this.systemMaxUses}, 恢复速度(秒):${this.systemRegen}, 冷却(秒):${this.systemCooldown}`;
     }
   }
 
   getSlotDescription(): string {
     const map = new Map<WeaponType, Map<WeaponSize, number>>();
-    this.allWeaponSlots.forEach(weaponSlot => {
+    this.allWeaponSlots.forEach((weaponSlot) => {
       if (weaponSlot.weaponSlot) {
-        const sizeMap = map.get(weaponSlot.weaponType) ?? new Map<WeaponSize, number>()
-        let count = sizeMap.get(weaponSlot.slotSize) ?? 0
-        count += 1
-        sizeMap.set(weaponSlot.slotSize, count)
-        map.set(weaponSlot.weaponType, sizeMap)
+        const sizeMap =
+          map.get(weaponSlot.weaponType) ?? new Map<WeaponSize, number>();
+        let count = sizeMap.get(weaponSlot.slotSize) ?? 0;
+        count += 1;
+        sizeMap.set(weaponSlot.slotSize, count);
+        map.set(weaponSlot.weaponType, sizeMap);
       }
     });
     const weaponSlotStrs: string[] = [];
     map.forEach((sizeMap, weaponType) => {
       sizeMap.forEach((count, weaponSize) => {
-        weaponSlotStrs.push(`${count}x ${WeaponSizeDisplay.get(weaponSize)}${WeaponTypeDisplay.get(weaponType)}`)
-      })
-    })
+        weaponSlotStrs.push(
+          `${count}x ${WeaponSizeDisplay.get(
+            weaponSize
+          )}${WeaponTypeDisplay.get(weaponType)}`
+        );
+      });
+    });
     return weaponSlotStrs.join(', ');
   }
 
-  getShipMods(): { id: string, name: string }[] {
+  getShipMods(): { id: string; name: string }[] {
     const dataStore = appData;
-    return [...this.builtInMods, ...this.storyMods, ...this.nonBuiltInMods].filter(value => value != undefined)
-      .map(id => {
+    return [...this.builtInMods, ...this.storyMods, ...this.nonBuiltInMods]
+      .filter((value) => value != undefined)
+      .map((id) => {
         return {
           id: id,
-          name: dataStore?.getShipModById(id)?.name ?? id
-        }
-      })
+          name: dataStore?.getShipModById(id)?.name ?? id,
+        };
+      });
   }
 
   getShipModDescription(): string {
-    const modStrs: string[] = []
+    const modStrs: string[] = [];
     if (this.builtInMods.length > 0) {
-      modStrs.push(...(this.builtInMods.map(value => appData.getShipModById(value)?.name).filter(value => value != undefined)) as string[])
+      modStrs.push(
+        ...(this.builtInMods
+          .map((value) => appData.getShipModById(value)?.name)
+          .filter((value) => value != undefined) as string[])
+      );
     }
     if (this.storyMods.length > 0) {
-      modStrs.push(...(this.storyMods.map(value => appData.getShipModById(value)?.name).filter(value => value != undefined)) as string[])
+      modStrs.push(
+        ...(this.storyMods
+          .map((value) => appData.getShipModById(value)?.name)
+          .filter((value) => value != undefined) as string[])
+      );
     }
     if (this.nonBuiltInMods.length > 0) {
-      modStrs.push(...(this.nonBuiltInMods.map(value => appData.getShipModById(value)?.name).filter(value => value != undefined)) as string[])
+      modStrs.push(
+        ...(this.nonBuiltInMods
+          .map((value) => appData.getShipModById(value)?.name)
+          .filter((value) => value != undefined) as string[])
+      );
     }
     return modStrs.join(', ');
   }
-  getWeapons(): { id: string, name: string, count: number }[] {
+  getWeapons(): { id: string; name: string; count: number }[] {
     const weaponMap = new Map<string, number>();
     this.weaponIdMap.forEach((weaponId) => {
       if (weaponId) {
-        let count = weaponMap.get(weaponId) ?? 0
-        count += 1
+        let count = weaponMap.get(weaponId) ?? 0;
+        count += 1;
         weaponMap.set(weaponId, count);
       }
-    })
-    const weapons: { id: string, name: string, count: number }[] = []
+    });
+    const weapons: { id: string; name: string; count: number }[] = [];
     weaponMap.forEach((count, weaponId) => {
       weapons.push({
         id: weaponId,
         name: appData.getWeaponById(weaponId)?.name ?? weaponId,
         count: count,
       });
-    })
+    });
     return weapons;
   }
 
-
   getWeaponDescription(): string {
     const weaponMap = new Map<string, number>();
-    this.weaponIdMap.forEach(weaponId => {
+    this.weaponIdMap.forEach((weaponId) => {
       if (weaponId) {
-        let count = weaponMap.get(weaponId) ?? 0
-        count += 1
+        let count = weaponMap.get(weaponId) ?? 0;
+        count += 1;
         weaponMap.set(weaponId, count);
       }
     });
-    const weaponStrs: string[] = []
+    const weaponStrs: string[] = [];
     weaponMap.forEach((count, weaponId) => {
-      weaponStrs.push(`${count}x ${appData.getWeaponById(weaponId)?.name ?? weaponId}`)
-    })
-    return weaponStrs.join(', ')
+      weaponStrs.push(
+        `${count}x ${appData.getWeaponById(weaponId)?.name ?? weaponId}`
+      );
+    });
+    return weaponStrs.join(', ');
   }
 }
 
@@ -325,7 +356,7 @@ export class MutableStat {
   }
 
   getAddend(): number {
-    return this.modifiedValue - this.baseValue
+    return this.modifiedValue - this.baseValue;
   }
 }
 
@@ -333,7 +364,7 @@ export class WeaponSlot {
   id!: string;
   slotSize!: WeaponSize;
   weaponType!: WeaponType;
-  location!: { x: number; y: number; };
+  location!: { x: number; y: number };
   angle!: number;
 
   weaponSlot!: boolean;

@@ -6,7 +6,7 @@ export class StarSystem {
   id!: string;
   jsonType!: string;
   name!: string;
-  location!: { x: number; y: number; };
+  location!: { x: number; y: number };
   type!: string;
 
   constellationId!: string;

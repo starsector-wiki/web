@@ -5,7 +5,6 @@ import { appData } from 'src/AppData';
 defineOptions({
   name: 'ShipsPage',
 });
-
 </script>
 
 <template>

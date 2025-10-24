@@ -5,7 +5,6 @@ import PersonsDiv from 'src/components/listDiv/PersonsDiv.vue';
 defineOptions({
   name: 'PersonsPage',
 });
-
 </script>
 
 <template>

@@ -1,12 +1,15 @@
 export const enum ShieldType {
-  NONE = 'NONE', FRONT = 'FRONT', OMNI = 'OMNI', PHASE = 'PHASE'
+  NONE = 'NONE',
+  FRONT = 'FRONT',
+  OMNI = 'OMNI',
+  PHASE = 'PHASE',
 }
 
 export const ShieldTypeDisplay = new Map([
   [ShieldType.NONE, '无盾'],
   [ShieldType.FRONT, '前盾'],
   [ShieldType.OMNI, '全盾'],
-  [ShieldType.PHASE, '相位线圈']
+  [ShieldType.PHASE, '相位线圈'],
 ]);
 
 export const enum HullSize {
@@ -14,7 +17,7 @@ export const enum HullSize {
   FRIGATE = 'FRIGATE',
   DESTROYER = 'DESTROYER',
   CRUISER = 'CRUISER',
-  CAPITAL_SHIP = 'CAPITAL_SHIP'
+  CAPITAL_SHIP = 'CAPITAL_SHIP',
 }
 
 export const HullSizeDisplay = new Map([
@@ -22,7 +25,7 @@ export const HullSizeDisplay = new Map([
   [HullSize.FRIGATE, '护卫舰'],
   [HullSize.DESTROYER, '驱逐舰'],
   [HullSize.CRUISER, '巡洋舰'],
-  [HullSize.CAPITAL_SHIP, '主力舰']
+  [HullSize.CAPITAL_SHIP, '主力舰'],
 ]);
 
 export const enum WeaponType {
@@ -46,9 +49,9 @@ export const WeaponTypeDisplay = new Map([
   [WeaponType.MISSILE, '导弹'],
   [WeaponType.LAUNCH_BAY, '甲板'],
   [WeaponType.UNIVERSAL, '通用'],
-  [WeaponType.HYBRID, '混合'],//实弹+能量
-  [WeaponType.SYNERGY, '协同'],//能量+导弹
-  [WeaponType.COMPOSITE, '复合'],//实弹+导弹
+  [WeaponType.HYBRID, '混合'], //实弹+能量
+  [WeaponType.SYNERGY, '协同'], //能量+导弹
+  [WeaponType.COMPOSITE, '复合'], //实弹+导弹
   [WeaponType.BUILT_IN, '内置'],
   [WeaponType.DECORATIVE, '装饰'],
   [WeaponType.SYSTEM, '系统'],
