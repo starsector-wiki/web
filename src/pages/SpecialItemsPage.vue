@@ -8,8 +8,13 @@ defineOptions({
 
 <template>
   <q-page padding class="card-item-list-page">
-    <q-btn class="card-item" no-caps v-for="specialItem in appData.sortdSpecialItem()" :key="specialItem.id"
-      :to="{ name: 'special_item', params: { id: specialItem.id } }">
+    <q-btn
+      class="card-item"
+      no-caps
+      v-for="specialItem in appData.sortdSpecialItem()"
+      :key="specialItem.id"
+      :to="{ name: 'special_item', params: { id: specialItem.id } }"
+    >
       <div class="card-item-content">
         <img decoding="async" :src="specialItem.iconName" />
         <span>

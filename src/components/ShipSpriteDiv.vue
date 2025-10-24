@@ -16,8 +16,12 @@ interface Props {
 }
 const { ship } = defineProps<Props>();
 
-const weapons = ref(undefined as [Weapon, WeaponSlot, CanvasResult][] | undefined);
-const modules = ref(undefined as [Ship, WeaponSlot, CanvasResult][] | undefined);
+const weapons = ref(
+  undefined as [Weapon, WeaponSlot, CanvasResult][] | undefined
+);
+const modules = ref(
+  undefined as [Ship, WeaponSlot, CanvasResult][] | undefined
+);
 const canvasResult = ref(undefined as CanvasResult | undefined);
 
 watchEffect(() => {
@@ -33,9 +37,16 @@ async function getWeapons() {
       const weapon = appData.getWeaponById(weaponId);
       const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
       if (weapon && slotData) {
-        const weaponCanvas = await appData.getWeaponCanvas(weapon, slotData.hardPoint);
+        const weaponCanvas = await appData.getWeaponCanvas(
+          weapon,
+          slotData.hardPoint
+        );
         if (weaponCanvas) {
-          result.push([weapon, slotData, weaponCanvas] as [Weapon, WeaponSlot, CanvasResult]);
+          result.push([weapon, slotData, weaponCanvas] as [
+            Weapon,
+            WeaponSlot,
+            CanvasResult
+          ]);
         }
       }
     }
@@ -49,7 +60,7 @@ async function getWeapons() {
     }
     return Math.abs(aLocation.y) - Math.abs(bLocation.y);
   });
-};
+}
 
 async function getModules() {
   let modules1: [Ship, WeaponSlot, CanvasResult][] = [];
@@ -57,9 +68,7 @@ async function getModules() {
     for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
       if (variantId) {
         const variant = appData.getShipById(variantId);
-        const slotData = ship.allWeaponSlots.find(
-          (it) => it.id === slotId
-        );
+        const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
         if (variant && slotData) {
           const moduleCanvas = await appData.getShipCanvas(variant);
           modules1.push([variant, slotData, moduleCanvas]);
@@ -87,53 +96,72 @@ async function getModules() {
     });
   }
   modules.value = modules1;
-};
+}
 
 async function getShipCanvas() {
   canvasResult.value = await computeShipSize(ship);
-};
+}
 </script>
 
 <template>
-  <div v-if="canvasResult && modules && weapons" :style="{
-    position: 'relative',
-    width: canvasResult.left + canvasResult.right + 'px',
-    height: canvasResult.top + canvasResult.bottom + 'px'
-  }">
-    <img decoding="async" :src="ship.sprite" :style="{
-      position: 'absolute',
-      left: canvasResult.left + 'px',
-      top: canvasResult.top + 'px',
-      transform: `translate(${-ship.center.left}px, calc(-100% + ${ship.center.bottom}px))`
-    }" />
+  <div
+    v-if="canvasResult && modules && weapons"
+    :style="{
+      position: 'relative',
+      width: canvasResult.left + canvasResult.right + 'px',
+      height: canvasResult.top + canvasResult.bottom + 'px',
+    }"
+  >
+    <img
+      decoding="async"
+      :src="ship.sprite"
+      :style="{
+        position: 'absolute',
+        left: canvasResult.left + 'px',
+        top: canvasResult.top + 'px',
+        transform: `translate(${-ship.center.left}px, calc(-100% + ${
+          ship.center.bottom
+        }px))`,
+      }"
+    />
 
-    <div v-for="([weapon, slotData, weaponCanvas]) in weapons" :key="slotData.id" :style="{
-      position: 'absolute',
-      left: canvasResult.left + 'px',
-      top: canvasResult.top + 'px',
-      transformOrigin: `${weaponCanvas.left}px ${weaponCanvas.top}px`,
-      transform: `translate(${-weaponCanvas.left}px, ${-weaponCanvas.top}px)`
-        + ` translate(${slotData.location.x}px, ${-slotData.location.y}px)`
-        + ` rotate(${360 - slotData.angle}deg)`,
-    }">
+    <div
+      v-for="[weapon, slotData, weaponCanvas] in weapons"
+      :key="slotData.id"
+      :style="{
+        position: 'absolute',
+        left: canvasResult.left + 'px',
+        top: canvasResult.top + 'px',
+        transformOrigin: `${weaponCanvas.left}px ${weaponCanvas.top}px`,
+        transform:
+          `translate(${-weaponCanvas.left}px, ${-weaponCanvas.top}px)` +
+          ` translate(${slotData.location.x}px, ${-slotData.location.y}px)` +
+          ` rotate(${360 - slotData.angle}deg)`,
+      }"
+    >
       <WeaponSpriteDiv :weapon="weapon" :is-hard-point="slotData.hardPoint" />
     </div>
 
-    <div v-for="([module, slotData, moduleCanvas], index) in modules" :key="slotData.id" :style="{
-      position: 'absolute',
-      left: canvasResult.left + 'px',
-      top: canvasResult.top + 'px',
-      transformOrigin: `calc(${moduleCanvas.left}px - ${module.moduleAnchor?.x ?? 0
-        }px) calc(${moduleCanvas.top}px - ${module.moduleAnchor?.y ?? 0
-        }px)`,
-      transform:
-        `translate(${-moduleCanvas.left}px, ${-moduleCanvas.top}px) ` +
-        `translate(${module.moduleAnchor?.x ?? 0}px, ${module.moduleAnchor?.y ?? 0
-        }px) ` +
-        `translate(${slotData.location.x}px, ${-slotData.location.y}px) ` +
-        `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
-      zIndex: module.isUnderParent() ? -1 : 2 + index,
-    }">
+    <div
+      v-for="([module, slotData, moduleCanvas], index) in modules"
+      :key="slotData.id"
+      :style="{
+        position: 'absolute',
+        left: canvasResult.left + 'px',
+        top: canvasResult.top + 'px',
+        transformOrigin: `calc(${moduleCanvas.left}px - ${
+          module.moduleAnchor?.x ?? 0
+        }px) calc(${moduleCanvas.top}px - ${module.moduleAnchor?.y ?? 0}px)`,
+        transform:
+          `translate(${-moduleCanvas.left}px, ${-moduleCanvas.top}px) ` +
+          `translate(${module.moduleAnchor?.x ?? 0}px, ${
+            module.moduleAnchor?.y ?? 0
+          }px) ` +
+          `translate(${slotData.location.x}px, ${-slotData.location.y}px) ` +
+          `rotate(${slotData.angle === 0 ? 0 : 360 - slotData.angle}deg)`,
+        zIndex: module.isUnderParent() ? -1 : 2 + index,
+      }"
+    >
       <ShipSpriteDiv :ship="module" />
     </div>
   </div>

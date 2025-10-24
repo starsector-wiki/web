@@ -16,7 +16,14 @@ function toggleLeftDrawer() {
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+        />
 
         <q-toolbar-title> Starsector Wiki </q-toolbar-title>
       </q-toolbar>
@@ -73,9 +80,17 @@ function toggleLeftDrawer() {
     <q-page-container>
       <router-view v-slot="{ Component, route }">
         <keep-alive>
-          <component v-if="route.meta.keepAlive" :is="Component" :key="route.fullPath" />
+          <component
+            v-if="route.meta.keepAlive"
+            :is="Component"
+            :key="route.fullPath"
+          />
         </keep-alive>
-        <component v-if="!route.meta.keepAlive" :is="Component" :key="route.fullPath" />
+        <component
+          v-if="!route.meta.keepAlive"
+          :is="Component"
+          :key="route.fullPath"
+        />
       </router-view>
     </q-page-container>
   </q-layout>

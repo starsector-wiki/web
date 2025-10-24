@@ -35,15 +35,16 @@ const faction = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
-
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ faction.description }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ faction.description }}</span
+        >
         <div style="margin: auto">
           <img decoding="async" :src="faction.logo" />
         </div>
       </div>
 
       <br /><br />
-
 
       <div style="column-count: 1">
         <div style="display: grid; grid-template-columns: 1fr 6fr">
@@ -61,10 +62,20 @@ const faction = computed(() => {
         <div style="display: grid; grid-template-columns: 1fr 6fr">
           <div>势力关系</div>
           <div>
-            <q-btn v-for="[factionId, relationship] in faction.relationshipMap.entries()" :key="factionId"
-              :to="{ name: 'faction', params: { id: factionId } }">
-              <img style="width: 64px;height: 40px;" :src="appData.getFactionById(factionId)?.logo" />
-              {{ appData.getFactionById(factionId)?.displayName }} : {{ Math.floor(relationship * 100) }}
+            <q-btn
+              v-for="[
+                factionId,
+                relationship,
+              ] in faction.relationshipMap.entries()"
+              :key="factionId"
+              :to="{ name: 'faction', params: { id: factionId } }"
+            >
+              <img
+                style="width: 64px; height: 40px"
+                :src="appData.getFactionById(factionId)?.logo"
+              />
+              {{ appData.getFactionById(factionId)?.displayName }} :
+              {{ Math.floor(relationship * 100) }}
             </q-btn>
           </div>
         </div>
@@ -87,13 +98,25 @@ const faction = computed(() => {
       <br /><br />
       <template v-if="faction.knownShipIds.length > 0">
         <h4>船体</h4>
-        <ShipsDiv :ships="appData.getShipsByIds(faction.knownShipIds.map(it => it + '_Hull'))" />
+        <ShipsDiv
+          :ships="
+            appData.getShipsByIds(
+              faction.knownShipIds.map((it) => it + '_Hull')
+            )
+          "
+        />
       </template>
 
       <br /><br />
       <template v-if="faction.knownFighterIds.length > 0">
         <h4>飞机</h4>
-        <ShipsDiv :ships="appData.getShipsByIds(faction.knownFighterIds.map(it => it.replace('_wing', '_Hull')))" />
+        <ShipsDiv
+          :ships="
+            appData.getShipsByIds(
+              faction.knownFighterIds.map((it) => it.replace('_wing', '_Hull'))
+            )
+          "
+        />
       </template>
 
       <br /><br />

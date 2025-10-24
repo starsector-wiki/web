@@ -2,12 +2,12 @@ export interface CanvasSprite {
   element: {
     naturalHeight: number;
     naturalWidth: number;
-  }
-  centerOffsetX: number
-  centerOffsetY: number
-  translateX: number
-  translateY: number
-  degree: number
+  };
+  centerOffsetX: number;
+  centerOffsetY: number;
+  translateX: number;
+  translateY: number;
+  degree: number;
 }
 
 export function defaultCanvasSprite(element: HTMLImageElement): CanvasSprite {
@@ -17,31 +17,36 @@ export function defaultCanvasSprite(element: HTMLImageElement): CanvasSprite {
     centerOffsetY: 0,
     translateX: 0,
     translateY: 0,
-    degree: 0
-  }
+    degree: 0,
+  };
 }
 
 export interface CanvasResult {
-  left: number
-  right: number
-  top: number
-  bottom: number
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
 }
 
-export function computeCanvasSprites(...canvasSprites: CanvasSprite[]): CanvasResult {
+export function computeCanvasSprites(
+  ...canvasSprites: CanvasSprite[]
+): CanvasResult {
   let result: CanvasResult = {
     left: 0,
     right: 0,
     top: 0,
-    bottom: 0
-  }
+    bottom: 0,
+  };
   for (const canvasSprite of canvasSprites) {
     result = addCanvasSprite(result, canvasSprite);
   }
   return result;
 }
 
-function addCanvasSprite(canvasResult: CanvasResult, canvasSprite: CanvasSprite): CanvasResult {
+function addCanvasSprite(
+  canvasResult: CanvasResult,
+  canvasSprite: CanvasSprite
+): CanvasResult {
   let top = canvasSprite.element.naturalHeight / 2;
   let bottom = canvasSprite.element.naturalHeight / 2;
   let left = canvasSprite.element.naturalWidth / 2;
@@ -64,15 +69,15 @@ function addCanvasSprite(canvasResult: CanvasResult, canvasSprite: CanvasSprite)
     right = maxDiagonal;
   }
 
-  top += canvasSprite.translateY
-  bottom -= canvasSprite.translateY
-  left -= canvasSprite.translateX
-  right += canvasSprite.translateX
+  top += canvasSprite.translateY;
+  bottom -= canvasSprite.translateY;
+  left -= canvasSprite.translateX;
+  right += canvasSprite.translateX;
 
   return {
     left: Math.max(canvasResult.left, left),
     right: Math.max(canvasResult.right, right),
     top: Math.max(canvasResult.top, top),
-    bottom: Math.max(canvasResult.bottom, bottom)
-  }
+    bottom: Math.max(canvasResult.bottom, bottom),
+  };
 }

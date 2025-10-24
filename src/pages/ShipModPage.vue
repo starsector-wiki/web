@@ -38,15 +38,20 @@ const variantShips = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
-
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ shipMod.description }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ shipMod.description }}</span
+        >
         <div style="margin: auto">
-          <img style="background-color: black" decoding="async" :src="shipMod.icon" />
+          <img
+            style="background-color: black"
+            decoding="async"
+            :src="shipMod.icon"
+          />
         </div>
       </div>
 
       <br /><br />
-
 
       <div style="column-count: 1">
         <div style="display: grid; grid-template-columns: 1fr 9fr">

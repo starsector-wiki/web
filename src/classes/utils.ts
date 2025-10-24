@@ -1,5 +1,10 @@
 import { appData } from 'src/AppData';
-import { CanvasResult, CanvasSprite, computeCanvasSprites, defaultCanvasSprite } from './model/CanvasSprite';
+import {
+  CanvasResult,
+  CanvasSprite,
+  computeCanvasSprites,
+  defaultCanvasSprite,
+} from './model/CanvasSprite';
 import { Weapon } from './model/weapon';
 import { Ship, WeaponSlot } from './model/ship';
 import { Faction } from './model/Faction';
@@ -11,7 +16,7 @@ import { Industry } from './model/Industry';
 import { MarketCondition } from './model/MarketCondition';
 
 export function round(value: number): number {
-  return parseFloat(value.toFixed(2))
+  return parseFloat(value.toFixed(2));
 }
 
 export function debugJson(value: unknown): string {
@@ -26,14 +31,21 @@ function replacer(key: string, value: unknown) {
   }
 }
 
-export async function computeWeaponSize(weapon: Weapon, isHardPoint: boolean = false): Promise<CanvasResult> {
-  const underSprite = isHardPoint ? weapon.hardPointUnderSprite : weapon.turretUnderSprite;
-  const gunSprite = isHardPoint ? weapon.hardPointGunSprite : weapon.turretGunSprite;
-  const weaponSprite = isHardPoint ? weapon.hardPointSprite : weapon.turretSprite;
+export async function computeWeaponSize(
+  weapon: Weapon,
+  isHardPoint: boolean = false
+): Promise<CanvasResult> {
+  const underSprite = isHardPoint
+    ? weapon.hardPointUnderSprite
+    : weapon.turretUnderSprite;
+  const gunSprite = isHardPoint
+    ? weapon.hardPointGunSprite
+    : weapon.turretGunSprite;
+  const weaponSprite = isHardPoint
+    ? weapon.hardPointSprite
+    : weapon.turretSprite;
 
-  const imagePromises = [
-    appData.getImage(weaponSprite),
-  ];
+  const imagePromises = [appData.getImage(weaponSprite)];
   if (underSprite) {
     imagePromises.push(appData.getImage(underSprite));
   }
@@ -56,20 +68,20 @@ export async function computeWeaponSize(weapon: Weapon, isHardPoint: boolean = f
     weapon.renderHints.includes('RENDER_LOADED_MISSILES') ||
     weapon.renderHints.includes('RENDER_LOADED_MISSILES_UNLESS_HIDDEN');
   const offsets = isHardPoint ? weapon.hardPointOffsets : weapon.turretOffsets;
-  if (
-    showMissile &&
-    offsets.length > 0 &&
-    weapon.projSpriteName
-  ) {
+  if (showMissile && offsets.length > 0 && weapon.projSpriteName) {
     offsetPairs = [];
     for (let i = 0; i < offsets.length; i += 2) {
-      const top = isHardPoint ? offsets[i] - weaponSpriteImg.naturalHeight / 4 : offsets[i];
+      const top = isHardPoint
+        ? offsets[i] - weaponSpriteImg.naturalHeight / 4
+        : offsets[i];
       offsetPairs.push([top, offsets[i + 1]]);
     }
   }
 
   const canvasSprites: CanvasSprite[] = [];
-  if (underSpriteImg) { canvasSprites.push(defaultCanvasSprite(underSpriteImg)); }
+  if (underSpriteImg) {
+    canvasSprites.push(defaultCanvasSprite(underSpriteImg));
+  }
   if (gunSpriteImg) {
     canvasSprites.push(defaultCanvasSprite(gunSpriteImg));
   }
@@ -82,7 +94,7 @@ export async function computeWeaponSize(weapon: Weapon, isHardPoint: boolean = f
         centerOffsetY: 0,
         translateX: offsetPair[1],
         translateY: offsetPair[0],
-        degree: 0
+        degree: 0,
       });
     }
   }
@@ -92,14 +104,19 @@ export async function computeWeaponSize(weapon: Weapon, isHardPoint: boolean = f
 export async function computeShipSize(ship: Ship): Promise<CanvasResult> {
   const shipImg = await appData.getImage(ship.sprite);
 
-  let weapons: [WeaponSlot, CanvasResult][] = []
+  let weapons: [WeaponSlot, CanvasResult][] = [];
   for (const [slotId, weaponId] of ship.weaponIdMap.entries()) {
     if (weaponId) {
       const weapon = appData.getWeaponById(weaponId);
       const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
       if (weapon && slotData) {
-        const weaponCanvas = await appData.getWeaponCanvas(weapon, slotData.hardPoint);
-        if (weaponCanvas) { weapons.push([slotData, weaponCanvas]); }
+        const weaponCanvas = await appData.getWeaponCanvas(
+          weapon,
+          slotData.hardPoint
+        );
+        if (weaponCanvas) {
+          weapons.push([slotData, weaponCanvas]);
+        }
       }
     }
   }
@@ -118,9 +135,7 @@ export async function computeShipSize(ship: Ship): Promise<CanvasResult> {
     for (const [slotId, variantId] of ship.moduleIdMap.entries()) {
       if (variantId) {
         const variant = appData.getShipById(variantId);
-        const slotData = ship.allWeaponSlots.find(
-          (it) => it.id === slotId
-        );
+        const slotData = ship.allWeaponSlots.find((it) => it.id === slotId);
         if (variant && slotData) {
           const moduleCanvas = await appData.getShipCanvas(variant);
           modules.push([variant, slotData, moduleCanvas]);
@@ -151,11 +166,15 @@ export async function computeShipSize(ship: Ship): Promise<CanvasResult> {
   const canvasSprites: CanvasSprite[] = [];
   canvasSprites.push({
     element: shipImg,
-    centerOffsetX: ship.center.left - shipImg.naturalWidth / 2 + (ship.moduleAnchor?.x ?? 0),
-    centerOffsetY: ship.center.bottom - shipImg.naturalHeight / 2 + (ship.moduleAnchor?.y ?? 0),
+    centerOffsetX:
+      ship.center.left - shipImg.naturalWidth / 2 + (ship.moduleAnchor?.x ?? 0),
+    centerOffsetY:
+      ship.center.bottom -
+      shipImg.naturalHeight / 2 +
+      (ship.moduleAnchor?.y ?? 0),
     translateX: 0,
     translateY: 0,
-    degree: 0
+    degree: 0,
   });
   for (const weaponData of weapons) {
     const weaponCanvas = weaponData[1];
@@ -165,13 +184,13 @@ export async function computeShipSize(ship: Ship): Promise<CanvasResult> {
     canvasSprites.push({
       element: {
         naturalHeight: height,
-        naturalWidth: width
+        naturalWidth: width,
       },
       centerOffsetX: weaponCanvas.left - width / 2,
       centerOffsetY: -(weaponCanvas.top - height / 2),
       translateX: weaponSlot.location.x,
       translateY: weaponSlot.location.y,
-      degree: weaponSlot.angle
+      degree: weaponSlot.angle,
     });
   }
   for (const moduleData of modules) {
@@ -182,13 +201,13 @@ export async function computeShipSize(ship: Ship): Promise<CanvasResult> {
     canvasSprites.push({
       element: {
         naturalHeight: height,
-        naturalWidth: width
+        naturalWidth: width,
       },
       centerOffsetX: moduleCanvas.left - width / 2,
       centerOffsetY: -(moduleCanvas.top - height / 2),
       translateX: moduleSlot.location.x,
       translateY: moduleSlot.location.y,
-      degree: moduleSlot.angle
+      degree: moduleSlot.angle,
     });
   }
   return computeCanvasSprites(...canvasSprites);
@@ -246,7 +265,7 @@ export function compareShipMod(a: ShipMod, b: ShipMod): number {
 }
 
 export function comparePlanet(a: Planet, b: Planet): number {
-  if ((a.isStation()) !== (b.isStation())) {
+  if (a.isStation() !== b.isStation()) {
     if (a.isStation()) {
       return 1;
     } else {
@@ -259,7 +278,7 @@ export function comparePlanet(a: Planet, b: Planet): number {
       return 1;
     }
   } else if (a.market && b.market) {
-    return b.market.size - a.market.size
+    return b.market.size - a.market.size;
   } else if (a.factionId !== b.factionId) {
     return a.factionId.localeCompare(b.factionId);
   }
@@ -277,22 +296,28 @@ export function compareIndustry(a: Industry, b: Industry): number {
   return a.order - b.order;
 }
 
-export function compareMarketCondition(a: MarketCondition, b: MarketCondition): number {
+export function compareMarketCondition(
+  a: MarketCondition,
+  b: MarketCondition
+): number {
   return a.order - b.order;
 }
 
-export function convertOptions(rows: {
-  label: string,
-  value: string
-}[], filterFun: (arg0: string) => number): {
-  label: string,
-  value: string
+export function convertOptions(
+  rows: {
+    label: string;
+    value: string;
+  }[],
+  filterFun: (arg0: string) => number
+): {
+  label: string;
+  value: string;
 }[] {
-  return rows.map(row => {
+  return rows.map((row) => {
     const count = filterFun(row.value);
     return {
       label: `${row.label}(${count})`,
-      value: row.value
+      value: row.value,
     };
   });
 }

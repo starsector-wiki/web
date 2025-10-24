@@ -30,15 +30,16 @@ const commodity = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
-
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ commodity.description }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ commodity.description }}</span
+        >
         <div style="margin: auto">
           <img decoding="async" :src="commodity.iconName" />
         </div>
       </div>
 
       <br /><br />
-
 
       <div style="column-count: 2">
         <div style="display: grid; grid-template-columns: 1fr 1fr">
@@ -66,7 +67,6 @@ const commodity = computed(() => {
           <div>{{ commodity.baseDanger }}</div>
         </div>
       </div>
-
 
       <br /><br />
 

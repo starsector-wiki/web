@@ -21,19 +21,26 @@ const $q = useQuasar();
 const selectSize = ref<string[]>([]);
 const selectManufacturer = ref<(string | null)[]>([]);
 const selectType = ref<string[]>(['normal']);
-const rowTypeOptions = [{
-  label: '普通',
-  value: 'normal'
-}, {
-  label: '空间站',
-  value: 'station'
-}, {
-  label: '模块',
-  value: 'module'
-}];
+const rowTypeOptions = [
+  {
+    label: '普通',
+    value: 'normal',
+  },
+  {
+    label: '空间站',
+    value: 'station',
+  },
+  {
+    label: '模块',
+    value: 'module',
+  },
+];
 
 const sizeOptions = computed(() => {
-  const baseShips = filterType(filterManufacturer(allShips.value, selectManufacturer.value), selectType.value);
+  const baseShips = filterType(
+    filterManufacturer(allShips.value, selectManufacturer.value),
+    selectType.value
+  );
   const values = Array.from(new Set(allShips.value.map((it) => it.size)));
   return values.map((value) => {
     const label = HullSizeDisplay.get(value) ?? value;
@@ -44,8 +51,13 @@ const sizeOptions = computed(() => {
   });
 });
 const manufacturerOptions = computed(() => {
-  const baseShips = filterType(filterSize(allShips.value, selectSize.value), selectType.value);
-  const values = Array.from(new Set(allShips.value.map((it) => it.manufacturer ?? null))).sort((a, b) => {
+  const baseShips = filterType(
+    filterSize(allShips.value, selectSize.value),
+    selectType.value
+  );
+  const values = Array.from(
+    new Set(allShips.value.map((it) => it.manufacturer ?? null))
+  ).sort((a, b) => {
     const left = a ?? '';
     const right = b ?? '';
     return left.localeCompare(right);
@@ -59,14 +71,36 @@ const manufacturerOptions = computed(() => {
   });
 });
 const typeOptions = computed(() => {
-  const baseShips = filterManufacturer(filterSize(allShips.value, selectSize.value), selectManufacturer.value);
-  return convertOptions(rowTypeOptions, (v) => filterType(baseShips, [v]).length);
+  const baseShips = filterManufacturer(
+    filterSize(allShips.value, selectSize.value),
+    selectManufacturer.value
+  );
+  return convertOptions(
+    rowTypeOptions,
+    (v) => filterType(baseShips, [v]).length
+  );
 });
 
-const allShips = computed(() => ships.map(it => typeof it === 'string' ? appData.getShipById(it) : it).filter(it => it !== undefined).sort(compareShip));
-const finalShips = computed(() => filterType(filterManufacturer(filterSize(allShips.value, selectSize.value), selectManufacturer.value), selectType.value));
+const allShips = computed(() =>
+  ships
+    .map((it) => (typeof it === 'string' ? appData.getShipById(it) : it))
+    .filter((it) => it !== undefined)
+    .sort(compareShip)
+);
+const finalShips = computed(() =>
+  filterType(
+    filterManufacturer(
+      filterSize(allShips.value, selectSize.value),
+      selectManufacturer.value
+    ),
+    selectType.value
+  )
+);
 
-function filterSize(ships: Ship[], sizes: readonly string[] | null | undefined): Ship[] {
+function filterSize(
+  ships: Ship[],
+  sizes: readonly string[] | null | undefined
+): Ship[] {
   if (!sizes || sizes.length === 0) {
     return ships;
   }
@@ -94,7 +128,8 @@ function filterType(
   return ships.filter((ship) => {
     const matchesStation = ship.station && types.includes('station');
     const matchesModule = ship.isModule && types.includes('module');
-    const matchesNormal = !ship.station && !ship.isModule && types.includes('normal');
+    const matchesNormal =
+      !ship.station && !ship.isModule && types.includes('normal');
     return matchesStation || matchesModule || matchesNormal;
   });
 }
@@ -104,27 +139,70 @@ function filterType(
   <div v-if="!hiddenOptions" class="filter-toolbar">
     <div v-if="typeOptions.length" class="filter-block">
       <span>类型:</span>
-      <q-select v-model="selectType" :options="typeOptions" multiple emit-value map-options use-chips dense
-        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
-        placeholder="全部" />
+      <q-select
+        v-model="selectType"
+        :options="typeOptions"
+        multiple
+        emit-value
+        map-options
+        use-chips
+        dense
+        options-dense
+        :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'"
+        clearable
+        clear-icon="close"
+        :clear-value="[]"
+        placeholder="全部"
+      />
     </div>
     <div v-if="sizeOptions.length" class="filter-block">
       <span>大小:</span>
-      <q-select v-model="selectSize" :options="sizeOptions" multiple emit-value map-options use-chips dense
-        options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close" :clear-value="[]"
-        placeholder="全部" />
+      <q-select
+        v-model="selectSize"
+        :options="sizeOptions"
+        multiple
+        emit-value
+        map-options
+        use-chips
+        dense
+        options-dense
+        :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'"
+        clearable
+        clear-icon="close"
+        :clear-value="[]"
+        placeholder="全部"
+      />
     </div>
     <div v-if="manufacturerOptions.length" class="filter-block">
       <span>设计类型:</span>
-      <q-select v-model="selectManufacturer" :options="manufacturerOptions" multiple emit-value map-options use-chips
-        dense options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close"
-        :clear-value="[]" placeholder="全部" />
+      <q-select
+        v-model="selectManufacturer"
+        :options="manufacturerOptions"
+        multiple
+        emit-value
+        map-options
+        use-chips
+        dense
+        options-dense
+        :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'"
+        clearable
+        clear-icon="close"
+        :clear-value="[]"
+        placeholder="全部"
+      />
     </div>
   </div>
 
   <div class="card-item-list-page">
-    <q-btn no-caps flat class="card-item" style="align-self: stretch;" v-for="ship in finalShips" :key="ship.id"
-      :to="{ name: 'ship', params: { id: ship.id } }">
+    <q-btn
+      no-caps
+      flat
+      class="card-item"
+      style="align-self: stretch"
+      v-for="ship in finalShips"
+      :key="ship.id"
+      :to="{ name: 'ship', params: { id: ship.id } }"
+    >
       <div class="card-item-content">
         <ShipSpriteDiv :ship="ship" />
         <span> {{ ship.getDisplayName() }} </span>

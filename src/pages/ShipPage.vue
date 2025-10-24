@@ -19,9 +19,7 @@ onBeforeRouteUpdate(async (to) => {
   id.value = to.params.id as string;
 });
 const ship = computed(() => appData.getShipById(id.value));
-const skins = computed(() =>
-  appData.getShipsByIds(ship.value?.skinIds ?? [])
-);
+const skins = computed(() => appData.getShipsByIds(ship.value?.skinIds ?? []));
 const variants = computed(() =>
   appData.getShipsByIds(ship.value?.varinatIds ?? [])
 );
@@ -38,7 +36,10 @@ const variants = computed(() =>
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 10px">
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ ship.description }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ ship.description }}</span
+        >
         <ShipSpriteDiv :ship="ship" />
       </div>
 
@@ -65,7 +66,10 @@ const variants = computed(() =>
             <td style="text-align: right">{{ ship.crToDeploy }}%</td>
             <td>维护消耗(补给/月)</td>
             <td style="text-align: right">
-              <MutableStatDiv :stat="ship.suppliesPerMonth" :add-is-good="false" />
+              <MutableStatDiv
+                :stat="ship.suppliesPerMonth"
+                :add-is-good="false"
+              />
             </td>
             <td>结构值</td>
             <td style="text-align: right">
@@ -89,7 +93,10 @@ const variants = computed(() =>
           <tr>
             <td>部署成本(补给)</td>
             <td style="text-align: right">
-              <MutableStatDiv :stat="ship.suppliesToRecover" :add-is-good="false" />
+              <MutableStatDiv
+                :stat="ship.suppliesToRecover"
+                :add-is-good="false"
+              />
             </td>
             <td>最大载员</td>
             <td style="text-align: right">
@@ -103,7 +110,10 @@ const variants = computed(() =>
           <tr>
             <td>部署点</td>
             <td style="text-align: right">
-              <MutableStatDiv :stat="ship.suppliesToRecover" :add-is-good="false" />
+              <MutableStatDiv
+                :stat="ship.suppliesToRecover"
+                :add-is-good="false"
+              />
             </td>
             <td>必要船员</td>
             <td style="text-align: right">
@@ -114,13 +124,17 @@ const variants = computed(() =>
                 ship.hasShield()
                   ? '护盾角度'
                   : ship.hasPhase()
-                    ? '相位线圈激活'
-                    : ''
+                  ? '相位线圈激活'
+                  : ''
               }}
             </td>
             <td style="text-align: right">
               <MutableStatDiv v-if="ship.hasShield()" :stat="ship.shieldArc" />
-              <MutableStatDiv v-else-if="ship.hasPhase()" :stat="ship.phaseCost" :add-is-good="false" />
+              <MutableStatDiv
+                v-else-if="ship.hasPhase()"
+                :stat="ship.phaseCost"
+                :add-is-good="false"
+              />
             </td>
           </tr>
           <tr>
@@ -137,13 +151,21 @@ const variants = computed(() =>
                 ship.hasShield()
                   ? '护盾维持(幅能/秒)'
                   : ship.hasPhase()
-                    ? '相位线圈维持(幅能/秒)'
-                    : ''
+                  ? '相位线圈维持(幅能/秒)'
+                  : ''
               }}
             </td>
             <td style="text-align: right">
-              <MutableStatDiv v-if="ship.hasShield()" :stat="ship.shieldUpkeep" :add-is-good="false" />
-              <MutableStatDiv v-else-if="ship.hasPhase()" :stat="ship.phaseUpKeep" :add-is-good="false" />
+              <MutableStatDiv
+                v-if="ship.hasShield()"
+                :stat="ship.shieldUpkeep"
+                :add-is-good="false"
+              />
+              <MutableStatDiv
+                v-else-if="ship.hasPhase()"
+                :stat="ship.phaseUpKeep"
+                :add-is-good="false"
+              />
             </td>
           </tr>
           <tr>
@@ -157,7 +179,11 @@ const variants = computed(() =>
               {{ ship.hasShield() ? '护盾效率(幅能/伤害)' : '' }}
             </td>
             <td style="text-align: right">
-              <MutableStatDiv v-if="ship.hasShield()" :stat="ship.fluxPerDamageAbsorbed" :add-is-good="false" />
+              <MutableStatDiv
+                v-if="ship.hasShield()"
+                :stat="ship.fluxPerDamageAbsorbed"
+                :add-is-good="false"
+              />
             </td>
           </tr>
           <tr>
@@ -207,10 +233,14 @@ const variants = computed(() =>
           <tr>
             <td>战术系统</td>
             <td colspan="5">
-              <router-link v-if="ship.getSystem()" :to="{
-                name: 'ship_system',
-                params: { id: ship?.shipSystemId },
-              }">{{ ship.getSystem()?.name }}</router-link>
+              <router-link
+                v-if="ship.getSystem()"
+                :to="{
+                  name: 'ship_system',
+                  params: { id: ship?.shipSystemId },
+                }"
+                >{{ ship.getSystem()?.name }}</router-link
+              >
             </td>
             <td></td>
           </tr>
@@ -223,10 +253,14 @@ const variants = computed(() =>
           <tr>
             <td>特殊系统</td>
             <td colspan="5">
-              <router-link v-if="ship.getDefense()" :to="{
-                name: 'ship_system',
-                params: { id: ship?.shipDefenseId },
-              }">{{ ship.getDefense()?.name ?? '无' }}</router-link>
+              <router-link
+                v-if="ship.getDefense()"
+                :to="{
+                  name: 'ship_system',
+                  params: { id: ship?.shipDefenseId },
+                }"
+                >{{ ship.getDefense()?.name ?? '无' }}</router-link
+              >
             </td>
           </tr>
           <tr v-if="ship.hasDefense()">
@@ -242,9 +276,16 @@ const variants = computed(() =>
           <tr>
             <td>军备详情:</td>
             <td colspan="5">
-              <span style="margin-right: 10px" v-for="weapon in ship.getWeapons()" :key="weapon.id">
+              <span
+                style="margin-right: 10px"
+                v-for="weapon in ship.getWeapons()"
+                :key="weapon.id"
+              >
                 {{ weapon.count }}x
-                <router-link v-if="weapon.id != weapon.name" :to="{ name: 'weapon', params: { id: weapon.id } }">
+                <router-link
+                  v-if="weapon.id != weapon.name"
+                  :to="{ name: 'weapon', params: { id: weapon.id } }"
+                >
                   {{ weapon.name }}
                 </router-link>
                 <span v-else>{{ weapon.name }}</span>
@@ -254,8 +295,15 @@ const variants = computed(() =>
           <tr>
             <td>船体插槽:</td>
             <td colspan="5">
-              <span style="margin-right: 10px" v-for="shipMod in ship.getShipMods()" :key="shipMod.id">
-                <router-link v-if="shipMod.id != shipMod.name" :to="{ name: 'ship_mod', params: { id: shipMod.id } }">
+              <span
+                style="margin-right: 10px"
+                v-for="shipMod in ship.getShipMods()"
+                :key="shipMod.id"
+              >
+                <router-link
+                  v-if="shipMod.id != shipMod.name"
+                  :to="{ name: 'ship_mod', params: { id: shipMod.id } }"
+                >
                   {{ shipMod.name }}
                 </router-link>
                 <span v-else>{{ shipMod.name }}</span>

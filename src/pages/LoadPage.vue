@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { appData } from 'src/AppData';
 import { ref, watchEffect } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
-const fail = ref(false)
+const fail = ref(false);
 
 watchEffect(() => {
   if ('none' === appData.status.value) {
-    appData.initData()
+    appData.initData();
   } else if ('finish' === appData.status.value) {
-    router.replace('/')
+    router.replace('/');
   } else if ('fail' === appData.status.value) {
-    fail.value = true
+    fail.value = true;
   }
-})
+});
 </script>
 
 <template>

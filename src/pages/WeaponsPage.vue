@@ -5,7 +5,6 @@ import WeaponsDiv from 'src/components/listDiv/WeaponsDiv.vue';
 defineOptions({
   name: 'WeaponsPage',
 });
-
 </script>
 
 <template>

@@ -31,15 +31,16 @@ const marketCondition = computed(() => {
       </h4>
 
       <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 10px">
-
-        <span style="text-align: left; vertical-align: top; white-space: pre-wrap">{{ marketCondition.desc }}</span>
+        <span
+          style="text-align: left; vertical-align: top; white-space: pre-wrap"
+          >{{ marketCondition.desc }}</span
+        >
         <div style="margin: auto">
           <img decoding="async" :src="marketCondition.icon" />
         </div>
       </div>
 
       <br /><br />
-
 
       <div style="column-count: 2">
         <div style="display: grid; grid-template-columns: 1fr 1fr">
@@ -55,10 +56,11 @@ const marketCondition = computed(() => {
         <PlanetsDiv :planet-values="marketCondition.planets" />
       </template>
 
-
       <br /><br />
 
-      <pre v-if="appData.debug"><code>{{ debugJson(marketCondition) }}</code></pre>
+      <pre
+        v-if="appData.debug"
+      ><code>{{ debugJson(marketCondition) }}</code></pre>
     </template>
   </q-page>
 </template>

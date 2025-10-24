@@ -5,7 +5,6 @@ import PlanetsDiv from 'src/components/listDiv/PlanetsDiv.vue';
 defineOptions({
   name: 'PlanetsPage',
 });
-
 </script>
 
 <template>

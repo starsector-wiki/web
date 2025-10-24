@@ -26,8 +26,8 @@ export class Planet {
   @Type(() => Market)
   market!: Market;
 
-  location!: { x: number; y: number; };
-  locationInHyperspace!: { x: number; y: number; };
+  location!: { x: number; y: number };
+  locationInHyperspace!: { x: number; y: number };
   starSystem!: StarSystem;
   isSubStation: boolean = false;
   faction!: Faction;

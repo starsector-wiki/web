@@ -5,7 +5,6 @@ import FactionsDiv from 'src/components/listDiv/FactionsDiv.vue';
 defineOptions({
   name: 'FactionsPage',
 });
-
 </script>
 
 <template>

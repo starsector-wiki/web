@@ -9,8 +9,8 @@ export class ShipSystem {
   shortDescription!: string;
   icon!: string;
 
-  shipIds: string[] = []
-  defenseShipIds: string[] = []
+  shipIds: string[] = [];
+  defenseShipIds: string[] = [];
 
   static deserialize(object: object) {
     return plainToInstance(ShipSystem, object);
