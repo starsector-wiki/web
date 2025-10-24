@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { Planet } from 'src/classes/model/Planet';
 import { comparePlanet } from 'src/classes/utils';
 import { computed, ref } from 'vue';
+import { useQuasar } from 'quasar';
 
 
 defineOptions({
@@ -14,6 +15,7 @@ interface Props {
   hiddenOptions?: boolean;
 }
 const { planetValues, hiddenOptions = false } = defineProps<Props>();
+const $q = useQuasar();
 
 const ALL = '全部';
 const selectFaction = ref(ALL);
@@ -104,20 +106,23 @@ function filterType(
 </script>
 
 <template>
-  <template v-if="!hiddenOptions">
-    <template v-if="factionOptions.length > 2">
+  <div v-if="!hiddenOptions" class="filter-toolbar">
+    <div v-if="factionOptions.length > 2" class="filter-block">
       <span>势力:</span>
-      <q-option-group v-model="selectFaction" :options="factionOptions" type="radio" color="primary" inline />
-    </template>
-    <template v-if="sizeOptions.length > 2">
+      <q-option-group v-model="selectFaction" :options="factionOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div v-if="sizeOptions.length > 2" class="filter-block">
       <span>殖民地大小:</span>
-      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary" inline />
-    </template>
-    <template v-if="typeOptions.length > 2">
+      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div v-if="typeOptions.length > 2" class="filter-block">
       <span>星球类型:</span>
-      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary" inline />
-    </template>
-  </template>
+      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+  </div>
 
   <div class="card-item-list-page">
     <q-btn class="card-item" no-caps v-for="planet in finalPlanets" :key="planet.id"

@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { Faction } from 'src/classes/model/Faction';
 import { compareFaction, convertOptions } from 'src/classes/utils';
 import { computed, ref } from 'vue';
+import { useQuasar } from 'quasar';
 
 
 defineOptions({
@@ -15,6 +16,7 @@ interface Props {
   hiddenOptions?: boolean;
 }
 const { factionValues, img = 'logo', hiddenOptions = false } = defineProps<Props>();
+const $q = useQuasar();
 
 const ALL = '全部';
 const selectIsHidden = ref(ALL);
@@ -45,10 +47,13 @@ function filterIsHidden(factions: Faction[], value: string): Faction[] {
 </script>
 
 <template>
-  <template v-if="!hiddenOptions">
-    <span>显示在列表中:</span>
-    <q-option-group v-model="selectIsHidden" :options="isHiddenOptions" type="radio" color="primary" inline />
-  </template>
+  <div v-if="!hiddenOptions" class="filter-toolbar">
+    <div class="filter-block">
+      <span>显示在列表中:</span>
+      <q-option-group v-model="selectIsHidden" :options="isHiddenOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+  </div>
 
   <div class="card-item-list-page">
     <q-btn class="card-item" no-caps v-for="faction in factions" :key="faction.id"

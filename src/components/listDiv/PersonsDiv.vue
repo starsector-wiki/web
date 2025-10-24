@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { Person } from 'src/classes/model/Person';
 import { comparePerson, convertOptions } from 'src/classes/utils';
 import { computed, ref } from 'vue';
+import { useQuasar } from 'quasar';
 
 
 defineOptions({
@@ -14,6 +15,7 @@ interface Props {
   hiddenOptions?: boolean;
 }
 const { personValues: planetValues, hiddenOptions = false } = defineProps<Props>();
+const $q = useQuasar();
 
 
 const ALL = '全部';
@@ -99,20 +101,23 @@ function filterIsAi(persons: Person[], value: string): Person[] {
 </script>
 
 <template>
-  <template v-if="!hiddenOptions">
-    <template v-if="factionOptions.length > 2">
+  <div v-if="!hiddenOptions" class="filter-toolbar">
+    <div v-if="factionOptions.length > 2" class="filter-block">
       <span>势力:</span>
-      <q-option-group v-model="selectFaction" :options="factionOptions" type="radio" color="primary" inline />
-    </template>
-    <template v-if="isDefaultOptions.length > 2">
+      <q-option-group v-model="selectFaction" :options="factionOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div v-if="isDefaultOptions.length > 2" class="filter-block">
       <span>是否为默认:</span>
-      <q-option-group v-model="selectIsDefault" :options="isDefaultOptions" type="radio" color="primary" inline />
-    </template>
-    <template v-if="isAiOptions.length > 2">
+      <q-option-group v-model="selectIsDefault" :options="isDefaultOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div v-if="isAiOptions.length > 2" class="filter-block">
       <span>是否为AI核心:</span>
-      <q-option-group v-model="selectIsAi" :options="isAiOptions" type="radio" color="primary" inline />
-    </template>
-  </template>
+      <q-option-group v-model="selectIsAi" :options="isAiOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+  </div>
 
   <div class="card-item-list-page">
     <q-btn class="card-item" no-caps v-for="person in finalPersons" :key="person.id"

@@ -5,6 +5,7 @@ import { compareWeapon } from 'src/classes/utils';
 import { computed, ref } from 'vue';
 import WeaponSpriteDiv from '../WeaponSpriteDiv.vue';
 import { WeaponSizeDisplay, WeaponTypeDisplay } from 'src/classes/conts';
+import { useQuasar } from 'quasar';
 
 
 defineOptions({
@@ -16,6 +17,7 @@ interface Props {
   hiddenOptions?: boolean;
 }
 const { weaponValues, hiddenOptions = false } = defineProps<Props>();
+const $q = useQuasar();
 
 const ALL = '全部';
 const selectSize = ref(ALL);
@@ -73,12 +75,18 @@ function filterType(
 </script>
 
 <template>
-  <template v-if="!hiddenOptions">
-    <span>大小:</span>
-    <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary" inline />
-    <span>类型:</span>
-    <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary" inline />
-  </template>
+  <div v-if="!hiddenOptions" class="filter-toolbar">
+    <div class="filter-block">
+      <span>大小:</span>
+      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div class="filter-block">
+      <span>类型:</span>
+      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+  </div>
 
   <div class="card-item-list-page">
     <q-btn class="card-item" style="align-self: stretch;" no-caps v-for="weapon in weapons" :key="weapon.id"

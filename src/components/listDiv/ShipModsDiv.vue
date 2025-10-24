@@ -3,6 +3,7 @@ import { appData } from 'src/AppData';
 import { compareShipMod, convertOptions } from 'src/classes/utils';
 import { computed, ref } from 'vue';
 import { ShipMod } from 'src/classes/model/shipMod';
+import { useQuasar } from 'quasar';
 
 
 defineOptions({
@@ -14,6 +15,7 @@ interface Props {
   hiddenOptions?: boolean;
 }
 const { shipModValues, hiddenOptions = false } = defineProps<Props>();
+const $q = useQuasar();
 
 const ALL = '全部';
 const selectUiTag = ref(ALL);
@@ -101,14 +103,23 @@ function filterType(
 </script>
 
 <template>
-  <template v-if="!hiddenOptions">
-    <span>类型:</span>
-    <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary" inline />
-    <span>UI标签:</span>
-    <q-option-group v-model="selectUiTag" :options="uiTagOptions" type="radio" color="primary" inline />
-    <span>设计类型:</span>
-    <q-option-group v-model="selectManufacturer" :options="manufacturerOptions" type="radio" color="primary" inline />
-  </template>
+  <div v-if="!hiddenOptions" class="filter-toolbar">
+    <div class="filter-block">
+      <span>类型:</span>
+      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div class="filter-block">
+      <span>UI标签:</span>
+      <q-option-group v-model="selectUiTag" :options="uiTagOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div class="filter-block">
+      <span>设计类型:</span>
+      <q-option-group v-model="selectManufacturer" :options="manufacturerOptions" type="radio"
+        color="primary" :inline="!$q.screen.lt.sm" />
+    </div>
+  </div>
 
   <div class="card-item-list-page">
     <q-btn class="card-item" style="align-self: stretch;" no-caps v-for="shipMod in shipMods" :key="shipMod.id"

@@ -18,9 +18,7 @@ function toggleLeftDrawer() {
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-toolbar-title> Starsector Wiki </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -73,7 +71,12 @@ function toggleLeftDrawer() {
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view v-slot="{ Component, route }">
+        <keep-alive>
+          <component v-if="route.meta.keepAlive" :is="Component" :key="route.fullPath" />
+        </keep-alive>
+        <component v-if="!route.meta.keepAlive" :is="Component" :key="route.fullPath" />
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>

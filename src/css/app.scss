@@ -24,3 +24,42 @@ a {
   align-content: flex-start;
   align-items: center;
 }
+
+.filter-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.filter-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.filter-block > span {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .filter-toolbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .filter-block {
+    width: 100%;
+  }
+
+  .card-item {
+    width: 100%;
+  }
+
+  .card-item-content {
+    width: 100%;
+    align-items: flex-start;
+  }
+}

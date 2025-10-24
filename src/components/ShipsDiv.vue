@@ -5,6 +5,7 @@ import ShipSpriteDiv from './ShipSpriteDiv.vue';
 import { computed, ref } from 'vue';
 import { appData } from 'src/AppData';
 import { compareShip, convertOptions } from 'src/classes/utils';
+import { useQuasar } from 'quasar';
 
 defineOptions({
   name: 'ShipsDiv',
@@ -15,6 +16,7 @@ interface Props {
   hiddenOptions?: boolean;
 }
 const { ships, hiddenOptions = false } = defineProps<Props>();
+const $q = useQuasar();
 
 const ALL = '全部';
 const selectSize = ref(ALL);
@@ -104,20 +106,23 @@ function filterType(
 </script>
 
 <template>
-  <template v-if="!hiddenOptions">
-    <template v-if="typeOptions.length > 2">
+  <div v-if="!hiddenOptions" class="filter-toolbar">
+    <div v-if="typeOptions.length > 2" class="filter-block">
       <span>类型:</span>
-      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary" inline />
-    </template>
-    <template v-if="sizeOptions.length > 2">
+      <q-option-group v-model="selectType" :options="typeOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div v-if="sizeOptions.length > 2" class="filter-block">
       <span>大小:</span>
-      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary" inline />
-    </template>
-    <template v-if="manufacturerOptions.length > 2">
+      <q-option-group v-model="selectSize" :options="sizeOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+    <div v-if="manufacturerOptions.length > 2" class="filter-block">
       <span>设计类型:</span>
-      <q-option-group v-model="selectManufacturer" :options="manufacturerOptions" type="radio" color="primary" inline />
-    </template>
-  </template>
+      <q-option-group v-model="selectManufacturer" :options="manufacturerOptions" type="radio" color="primary"
+        :inline="!$q.screen.lt.sm" />
+    </div>
+  </div>
 
   <div class="card-item-list-page">
     <q-btn no-caps flat class="card-item" style="align-self: stretch;" v-for="ship in finalShips" :key="ship.id"
