@@ -27,14 +27,13 @@ const allMarketConditions = computed(() =>
 <template>
   <template v-if="!hiddenOptions"> </template>
 
+  <div v-if="!hiddenOptions" class="result-count">
+    共 {{ allMarketConditions.length }} 个结果
+  </div>
+
   <div class="card-item-list-page">
-    <q-btn
-      class="card-item"
-      no-caps
-      v-for="marketCondition in allMarketConditions"
-      :key="marketCondition.id"
-      :to="{ name: 'market_condition', params: { id: marketCondition.id } }"
-    >
+    <q-btn class="card-item" no-caps v-for="marketCondition in allMarketConditions" :key="marketCondition.id"
+      :to="{ name: 'market_condition', params: { id: marketCondition.id } }">
       <div class="card-item-content">
         <img decoding="async" :src="marketCondition.icon" />
         <span>

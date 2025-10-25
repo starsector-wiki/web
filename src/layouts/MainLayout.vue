@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 defineOptions({
   name: 'MainLayout',
 });
 
 const leftDrawerOpen = ref(false);
+const router = useRouter();
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function goBack() {
+  router.back();
 }
 </script>
 
@@ -16,14 +22,9 @@ function toggleLeftDrawer() {
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+
+        <q-btn flat dense round icon="arrow_back" aria-label="Back" @click="goBack" class="q-ml-sm lt-sm" />
 
         <q-toolbar-title> Starsector Wiki </q-toolbar-title>
       </q-toolbar>
@@ -80,17 +81,9 @@ function toggleLeftDrawer() {
     <q-page-container>
       <router-view v-slot="{ Component, route }">
         <keep-alive>
-          <component
-            v-if="route.meta.keepAlive"
-            :is="Component"
-            :key="route.fullPath"
-          />
+          <component v-if="route.meta.keepAlive" :is="Component" :key="route.fullPath" />
         </keep-alive>
-        <component
-          v-if="!route.meta.keepAlive"
-          :is="Component"
-          :key="route.fullPath"
-        />
+        <component v-if="!route.meta.keepAlive" :is="Component" :key="route.fullPath" />
       </router-view>
     </q-page-container>
   </q-layout>
