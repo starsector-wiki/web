@@ -26,14 +26,13 @@ const finalIndustries = computed(() => allIndustries.value);
 <template>
   <template v-if="!hiddenOptions"> </template>
 
+  <div v-if="!hiddenOptions" class="result-count">
+    共 {{ finalIndustries.length }} 个结果
+  </div>
+
   <div class="card-item-list-page">
-    <q-btn
-      class="card-item"
-      no-caps
-      v-for="industry in finalIndustries"
-      :key="industry.id"
-      :to="{ name: 'industry', params: { id: industry.id } }"
-    >
+    <q-btn class="card-item" no-caps v-for="industry in finalIndustries" :key="industry.id"
+      :to="{ name: 'industry', params: { id: industry.id } }">
       <div class="card-item-content">
         <img decoding="async" :src="industry.imageName" />
         <span>

@@ -312,12 +312,14 @@ export function convertOptions(
 ): {
   label: string;
   value: string;
+  chipLabel: string;
 }[] {
   return rows.map((row) => {
     const count = filterFun(row.value);
     return {
       label: `${row.label}(${count})`,
       value: row.value,
+      chipLabel: row.label,
     };
   });
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { appData } from 'src/AppData';
 import { Person } from 'src/classes/model/Person';
-import { comparePerson, convertOptions } from 'src/classes/utils';
+import { comparePerson } from 'src/classes/utils';
 import { computed, ref } from 'vue';
 import { useQuasar } from 'quasar';
 
@@ -17,69 +17,17 @@ const { personValues: planetValues, hiddenOptions = false } =
   defineProps<Props>();
 const $q = useQuasar();
 
-const selectFaction = ref<string[]>([]);
-const selectIsDefault = ref<string[]>([]);
-const rowIsDefaultOptions = [
-  {
-    label: '是',
-    value: 'Y',
-  },
-  {
-    label: '否',
-    value: 'N',
-  },
-];
-const selectIsAi = ref<string[]>([]);
-const rowIsAiOptions = [
-  {
-    label: '是',
-    value: 'Y',
-  },
-  {
-    label: '否',
-    value: 'N',
-  },
-];
+const includeFilters = ref<string[]>([]);
+const excludeFilters = ref<string[]>([]);
 
-const factionOptions = computed(() => {
-  const basePersons = filterIsAi(
-    filterIsDefault(allPersons.value, selectIsDefault.value),
-    selectIsAi.value
-  );
-  const values = new Map<string, { id: string; name: string }>();
-  for (const person of allPersons.value) {
-    values.set(person.factionId, {
-      id: person.factionId,
-      name: person.faction.displayName,
-    });
-  }
-  return Array.from(values.values())
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((it) => ({
-      label: `${it.name}(${filterFaction(basePersons, [it.id]).length})`,
-      value: it.id,
-    }));
-});
-const isDefaultOptions = computed(() => {
-  const basePersons = filterIsAi(
-    filterFaction(allPersons.value, selectFaction.value),
-    selectIsAi.value
-  );
-  return convertOptions(
-    rowIsDefaultOptions,
-    (v) => filterIsDefault(basePersons, [v]).length
-  );
-});
-const isAiOptions = computed(() => {
-  const basePersons = filterIsDefault(
-    filterFaction(allPersons.value, selectFaction.value),
-    selectIsDefault.value
-  );
-  return convertOptions(
-    rowIsAiOptions,
-    (v) => filterIsAi(basePersons, [v]).length
-  );
-});
+const rowIsDefaultOptions = [
+  { label: '是', value: 'Y' },
+  { label: '否', value: 'N' },
+];
+const rowIsAiOptions = [
+  { label: '是', value: 'Y' },
+  { label: '否', value: 'N' },
+];
 
 const allPersons = computed(() =>
   planetValues
@@ -87,127 +35,162 @@ const allPersons = computed(() =>
     .filter((it) => it !== undefined)
     .sort(comparePerson)
 );
-const finalPersons = computed(() =>
-  filterIsAi(
-    filterIsDefault(
-      filterFaction(allPersons.value, selectFaction.value),
-      selectIsDefault.value
-    ),
-    selectIsAi.value
-  )
-);
 
-function filterFaction(
-  persons: Person[],
-  values: readonly string[] | null | undefined
-): Person[] {
-  if (!values || values.length === 0) {
-    return persons;
+const finalPersons = computed(() => {
+  let result = allPersons.value;
+
+  // 应用包含条件 - 必须满足所有包含条件（且关系）
+  if (includeFilters.value && includeFilters.value.length > 0) {
+    result = result.filter((person) => {
+      return includeFilters.value.every((filter) => matchesFilter(person, filter));
+    });
   }
-  return persons.filter((planet) => values.includes(planet.factionId));
+
+  // 应用排除条件 - 只要匹配任一排除条件就排除（或关系）
+  if (excludeFilters.value && excludeFilters.value.length > 0) {
+    result = result.filter((person) => {
+      return !excludeFilters.value.some((filter) => matchesFilter(person, filter));
+    });
+  }
+
+  return result;
+});
+
+// 为包含条件下拉框生成选项（基于当前已筛选的结果）
+const includeFilterOptions = computed(() => {
+  return generateFilterOptions(finalPersons.value, includeFilters.value, excludeFilters.value);
+});
+
+// 为排除条件下拉框生成选项（基于当前已筛选的结果）
+const excludeFilterOptions = computed(() => {
+  return generateFilterOptions(finalPersons.value, excludeFilters.value, includeFilters.value);
+});
+
+function generateFilterOptions(persons: Person[], selectedFilters: string[], oppositeFilters: string[]) {
+  const options: Array<{
+    label: string;
+    value: string;
+    chipLabel: string;
+    disable: boolean;
+  }> = [];
+
+  // 势力选项
+  const factionMap = new Map<string, { id: string; name: string }>();
+  for (const person of allPersons.value) {
+    factionMap.set(person.factionId, {
+      id: person.factionId,
+      name: person.faction.displayName,
+    });
+  }
+  const factions = Array.from(factionMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+  factions.forEach((faction) => {
+    const filterValue = `faction:${faction.id}`;
+    const count = persons.filter((p) => p.factionId === faction.id).length;
+    const isSelected = selectedFilters && selectedFilters.includes(filterValue);
+    const isSelectedInOpposite = oppositeFilters && oppositeFilters.includes(filterValue);
+
+    options.push({
+      label: `[势力] ${faction.name}(${count})`,
+      value: filterValue,
+      chipLabel: `[势力] ${faction.name}`,
+      disable: (!isSelected && count === 0) || isSelectedInOpposite,
+    });
+  });
+
+  // 是否为默认选项
+  rowIsDefaultOptions.forEach((opt) => {
+    const filterValue = `isDefault:${opt.value}`;
+    const count = opt.value === 'Y'
+      ? persons.filter((p) => p.defaults).length
+      : persons.filter((p) => !p.defaults).length;
+    const isSelected = selectedFilters && selectedFilters.includes(filterValue);
+    const isSelectedInOpposite = oppositeFilters && oppositeFilters.includes(filterValue);
+
+    options.push({
+      label: `[是否为默认] ${opt.label}(${count})`,
+      value: filterValue,
+      chipLabel: `[是否为默认] ${opt.label}`,
+      disable: (!isSelected && count === 0) || isSelectedInOpposite,
+    });
+  });
+
+  // 是否为AI核心选项
+  rowIsAiOptions.forEach((opt) => {
+    const filterValue = `isAi:${opt.value}`;
+    const count = opt.value === 'Y'
+      ? persons.filter((p) => Boolean(p.aiCore)).length
+      : persons.filter((p) => !p.aiCore).length;
+    const isSelected = selectedFilters && selectedFilters.includes(filterValue);
+    const isSelectedInOpposite = oppositeFilters && oppositeFilters.includes(filterValue);
+
+    options.push({
+      label: `[是否为AI核心] ${opt.label}(${count})`,
+      value: filterValue,
+      chipLabel: `[是否为AI核心] ${opt.label}`,
+      disable: (!isSelected && count === 0) || isSelectedInOpposite,
+    });
+  });
+
+  return options;
 }
-function filterIsDefault(
-  persons: Person[],
-  values: readonly string[] | null | undefined
-): Person[] {
-  if (!values || values.length === 0) {
-    return persons;
+
+function matchesFilter(person: Person, filter: string): boolean {
+  const [category, value] = filter.split(':');
+
+  if (category === 'faction') {
+    return person.factionId === value;
+  } else if (category === 'isDefault') {
+    return value === 'Y' ? person.defaults : !person.defaults;
+  } else if (category === 'isAi') {
+    return value === 'Y' ? Boolean(person.aiCore) : !person.aiCore;
   }
-  const includesYes = values.includes('Y');
-  const includesNo = values.includes('N');
-  if (includesYes && includesNo) {
-    return persons;
-  }
-  if (includesYes) {
-    return persons.filter((person) => person.defaults);
-  }
-  return persons.filter((person) => !person.defaults);
-}
-function filterIsAi(
-  persons: Person[],
-  values: readonly string[] | null | undefined
-): Person[] {
-  if (!values || values.length === 0) {
-    return persons;
-  }
-  const includesYes = values.includes('Y');
-  const includesNo = values.includes('N');
-  if (includesYes && includesNo) {
-    return persons;
-  }
-  if (includesYes) {
-    return persons.filter((person) => Boolean(person.aiCore));
-  }
-  return persons.filter((person) => !person.aiCore);
+
+  return false;
 }
 </script>
 
 <template>
   <div v-if="!hiddenOptions" class="filter-toolbar">
-    <div v-if="factionOptions.length" class="filter-block">
-      <span>势力:</span>
-      <q-select
-        v-model="selectFaction"
-        :options="factionOptions"
-        multiple
-        emit-value
-        map-options
-        use-chips
-        dense
-        options-dense
-        :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'"
-        clearable
-        clear-icon="close"
-        :clear-value="[]"
-        placeholder="全部"
-      />
-    </div>
-    <div v-if="isDefaultOptions.length" class="filter-block">
-      <span>是否为默认:</span>
-      <q-select
-        v-model="selectIsDefault"
-        :options="isDefaultOptions"
-        multiple
-        emit-value
-        map-options
-        use-chips
-        dense
-        options-dense
-        :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'"
-        clearable
-        clear-icon="close"
-        :clear-value="[]"
-        placeholder="全部"
-      />
-    </div>
-    <div v-if="isAiOptions.length" class="filter-block">
-      <span>是否为AI核心:</span>
-      <q-select
-        v-model="selectIsAi"
-        :options="isAiOptions"
-        multiple
-        emit-value
-        map-options
-        use-chips
-        dense
-        options-dense
-        :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'"
-        clearable
-        clear-icon="close"
-        :clear-value="[]"
-        placeholder="全部"
-      />
+    <div class="filter-row">
+      <div class="filter-group">
+        <div class="filter-item">
+          <div class="filter-item-label">包含条件</div>
+          <q-select v-model="includeFilters" :options="includeFilterOptions" multiple emit-value map-options use-chips
+            dense options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close"
+            placeholder="选择需要包含的条件">
+            <template v-slot:selected-item="scope">
+              <q-chip removable dense @remove="scope.removeAtIndex(scope.index)" :tabindex="scope.tabindex"
+                color="primary" text-color="white">
+                {{ scope.opt.chipLabel || scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
+        </div>
+        <div class="filter-item">
+          <div class="filter-item-label">排除条件</div>
+          <q-select v-model="excludeFilters" :options="excludeFilterOptions" multiple emit-value map-options use-chips
+            dense options-dense :behavior="$q.screen.lt.sm ? 'dialog' : 'menu'" clearable clear-icon="close"
+            placeholder="选择需要排除的条件">
+            <template v-slot:selected-item="scope">
+              <q-chip removable dense @remove="scope.removeAtIndex(scope.index)" :tabindex="scope.tabindex"
+                color="negative" text-color="white">
+                {{ scope.opt.chipLabel || scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
+        </div>
+      </div>
     </div>
   </div>
 
+  <div v-if="!hiddenOptions" class="result-count">
+    共 {{ finalPersons.length }} 个结果
+  </div>
+
   <div class="card-item-list-page">
-    <q-btn
-      class="card-item"
-      no-caps
-      v-for="person in finalPersons"
-      :key="person.id"
-      :to="{ name: 'person', params: { id: person.id } }"
-    >
+    <q-btn class="card-item" no-caps v-for="person in finalPersons" :key="person.id"
+      :to="{ name: 'person', params: { id: person.id } }">
       <div class="card-item-content">
         <img decoding="async" :src="person.portraitSprite" />
         <span :style="{ color: '#' + person.faction.color }">
